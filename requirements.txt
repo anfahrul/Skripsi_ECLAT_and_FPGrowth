@@ -1,4 +1,8 @@
 pandas
 numpy
+Flask
+Flask-SQLAlchemy
+psycopg2
+Flask-Migrate
 
 # -e .

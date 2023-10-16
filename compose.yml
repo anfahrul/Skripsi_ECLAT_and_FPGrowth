@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  postgresql-sinarmartanalytics:
+    container_name: postgresql-sinarmartanalytics
+    restart: always
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=anfahrul
+      - POSTGRES_PASSWORD=pass7890
+      - POSTGRES_DB=sinarmartanalytics
+    ports:
+      - "5432:5432"
