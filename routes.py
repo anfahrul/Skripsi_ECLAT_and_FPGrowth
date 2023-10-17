@@ -3,14 +3,20 @@ from src.models.user import User
 from src.models.product import Product
 from src.controllers.productController import index, create, edit, update, delete
 
-
-user_blueprint = Blueprint('user_blueprint', __name__, url_prefix='/')
+home_blueprint = Blueprint('home_blueprint', __name__, url_prefix='/')
+user_blueprint = Blueprint('user_blueprint', __name__, url_prefix='/users')
 product_blueprint = Blueprint('product_blueprint', __name__, url_prefix='/products')
 
 
-@user_blueprint.route("/user", methods=["GET"])
-def say_bye():
-    return render_template('home.html')
+# Home
+@home_blueprint.route("/", methods=["GET"])
+def home():
+    return render_template('dashboard.html')
+
+
+@user_blueprint.route("/", methods=["GET"])
+def dashboard():
+    return render_template('dashboard.html')
 
 
 # Product
