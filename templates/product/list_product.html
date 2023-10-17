@@ -1,0 +1,65 @@
+{% extends 'base.html' %} {% block title %} Product Page {% endblock %} {% block
+content %}
+<h1>Product Page</h1>
+
+<form action="/products" method="POST">
+  <div class="form-group">
+    <label for="itemCode">Kode Produk:</label>
+    <input
+      type="text"
+      class="form-control"
+      id="itemCode"
+      name="itemCode"
+      required
+    />
+  </div>
+  <div class="form-group">
+    <label for="nama_produk">Nama Produk:</label>
+    <input type="text" class="form-control" id="name" name="name" required />
+  </div>
+  <div class="form-group">
+    <label for="harga_produk">Harga Produk:</label>
+    <input
+      type="number"
+      class="form-control"
+      id="price"
+      name="price"
+      required
+    />
+  </div>
+  <button type="submit" class="btn btn-primary mb-5">Tambah Produk</button>
+</form>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Kode Barang</th>
+      <th scope="col">Nama</th>
+      <th scope="col">Harga</th>
+      <th scope="col">Aksi</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in products %}
+    <tr>
+      <td>{{ item.itemCode }}</td>
+      <td>{{ item.name }}</td>
+      <td>{{ item.price }}</td>
+      <td>
+        <a
+          href="{{ url_for('product_blueprint.edit_product', itemCode=item.itemCode) }}"
+          class="btn btn-sm btn-primary"
+          >Edit</a
+        >
+        <form
+          method="post"
+          action="{{ url_for('product_blueprint.delete_product', itemCode=item.itemCode) }}"
+        >
+          <input type="submit" value="Delete" class="btn btn-sm btn-danger" />
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
