@@ -8,7 +8,12 @@ def index():
     
     return render_template('product/list_product.html', products=products)
 
+
 def create():
+    return render_template('product/create_product.html')
+
+
+def store():
     request_form = request.form.to_dict()
     
     new_item = Product(
@@ -20,9 +25,10 @@ def create():
     db.session.add(new_item)
     db.session.commit()
     
-    products = Product.query.all()
+    # products = Product.query.all()
     
-    return render_template('product/list_product.html', products=products)
+    # return render_template('product/list_product.html', products=products)
+    return redirect(url_for('product_blueprint.list_product'))
 
 
 def edit(itemCode):
@@ -40,11 +46,11 @@ def update(itemCode):
 
     db.session.commit()
     
-    return redirect(url_for('product_blueprint.list_add_product'))
+    return redirect(url_for('product_blueprint.list_product'))
 
 
 def delete(itemCode):
     Product.query.filter_by(itemCode=itemCode).delete()
     db.session.commit()
     
-    return redirect(url_for('product_blueprint.list_add_product'))
+    return redirect(url_for('product_blueprint.list_product'))

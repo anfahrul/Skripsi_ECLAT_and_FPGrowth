@@ -1,43 +1,17 @@
-{% extends 'base_admin.html' %} {% block title %} Product Page {% endblock %} {%
-block content %}
+{% extends 'base_admin.html' %} {% block title %} Master Produk {% endblock %}
+{% block content %}
 
 <div class="card">
   <div class="card-body">
-    <h1>Product Page</h1>
+    <h3>Master Produk</h3>
 
-    <form action="/products" method="POST">
-      <div class="form-group">
-        <label for="itemCode">Kode Produk:</label>
-        <input
-          type="text"
-          class="form-control"
-          id="itemCode"
-          name="itemCode"
-          required
-        />
-      </div>
-      <div class="form-group">
-        <label for="nama_produk">Nama Produk:</label>
-        <input
-          type="text"
-          class="form-control"
-          id="name"
-          name="name"
-          required
-        />
-      </div>
-      <div class="form-group">
-        <label for="harga_produk">Harga Produk:</label>
-        <input
-          type="number"
-          class="form-control"
-          id="price"
-          name="price"
-          required
-        />
-      </div>
-      <button type="submit" class="btn btn-primary mb-5">Tambah Produk</button>
-    </form>
+    <div class="my-3">
+      <a
+        href="{{ url_for('product_blueprint.create_product') }}"
+        class="btn btn-primary"
+        >Tambah Produk</a
+      >
+    </div>
 
     <table class="table">
       <thead>
@@ -58,20 +32,42 @@ block content %}
             <div class="d-flex justify-content-left">
               <a
                 href="{{ url_for('product_blueprint.edit_product', itemCode=item.itemCode) }}"
-                class="btn btn-sm btn-primary"
-                >Edit</a
-              >
+                class="btn btn-sm btn-outline-primary"
+                title="Edit"
+                aria-label="Edit"
+                ><span> <i class="ti ti-edit"></i> </span
+              ></a>
               <form
                 method="post"
                 action="{{ url_for('product_blueprint.delete_product', itemCode=item.itemCode) }}"
+                onsubmit="return deleteProductConfirmation('{{ item.name }}')"
               >
-                <input
+                <button
                   type="submit"
-                  value="Delete"
-                  class="btn btn-sm btn-danger"
+                  class="btn btn-sm btn-outline-danger"
                   style="margin-left: 5px"
-                />
+                  title="Hapus"
+                  aria-label="Hapus"
+                >
+                  <span><i class="ti ti-trash"></i></span>
+                </button>
               </form>
+
+              <script>
+                function deleteProductConfirmation(item) {
+                  if (
+                    confirm(
+                      "Anda yakin ingin menghapus item " +
+                        item +
+                        " dari master produk?"
+                    )
+                  ) {
+                    return true;
+                  } else {
+                    return false;
+                  }
+                }
+              </script>
             </div>
           </td>
           <!-- <td>

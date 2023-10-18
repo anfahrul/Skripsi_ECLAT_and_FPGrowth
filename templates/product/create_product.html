@@ -1,12 +1,12 @@
-{% extends 'base_admin.html' %} {% block title %} Edit Produk {% endblock %} {%
-block content %}
+{% extends 'base_admin.html' %} {% block title %} Tambah Produk {% endblock %}
+{% block content %}
 
 <div class="card">
   <div class="card-body">
-    <h3>Edit Produk</h3>
+    <h3>Tambah Produk</h3>
 
     <form
-      action="{{ url_for('product_blueprint.edit_product', itemCode=product.itemCode) }}"
+      action="{{ url_for('product_blueprint.create_product') }}"
       method="POST"
     >
       <div class="mb-3">
@@ -16,13 +16,8 @@ block content %}
           class="form-control"
           id="itemCode"
           name="itemCode"
-          value="{{ product.itemCode }}"
-          readonly
-          title="Kode produk tidak dapat diubah!"
+          required
         />
-        <div id="itemCode" class="form-text">
-          Kode produk tidak dapat diubah!
-        </div>
       </div>
       <div class="mb-3">
         <label for="exampleInputEmail1" class="form-label">Nama Produk</label>
@@ -31,7 +26,6 @@ block content %}
           class="form-control"
           id="name"
           name="name"
-          value="{{ product.name }}"
           required
         />
       </div>
@@ -42,13 +36,11 @@ block content %}
           class="form-control"
           id="price"
           name="price"
-          value="{{ product.price }}"
           required
         />
       </div>
 
-      <button type="submit" class="btn btn-primary">Perbarui Produk</button>
-
+      <button type="submit" class="btn btn-primary">Tambah Produk</button>
       <a
         href="{{ url_for('product_blueprint.list_product') }}"
         class="btn btn-light mx-3"

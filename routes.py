@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request
 from src.models.user import User
 from src.models.product import Product
-from src.controllers.productController import index, create, edit, update, delete
+from src.controllers.productController import index, create, store, edit, update, delete
 
 home_blueprint = Blueprint('home_blueprint', __name__, url_prefix='/')
 user_blueprint = Blueprint('user_blueprint', __name__, url_prefix='/users')
@@ -20,10 +20,15 @@ def dashboard():
 
 
 # Product
-@product_blueprint.route("/", methods=["GET", "POST"])
-def list_add_product():
+@product_blueprint.route("/", methods=["GET"])
+def list_product():
     if request.method == 'GET': return index()
-    if request.method == 'POST': return create()
+    else: return "Method not allowed"
+
+@product_blueprint.route("/create", methods=["GET", "POST"])
+def create_product():
+    if request.method == 'GET': return create()
+    if request.method == 'POST': return store()
     else: return "Method not allowed"
 
 @product_blueprint.route("/<itemCode>/edit", methods=["GET", "POST"])
