@@ -1,0 +1,159 @@
+{% extends 'base_admin.html' %} {% block title %} Tambah Transaksi {% endblock
+%} {% block content %}
+<div class="card">
+  <div class="card-body">
+    <h3>Tambah Transaksi</h3>
+
+    <form
+      action="{{ url_for('transaction_blueprint.create_transaction') }}"
+      method="POST"
+      onsubmit="logSelectedProducts()"
+    >
+      <div class="mb-3">
+        <!-- <label for="transaction_id" class="form-label">ID Transaksi</label> -->
+        <input
+          type="text"
+          class="form-control"
+          id="transaction_id"
+          name="transaction_id"
+          hidden
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="date" class="form-label">Tanggal Transaksi</label>
+        <input
+          type="date"
+          class="form-control"
+          id="date"
+          name="date"
+          required
+        />
+      </div>
+
+      <div class="card mb-0">
+        <div class="card-body p-4">
+          <div id="product-fields" class="mb-3">
+            <!-- Initial product field -->
+            <div class="product-field">
+              <div class="d-flex justify-content-start">
+                <div class="d-flex flex-column">
+                  <label for="disabledSelect" class="form-label"
+                    >Pilih Produk</label
+                  >
+                  <select
+                    id="disabledSelect"
+                    class="form-select"
+                    name="itemCode[]"
+                  >
+                    <option>Select...</option>
+                    {% for item in products %}
+                    <option value="{{ item.itemCode }}">{{ item.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="d-flex flex-column">
+                  <label for="quantity" class="form-label">Kuantitas</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    name="quantity[]"
+                    min="1"
+                  />
+                </div>
+                <div class="d-flex flex-column">
+                  <button
+                    type="button"
+                    class="btn btn-outline-danger remove-product mt-auto"
+                  >
+                    <span>
+                      <i class="ti ti-trash"></i>
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-outline-primary mt-3"
+            id="add-product"
+          >
+            Tambah Produk
+          </button>
+        </div>
+      </div>
+      <button
+        type="submit"
+        class="btn btn-primary mt-3 d-none"
+        id="submit-transaction"
+      >
+        Simpan Transaksi
+      </button>
+      <a
+        href="{{ url_for('transaction_blueprint.list_transaction') }}"
+        class="btn btn-light mx-3 mt-3"
+      >
+        Batal
+      </a>
+    </form>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Pastikan jQuery sudah di-include -->
+
+<script>
+  // Fungsi untuk menambahkan produk
+  $("#add-product").click(function () {
+    var productField = $(".product-field:first").clone(); // Clone elemen produk pertama
+    productField.find("select").val("Select..."); // Reset select box ke "Select..."
+    productField.find("input[name='quantity[]']").val(""); // Reset input kuantitas
+    productField.appendTo("#product-fields"); // Tambahkan elemen yang di-clone ke daftar produk
+
+    checkSubmitButtonVisibility();
+  });
+
+  // Fungsi untuk menghapus produk
+  $("#product-fields").on("click", ".remove-product", function () {
+    if ($("#product-fields .product-field").length > 1) {
+      $(this).closest(".product-field").remove(); // Hapus elemen produk yang dipilih
+
+      checkSubmitButtonVisibility();
+    }
+  });
+
+  function checkSubmitButtonVisibility() {
+    if ($("#product-fields .product-field").length > 0) {
+      // Jika ada setidaknya satu produk yang dipilih
+      $("#submit-transaction").removeClass("d-none"); // Tampilkan tombol "Simpan Transaksi"
+    } else {
+      $("#submit-transaction").addClass("d-none"); // Sembunyikan tombol "Simpan Transaksi"
+    }
+  }
+
+  function logSelectedProducts() {
+    var selectedProducts = [];
+
+    // Loop melalui setiap elemen produk
+    $(".product-field").each(function () {
+      var productSelect = $(this).find("select");
+      var productQuantity = $(this).find("input[name='quantity[]']").val();
+
+      if (productSelect.val() !== "Select..." && productQuantity !== "") {
+        // Hanya tambahkan produk yang telah dipilih dan memiliki kuantitas
+        var productName = productSelect.find(":selected").text();
+        selectedProducts.push({
+          name: productName,
+          quantity: productQuantity,
+        });
+      }
+    });
+
+    console.log("Daftar Produk yang Diproses:");
+    console.log(selectedProducts);
+  }
+</script>
+
+{% endblock %}

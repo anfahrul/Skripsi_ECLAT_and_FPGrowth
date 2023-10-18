@@ -5,7 +5,8 @@ class Product(db.Model):
 
     itemCode = db.Column(db.String, primary_key=True)
     name = db.Column(db.String(), nullable=False)    
-    price = db.Column(db.Integer(), nullable=False)    
+    price = db.Column(db.Integer(), nullable=False)   
+    transactions = db.relationship('TransactionProduct', backref='product', lazy='dynamic') 
 
 
     def __init__(self, itemCode, name, price):

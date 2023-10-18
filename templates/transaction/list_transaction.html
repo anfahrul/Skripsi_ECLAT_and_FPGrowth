@@ -1,0 +1,51 @@
+{% extends 'base_admin.html' %} {% block title %} Daftar Transaksi {% endblock
+%} {% block content %}
+
+<div class="card">
+  <div class="card-body">
+    <h3>Transaksi Penjualan</h3>
+
+    <div class="my-3">
+      <a
+        href="{{ url_for('transaction_blueprint.create_transaction') }}"
+        class="btn btn-primary"
+        >Tambah Transaksi</a
+      >
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">No</th>
+          <th scope="col">ID Transaksi</th>
+          <th scope="col">Tanggal Transaksi</th>
+          <th scope="col">Total Bayar</th>
+          <th scope="col">Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for transaction in transactions %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ transaction.transaction_id }}</td>
+          <td>{{ transaction.date }}</td>
+          <td>{{ transaction.total_price }}</td>
+          <td>
+            <div class="d-flex justify-content-left">
+              <a
+                href="{{ url_for('transaction_blueprint.detail_transaction', transaction_id=transaction.transaction_id) }}"
+                class="btn btn-sm btn-outline-primary"
+                title="Lihat Detail"
+                aria-label="Lihat Detail"
+                ><span> <i class="ti ti-eye"></i> </span
+              ></a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

@@ -2,10 +2,12 @@ from flask import Blueprint, render_template, request
 from src.models.user import User
 from src.models.product import Product
 from src.controllers.productController import index, create, store, edit, update, delete
+from src.controllers.transactionController import indexTrans, createTrans, storeTrans
 
 home_blueprint = Blueprint('home_blueprint', __name__, url_prefix='/')
 user_blueprint = Blueprint('user_blueprint', __name__, url_prefix='/users')
 product_blueprint = Blueprint('product_blueprint', __name__, url_prefix='/products')
+transaction_blueprint = Blueprint('transaction_blueprint', __name__, url_prefix='/transaction')
 
 
 # Home
@@ -40,3 +42,20 @@ def edit_product(itemCode):
 @product_blueprint.route("/<itemCode>/delete", methods=["POST"])
 def delete_product(itemCode):
     return delete(itemCode)
+
+
+# Transaction
+@transaction_blueprint.route("/", methods=["GET"])
+def list_transaction():
+    return indexTrans()
+
+@transaction_blueprint.route("/create", methods=["GET", "POST"])
+def create_transaction():
+    if request.method == 'GET': return createTrans()
+    if request.method == 'POST': return storeTrans()
+    else: return "Method not allowed"
+    
+    
+@transaction_blueprint.route("/<transaction_id>/detail", methods=["GET"])
+def detail_transaction(transaction_id):
+    return render_template("transaction/detail_transaction.html", transaction_id=transaction_id)

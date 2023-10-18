@@ -15,12 +15,14 @@ db.init_app(app)
 
 from src.models.user import User
 from src.models.product import Product
+from src.models.transaction import Transaction, TransactionProduct
 migrate = Migrate(app, db)
 
-from routes import home_blueprint, user_blueprint, product_blueprint
+from routes import home_blueprint, user_blueprint, product_blueprint, transaction_blueprint
 app.register_blueprint(home_blueprint)
 app.register_blueprint(user_blueprint)
 app.register_blueprint(product_blueprint)
+app.register_blueprint(transaction_blueprint)
 
 
 if __name__=="__main__":
