@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request
 from src.models.user import User
 from src.models.product import Product
 from src.controllers.productController import index, create, store, edit, update, delete
-from src.controllers.transactionController import indexTrans, createTrans, storeTrans
+from src.controllers.transactionController import indexTrans, createTrans, storeTrans, detailTrans
 
 home_blueprint = Blueprint('home_blueprint', __name__, url_prefix='/')
 user_blueprint = Blueprint('user_blueprint', __name__, url_prefix='/users')
@@ -58,4 +58,4 @@ def create_transaction():
     
 @transaction_blueprint.route("/<transaction_id>/detail", methods=["GET"])
 def detail_transaction(transaction_id):
-    return render_template("transaction/detail_transaction.html", transaction_id=transaction_id)
+    return detailTrans(transaction_id)

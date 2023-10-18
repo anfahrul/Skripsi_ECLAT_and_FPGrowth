@@ -57,3 +57,13 @@ def storeTrans():
     db.session.commit()
     
     return redirect(url_for('transaction_blueprint.list_transaction'))
+
+
+def detailTrans(transaction_id):
+    transaction = Transaction.query.get(transaction_id)
+    
+    transaction_products = db.session.query(TransactionProduct, Product.name, Product.price).\
+        filter(TransactionProduct.itemCode == Product.itemCode).\
+        filter(TransactionProduct.transaction_id == transaction_id).all()
+    
+    return render_template('transaction/detail_transaction.html', transaction=transaction, transaction_products=transaction_products)
