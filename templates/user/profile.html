@@ -8,9 +8,11 @@ block content %}
         <div class="mb-4">
           <!-- <h5 class="card-title fw-semibold">Recent Transactions</h5> -->
           {% with messages = get_flashed_messages() %} {% if messages %}
-          <div class="alert alert-success" role="alert">
-            {{ messages[0] }}
-          </div>
+            {% if messages[0] == 'Profil berhasil diperbarui!' %}
+            <div class="alert alert-success" role="alert">
+              {{ messages[0] }}
+            </div>
+            {% endif %}
           {% endif %} {% endwith %}
 
           <div class="d-flex justify-content-between">
