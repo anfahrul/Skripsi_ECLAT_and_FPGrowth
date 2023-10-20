@@ -35,7 +35,8 @@ def loginPost(bcrypt):
     
     email = request_form['email']
     password = request_form['password']
-    remember = True if request_form['remember'] else False
+    # remember = True if request_form['remember'] else False
+    remember = bool(request.form.get('remember'))
     
     user = User.query.filter_by(email=email).first()
     
