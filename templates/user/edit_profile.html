@@ -1,0 +1,48 @@
+{% extends 'base_admin.html' %} {% block title %} Edit Profil {% endblock %} {%
+block content %}
+
+<div class="card">
+  <div class="card-body">
+    <h3>Edit Profil</h3>
+
+    <form
+      action="{{ url_for('user_blueprint.edit_profile', user_id=user.id) }}"
+      method="POST"
+    >
+      <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">Alamat Email</label>
+        <input
+          type="text"
+          class="form-control"
+          id="email"
+          name="email"
+          value="{{ user.email }}"
+          readonly
+          title="Email tidak dapat diubah!"
+        />
+        <div id="email" class="form-text">Alamat Email tidak dapat diubah!</div>
+      </div>
+      <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">Nama</label>
+        <input
+          type="text"
+          class="form-control"
+          id="name"
+          name="name"
+          value="{{ user.name }}"
+          required
+        />
+      </div>
+
+      <button type="submit" class="btn btn-primary">Perbarui profil</button>
+
+      <a
+        href="{{ url_for('user_blueprint.profile') }}"
+        class="btn btn-light mx-3"
+        >Batal</a
+      >
+    </form>
+  </div>
+</div>
+
+{% endblock %}

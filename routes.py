@@ -6,12 +6,13 @@ from src.models.product import Product
 from src.controllers.productController import index, create, store, edit, update, delete
 from src.controllers.transactionController import indexTrans, createTrans, storeTrans, detailTrans
 from src.controllers.authController import registerPost, loginPost
+from src.controllers.userController import getProfile, editProfile, updateProfile, updatePassword
 
 auth_blueprint = Blueprint('auth_blueprint', __name__, url_prefix='/')
 dashboard_blueprint = Blueprint('dashboard_blueprint', __name__)
-user_blueprint = Blueprint('user_blueprint', __name__)
 product_blueprint = Blueprint('product_blueprint', __name__)
 transaction_blueprint = Blueprint('transaction_blueprint', __name__)
+user_blueprint = Blueprint('user_blueprint', __name__)
 
 
 # Authentication
@@ -86,3 +87,19 @@ def create_transaction():
 @login_required
 def detail_transaction(transaction_id):
     return detailTrans(transaction_id)
+
+
+# User
+@user_blueprint.route("/profile", methods=["GET", "POST"])
+@login_required
+def profile():
+    if request.method == 'GET': return getProfile()
+    if request.method == 'POST': return updatePassword(bcrypt)
+    else: return "Method not allowed"
+
+@user_blueprint.route("/profile/<user_id>/edit", methods=["GET", "POST"])
+@login_required
+def edit_profile(user_id):
+    if request.method == 'GET': return editProfile(user_id)
+    if request.method == 'POST': return updateProfile(user_id)
+    else: return "Method not allowed"

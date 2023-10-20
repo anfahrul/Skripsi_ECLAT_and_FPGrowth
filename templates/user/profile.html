@@ -1,0 +1,106 @@
+{% extends 'base_admin.html' %} {% block title %} Profile {% endblock %} {%
+block content %}
+
+<div class="row">
+  <div class="col-lg-4 d-flex align-items-stretch">
+    <div class="card w-100">
+      <div class="card-body p-4">
+        <div class="mb-4">
+          <!-- <h5 class="card-title fw-semibold">Recent Transactions</h5> -->
+          {% with messages = get_flashed_messages() %} {% if messages %}
+          <div class="alert alert-success" role="alert">
+            {{ messages[0] }}
+          </div>
+          {% endif %} {% endwith %}
+
+          <div class="d-flex justify-content-between">
+            <div>
+              <h3>Profil Saya</h3>
+            </div>
+            <div>
+              <a
+                href="{{ url_for('user_blueprint.edit_profile', user_id=user.id) }}"
+                class="btn btn-sm btn-outline-primary"
+                title="Edit Profil"
+                aria-label="Edit Profil"
+                ><span> <i class="ti ti-edit"></i> </span>
+              </a>
+            </div>
+          </div>
+
+          <table class="table table-borderless">
+            <tbody>
+              <tr>
+                <th scope="row" width="15%">Nama</th>
+                <td>{{ user.name }}</td>
+              </tr>
+              <tr>
+                <th scope="row">Alamat Email</th>
+                <td>{{ user.email }}</td>
+              </tr>
+              <tr>
+                <th scope="row">Terdaftar Sejak</th>
+                <td>{{ user.created_at }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8 d-flex align-items-stretch">
+    <div class="card w-100">
+      <div class="card-body p-4">
+        <!-- <h5 class="card-title fw-semibold mb-4">Recent Transactions</h5> -->
+
+        {% with messages = get_flashed_messages() %} 
+          {% if messages %}
+            {% if messages[0] != 'Profil berhasil diperbarui!' %}
+            <div class="alert alert-{{ 'success' if 'Kata sandi berhasil diperbarui!' in messages[0] else 'danger' }}" role="alert">
+              {{ messages[0] }}
+            </div>
+            {% endif %}
+          {% endif %}
+        {% endwith %}
+
+        <h3>Perbarui Kata Sandi</h3>
+
+        <form action="{{ url_for('user_blueprint.profile') }}" method="POST">
+          <div class="mb-3">
+
+          <div class="mb-4">
+            <label for="exampleInputPassword1" class="form-label"
+              >Kata Sandi Lama</label
+            >
+            <input
+              name="old_password"
+              type="password"
+              class="form-control"
+              id="exampleInputPassword1"
+            />
+          </div>
+          <div class="mb-4">
+            <label for="exampleInputPassword1" class="form-label"
+              >Kata Sandi Baru</label
+            >
+            <input
+              name="new_password"
+              type="password"
+              class="form-control"
+              id="exampleInputPassword1"
+            />
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-outline-primary w-100 py-8 fs-4 mb-4 rounded-2"
+          >
+            Perbarui
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -140,6 +140,32 @@
                   <span class="hide-menu">Logout</span>
                 </a>
               </li>
+
+              <!-- <li class="sidebar-item">
+                <a
+                  class="sidebar-link"
+                  href="{{ url_for('auth_blueprint.logout') }}"
+                  aria-expanded="false"
+                >
+                  <span>
+                    <i class="ti ti-logout"></i>
+                  </span>
+                  <span class="hide-menu">Profil Saya</span>
+                </a>
+              </li> -->
+
+              <li class="sidebar-item">
+                <a
+                  class="sidebar-link"
+                  href="{{ url_for('user_blueprint.profile') }}"
+                  aria-expanded="false"
+                >
+                  <span>
+                    <i class="ti ti-user-circle"></i>
+                  </span>
+                  <span class="hide-menu">Pengaturan Akun</span>
+                </a>
+              </li>
             </ul>
           </nav>
           <!-- End Sidebar navigation -->
@@ -150,7 +176,7 @@
       <!--  Main wrapper -->
       <div class="body-wrapper">
         <!--  Header Start -->
-        <header class="app-header">
+        <!-- <header class="app-header">
           <nav class="navbar navbar-expand-lg navbar-light">
             <ul class="navbar-nav">
               <li class="nav-item d-block d-xl-none">
@@ -202,24 +228,10 @@
                         class="d-flex align-items-center gap-2 dropdown-item"
                       >
                         <i class="ti ti-user fs-6"></i>
-                        <p class="mb-0 fs-3">My Profile</p>
+                        <p class="mb-0 fs-3">Pengaturan Akun</p>
                       </a>
                       <a
-                        href="javascript:void(0)"
-                        class="d-flex align-items-center gap-2 dropdown-item"
-                      >
-                        <i class="ti ti-mail fs-6"></i>
-                        <p class="mb-0 fs-3">My Account</p>
-                      </a>
-                      <a
-                        href="javascript:void(0)"
-                        class="d-flex align-items-center gap-2 dropdown-item"
-                      >
-                        <i class="ti ti-list-check fs-6"></i>
-                        <p class="mb-0 fs-3">My Task</p>
-                      </a>
-                      <a
-                        href="./authentication-login.html"
+                        href="{{ url_for('auth_blueprint.logout') }}"
                         class="btn btn-outline-primary mx-3 mt-2 d-block"
                         >Logout</a
                       >
@@ -229,10 +241,10 @@
               </ul>
             </div>
           </nav>
-        </header>
+        </header> -->
         <!--  Header End -->
 
-        <div class="container-fluid">
+        <div class="container">
           <div class="p-5">{% block content %} {% endblock %}</div>
         </div>
       </div>
