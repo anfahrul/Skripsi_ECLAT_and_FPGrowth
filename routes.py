@@ -3,13 +3,16 @@ from flask_login import login_user, login_required, logout_user
 from app import bcrypt
 from src.models.user import User
 from src.models.product import Product
+from src.models.post import Post, Category
 from src.controllers.productController import index, create, store, edit, update, delete
 from src.controllers.transactionController import indexTrans, createTrans, storeTrans, detailTrans
 from src.controllers.authController import registerPost, loginPost
 from src.controllers.userController import getProfile, editProfile, updateProfile, updatePassword
+from src.controllers.datasetController import importIndex, doImportFile, doExportFile, handsonTable
 
 auth_blueprint = Blueprint('auth_blueprint', __name__, url_prefix='/')
 dashboard_blueprint = Blueprint('dashboard_blueprint', __name__)
+dataset_blueprint = Blueprint('dataset_blueprint', __name__)
 product_blueprint = Blueprint('product_blueprint', __name__)
 transaction_blueprint = Blueprint('transaction_blueprint', __name__)
 user_blueprint = Blueprint('user_blueprint', __name__)
@@ -41,6 +44,25 @@ def logout():
 @login_required
 def dashboard():
     return render_template('dashboard.html')
+
+
+# Import Dataset
+@dataset_blueprint.route("/import", methods=["GET", "POST"])
+@login_required
+def do_import():
+    if request.method == 'GET': return importIndex()
+    if request.method == 'POST': return doImportFile()
+    else: return "Method not allowed"
+
+# @dataset_blueprint.route("/export", methods=['GET'])
+# @login_required
+# def doexport():
+#     return doExportFile()
+
+# @dataset_blueprint.route("/handson_view", methods=['GET'])
+# @login_required
+# def handson_table():
+#     return handsonTable()
 
 
 # Product
