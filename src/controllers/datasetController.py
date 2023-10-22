@@ -1,6 +1,5 @@
 from flask import render_template, request, redirect, url_for, flash
 from app import db
-from src.models.post import Post, Category
 from src.models.transaction import Transaction, TransactionProduct
 from src.models.product import Product
 import flask_excel as excel
@@ -10,34 +9,6 @@ import pandas as pd
 def importIndex():
     return render_template('dataset/import.html')
     
-    
-# def category_init_func(row):
-#     category_id = row['id']
-#     existing_category = Category.query.filter_by(id=category_id).first()
-    
-#     if existing_category:
-#         return existing_category
-#     else:
-#         c = Category(row['name'])
-#         c.id = row['id']
-#         return c
-    
-
-# def post_init_func(row):
-#     c = Category.query.filter_by(name=row['category']).first()
-#     p = Post(row['title'], row['body'], c, row['pub_date'])
-#     return p
-
-
-# def doImportFile():
-#     request.save_book_to_database(
-#         field_name='file', session=db.session,
-#         tables=[Category, Post],
-#         initializers=[category_init_func, post_init_func])
-    
-#     flash('Dataset berhasil diimport.')
-#     return redirect(url_for('.do_import'), code=302)
-
 
 def doImportFile():
     if 'file' not in request.files:
