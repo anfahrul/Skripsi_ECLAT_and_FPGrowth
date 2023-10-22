@@ -12,9 +12,11 @@ dashboard_blueprint = Blueprint('dashboard_blueprint', __name__)
 dataset_blueprint = Blueprint('dataset_blueprint', __name__)
 product_blueprint = Blueprint('product_blueprint', __name__)
 transaction_blueprint = Blueprint('transaction_blueprint', __name__)
+mining_blueprint = Blueprint('mining_blueprint', __name__)
 user_blueprint = Blueprint('user_blueprint', __name__)
 
 
+# ---------------------------------------------------------------------
 # Authentication
 @auth_blueprint.route("/", methods=["GET", "POST"])
 def login():
@@ -36,6 +38,7 @@ def logout():
     return redirect(url_for('auth_blueprint.login'))
 
 
+# ---------------------------------------------------------------------
 # Home
 @dashboard_blueprint.route("/dashboard", methods=["GET"])
 @login_required
@@ -43,6 +46,7 @@ def dashboard():
     return render_template('dashboard.html')
 
 
+# ---------------------------------------------------------------------
 # Import Dataset
 @dataset_blueprint.route("/import", methods=["GET", "POST"])
 @login_required
@@ -52,6 +56,7 @@ def do_import():
     else: return "Method not allowed"
 
 
+# ---------------------------------------------------------------------
 # Product
 @product_blueprint.route("/products/", methods=["GET"])
 @login_required
@@ -79,6 +84,7 @@ def delete_product(itemCode):
     return delete(itemCode)
 
 
+# ---------------------------------------------------------------------
 # Transaction
 @transaction_blueprint.route("/transaction/", methods=["GET"])
 @login_required
@@ -98,6 +104,17 @@ def detail_transaction(transaction_id):
     return detailTrans(transaction_id)
 
 
+# ---------------------------------------------------------------------
+# Association Mining
+@mining_blueprint.route("/association-mining/eclat", methods=["GET", "POST"])
+@login_required
+def eclat_mining():
+    if request.method == 'GET': return render_template("mining/eclat.html")
+    # if request.method == 'POST': return doImportFile()
+    else: return "Method not allowed"
+
+
+# ---------------------------------------------------------------------
 # User
 @user_blueprint.route("/profile", methods=["GET", "POST"])
 @login_required

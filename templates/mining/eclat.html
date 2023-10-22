@@ -1,0 +1,189 @@
+{% extends 'base_admin.html' %} {% block title %} Mining ECLAT {% endblock %} {%
+block content %}
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title fw-semibold mb-4">Parameter</h5>
+
+    <form>
+      <div class="d-flex bd-highlight">
+        <div class="p-2 d-flex flex-column">
+          <label for="exampleFormControlInput1">Periode Transaksi</label>
+          <input
+            type="date"
+            class="form-control"
+            id="exampleFormControlInput1"
+            placeholder="name@example.com"
+          />
+        </div>
+        <div class="p-2 d-flex flex-column">
+          <input
+            type="date"
+            class="form-control mt-auto"
+            id="exampleFormControlInput1"
+            placeholder="name@example.com"
+          />
+        </div>
+        <div class="p-2 d-flex flex-column">
+          <label for="exampleFormControlInput1">Minimum Support</label>
+          <input
+            type="number"
+            class="form-control"
+            id="exampleFormControlInput1"
+            placeholder="0.1"
+          />
+        </div>
+        <div class="p-2 d-flex flex-column">
+          <label for="exampleFormControlInput1">Minimum Confidence</label>
+          <input
+            type="number"
+            class="form-control"
+            id="exampleFormControlInput1"
+            placeholder="0.5"
+          />
+        </div>
+
+        <div class="p-2 d-flex flex-column">
+          <button type="submit" class="btn btn-primary mt-auto">Proses</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title fw-semibold mb-4">
+      Transformasi Data ke Bentuk Vertikal
+    </h5>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Itemset</th>
+          <th scope="col">Daftar Transaksi</th>
+          <th scope="col">Nilai Support</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Kode Item - Nama</td>
+          <td>ID1, ID2</td>
+          <td>20%</td>
+        </tr>
+        <tr>
+          <td>Kode Item - Nama</td>
+          <td>ID1</td>
+          <td>30%</td>
+        </tr>
+        <tr>
+          <td>Kode Item - Nama</td>
+          <td>ID1, ID2, ID3</td>
+          <td>10%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title fw-semibold mb-4">Frequent n-Itemset</h5>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Itemset</th>
+          <th scope="col">Daftar Transaksi</th>
+          <th scope="col">Nilai Support</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Kode Item - Nama, Kode Item - Nama</td>
+          <td>ID1, ID2</td>
+          <td>20%</td>
+        </tr>
+        <tr>
+          <td>Kode Item - Nama, Kode Item - Nama</td>
+          <td>ID1</td>
+          <td>30%</td>
+        </tr>
+        <tr>
+          <td>Kode Item - Nama, Kode Item - Nama</td>
+          <td>ID1, ID2, ID3</td>
+          <td>10%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <div class="d-flex justify-content-between">
+      <h5 class="card-title fw-semibold mb-4">Hasil Asosiasi Produk</h5>
+      <div class="p-2">
+        <a
+          href="#"
+          class="btn btn-sm btn-outline-danger"
+          title="Cetak Asosiasi"
+          aria-label="Cetak Asosiasi"
+          ><span> <i class="ti ti-file-text"></i> Cetak PDF</span></a
+        >
+      </div>
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Asosiasi</th>
+          <th scope="col">Support</th>
+          <th scope="col">Confidence</th>
+          <th scope="col">Lift Ratio</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            Jika membeli <b>Kode Item - Nama</b>, maka berpotensi membeli
+            <b>Kode Item - Nama</b>
+          </td>
+          <td>40%</td>
+          <td>100%</td>
+          <td>1.5</td>
+        </tr>
+        <tr>
+          <td>
+            Jika membeli <b>Kode Item - Nama</b>, maka berpotensi membeli
+            <b>Kode Item - Nama</b>
+          </td>
+          <td>40%</td>
+          <td>100%</td>
+          <td>1.5</td>
+        </tr>
+        <tr>
+          <td>
+            Jika membeli <b>Kode Item - Nama</b>, maka berpotensi membeli
+            <b>Kode Item - Nama</b>
+          </td>
+          <td>40%</td>
+          <td>100%</td>
+          <td>1.5</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title fw-semibold mb-4">Hasil Lainnya</h5>
+
+    <div class="d-flex justify-content-between">
+      <div class="p-2">Waktu Eksekusi</div>
+      <div class="p-2">60 Detik</div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

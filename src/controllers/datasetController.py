@@ -24,14 +24,14 @@ def doImportFile():
         df = pd.read_excel(file)
 
         for index, row in df.iterrows():
-            item_code = str(row['itemCode'])
-            name = row['name']
-            price = row['price']
-            quantity = row['quantity']
-            transaction_id = row['transaction_id']
-            date = row['date']
-            discount = row['discount']
-            subtotal = row['subtotal']
+            item_code = str(row['Kode Barang'])
+            name = row['Nama Barang']
+            price = row['Harga']
+            quantity = row['Qty']
+            transaction_id = row['ID Transaksi']
+            date = row['Tanggal']
+            discount = row['Diskon']
+            subtotal = row['Subtotal']
 
             # Menyimpan data produk ke tabel 'product'
             existing_product = Product.query.filter_by(itemCode=item_code).first()

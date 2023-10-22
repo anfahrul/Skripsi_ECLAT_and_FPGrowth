@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>SinarMart Analytics - {% block title %} {% endblock %}</title>
+    <title>{% block title %} {% endblock %} | SinarMart Analytics</title>
     <link
       rel="shortcut icon"
       type="image/png"
@@ -113,13 +113,26 @@
               <li class="sidebar-item">
                 <a
                   class="sidebar-link"
-                  href="./ui-forms.html"
+                  href="{{ url_for('mining_blueprint.eclat_mining') }}"
                   aria-expanded="false"
                 >
                   <span>
                     <i class="ti ti-diamond"></i>
                   </span>
-                  <span class="hide-menu">Association Mining</span>
+                  <span class="hide-menu">Mining ECLAT</span>
+                </a>
+              </li>
+
+              <li class="sidebar-item">
+                <a
+                  class="sidebar-link"
+                  href="./ui-forms.html"
+                  aria-expanded="false"
+                >
+                  <span>
+                    <i class="ti ti-history"></i>
+                  </span>
+                  <span class="hide-menu">Riwayat Penambangan</span>
                 </a>
               </li>
 
@@ -131,32 +144,6 @@
               <li class="sidebar-item">
                 <a
                   class="sidebar-link"
-                  href="{{ url_for('auth_blueprint.logout') }}"
-                  aria-expanded="false"
-                >
-                  <span>
-                    <i class="ti ti-logout"></i>
-                  </span>
-                  <span class="hide-menu">Logout</span>
-                </a>
-              </li>
-
-              <!-- <li class="sidebar-item">
-                <a
-                  class="sidebar-link"
-                  href="{{ url_for('auth_blueprint.logout') }}"
-                  aria-expanded="false"
-                >
-                  <span>
-                    <i class="ti ti-logout"></i>
-                  </span>
-                  <span class="hide-menu">Profil Saya</span>
-                </a>
-              </li> -->
-
-              <li class="sidebar-item">
-                <a
-                  class="sidebar-link"
                   href="{{ url_for('user_blueprint.profile') }}"
                   aria-expanded="false"
                 >
@@ -164,6 +151,20 @@
                     <i class="ti ti-user-circle"></i>
                   </span>
                   <span class="hide-menu">Pengaturan Akun</span>
+                </a>
+              </li>
+
+              <li class="sidebar-item">
+                <a
+                  class="sidebar-link"
+                  href="{{ url_for('auth_blueprint.logout') }}"
+                  aria-expanded="false"
+                  onclick="return logoutConfirmation()"
+                >
+                  <span>
+                    <i class="ti ti-logout"></i>
+                  </span>
+                  <span class="hide-menu">Logout</span>
                 </a>
               </li>
             </ul>
@@ -256,5 +257,15 @@
     <script src="/static/libs/apexcharts/dist/apexcharts.min.js"></script>
     <script src="/static/libs/simplebar/dist/simplebar.js"></script>
     <script src="/static/js/dashboard.js"></script>
+
+    <script>
+      function logoutConfirmation() {
+        if (confirm("Anda yakin ingin keluar?")) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    </script>
   </body>
 </html>
