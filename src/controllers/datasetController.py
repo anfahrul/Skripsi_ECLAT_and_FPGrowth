@@ -47,6 +47,7 @@ def doImportFile():
             if not existing_transaction:
                 transaction = Transaction(transaction_id=transaction_id, date=date, total_price=0)  # Total harga akan dihitung nanti
                 db.session.add(transaction)
+                existing_transaction = transaction
             
             # Menyimpan data produk transaksi ke tabel 'transaction_products'
             existing_transaction_product = TransactionProduct.query.filter_by(transaction_id=transaction_id, itemCode=item_code).first()
@@ -54,6 +55,10 @@ def doImportFile():
                 # Jika belum ada, tambahkan data baru ke tabel 'transaction_products'
                 transaction_product = TransactionProduct(transaction_id=transaction_id, itemCode=item_code, quantity=quantity)
                 db.session.add(transaction_product)
+              
+                # Update total price  
+                subtotal_for_product = price * quantity
+                existing_transaction.total_price += subtotal_for_product
 
         db.session.commit()
         
@@ -63,12 +68,3 @@ def doImportFile():
     
     flash('Dataset berhasil diimport.')
     return render_template('dataset/import.html', dataframe_html=dataframe_html)
-
-
-def doExportFile():
-    return excel.make_response_from_tables(db.session, [Category, Post], "xls")
-
-
-def handsonTable():
-    return excel.make_response_from_tables(
-        db.session, [Category, Post], 'handsontable.html')
