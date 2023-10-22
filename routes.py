@@ -6,6 +6,7 @@ from src.controllers.transactionController import indexTrans, createTrans, store
 from src.controllers.authController import registerPost, loginPost
 from src.controllers.userController import getProfile, editProfile, updateProfile, updatePassword
 from src.controllers.datasetController import importIndex, doImportFile
+from src.controllers.miningController import eclatIndex, eclatMining
 
 auth_blueprint = Blueprint('auth_blueprint', __name__, url_prefix='/')
 dashboard_blueprint = Blueprint('dashboard_blueprint', __name__)
@@ -106,11 +107,11 @@ def detail_transaction(transaction_id):
 
 # ---------------------------------------------------------------------
 # Association Mining
-@mining_blueprint.route("/association-mining/eclat", methods=["GET", "POST"])
+@mining_blueprint.route("/eclat", methods=["GET", "POST"])
 @login_required
 def eclat_mining():
-    if request.method == 'GET': return render_template("mining/eclat.html")
-    # if request.method == 'POST': return doImportFile()
+    if request.method == 'GET': return eclatIndex()
+    if request.method == 'POST': return eclatMining()
     else: return "Method not allowed"
 
 
