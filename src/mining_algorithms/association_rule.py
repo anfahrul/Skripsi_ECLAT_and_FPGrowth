@@ -32,26 +32,63 @@ def getSupport(testSet, itemSetList):
 #     return rules
 
 
+# def associationRule(freqItemSetDict, itemSetList, minConf):
+#     rules = []
+
+#     # Menghitung dukungan setiap itemset dalam freqItemSet
+#     itemSetSupport = {}
+#     for k, itemSetList in freqItemSetDict.items():
+#         for itemSet, support, tids in itemSetList:
+#             itemSetTuple = tuple(itemSet)  # Konversi set menjadi tuple
+#             itemSetSupport[itemSetTuple] = support
+
+#     for k, itemSetList in freqItemSetDict.items():
+#         for itemSet, support, tids in itemSetList:
+#             subsets = powerset(itemSet)
+#             itemSetSup = itemSetSupport[tuple(itemSet)]  # Mengambil dukungan itemSet
+
+#             for s in subsets:
+#                 s_tuple = tuple(s)
+#                 if s_tuple in itemSetSupport and itemSetSupport[s_tuple] > 0:
+#                     confidence = float(itemSetSup / itemSetSupport[s_tuple])
+#                     if confidence > minConf:
+#                         rules.append([set(s), set(itemSet.difference(s)), support, confidence])
+
+#     return rules
+
+
 def associationRule(freqItemSetDict, itemSetList, minConf):
     rules = []
-
-    # Menghitung dukungan setiap itemset dalam freqItemSet
+    
+    # Inisialisasi kamus untuk menyimpan dukungan setiap itemset
     itemSetSupport = {}
+    
+    # Mengisi kamus dengan dukungan dari setiap itemset
     for k, itemSetList in freqItemSetDict.items():
         for itemSet, support, tids in itemSetList:
-            itemSetTuple = tuple(itemSet)  # Konversi set menjadi tuple
+            itemSetTuple = tuple(itemSet)
             itemSetSupport[itemSetTuple] = support
-
+            
+    # Iterasi melalui itemset dalam freqItemSetDict
     for k, itemSetList in freqItemSetDict.items():
         for itemSet, support, tids in itemSetList:
             subsets = powerset(itemSet)
-            itemSetSup = itemSetSupport[tuple(itemSet)]  # Mengambil dukungan itemSet
-
+            itemSetSup = itemSetSupport[tuple(itemSet)]
+            
+            # Iterasi melalui subset dari itemset
             for s in subsets:
                 s_tuple = tuple(s)
                 if s_tuple in itemSetSupport and itemSetSupport[s_tuple] > 0:
                     confidence = float(itemSetSup / itemSetSupport[s_tuple])
+                    
+                    # Periksa apakah confidence memenuhi ambang batas minConf
                     if confidence > minConf:
-                        rules.append([set(s), set(itemSet.difference(s)), support, confidence])
+                        
+                        # Hitung Lift Ratio
+                        lift_ratio = confidence / (itemSetSupport[tuple(itemSet.difference(s))] / len(itemSetList))
+                        
+                        # Tambahkan aturan ke dalam daftar aturan
+                        rules.append([set(s), set(itemSet.difference(s)), support, confidence, lift_ratio])
 
     return rules
+
