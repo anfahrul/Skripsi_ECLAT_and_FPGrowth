@@ -66,32 +66,33 @@ class Eclat:
             else:
                 common_tids = common_tids.intersection(item_data.tids)
 
-        return len(common_tids)
+        return len(common_tids), common_tids
     
     
     def eclat_mine(self, prefix, items, minsup, k, frequent_itemsets):
-        support = self.calculate_support(prefix)
+        support, common_tids = self.calculate_support(prefix)
 
         if support >= minsup:
-            frequent_itemsets.append(prefix)
+            frequent_itemsets[k] = frequent_itemsets.get(k, [])
+            itemset_data = (frozenset(prefix), support, common_tids)
+            if itemset_data not in frequent_itemsets[k]:
+                frequent_itemsets[k].append(itemset_data)
 
-        if support < minsup:
+        if support < minsup or k < 1:
             return
 
         for item in items:
             new_prefix = prefix | {item}
             new_items = items.difference({item})
-            
-            new_prefix_support = self.calculate_support(new_prefix)
-            if new_prefix_support >= minsup and new_prefix not in frequent_itemsets:
-                self.eclat_mine(new_prefix, new_items, minsup, k, frequent_itemsets)
+
+            self.eclat_mine(new_prefix, new_items, minsup, k + 1, frequent_itemsets)
     
     
     def run(self):
         listOfItemInTransaction = self.read_data()
         self.prune_and_sort_items()
         minsup = self.minsup
-        frequent_itemsets = []
+        frequent_itemsets = {} 
         verticalData = self.data
 
         items = set(self.data.keys())

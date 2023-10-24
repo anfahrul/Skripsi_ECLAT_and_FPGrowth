@@ -108,42 +108,37 @@ block content %}
     </table>
   </div>
 </div>
-{% endif %}
-
-<!-- <div class="card">
+{% endif %} {% if freqItems %} {% for key, k_value in freqItems.items() %}
+<div class="card">
   <div class="card-body">
-    <h5 class="card-title fw-semibold mb-4">Frequent n-Itemset</h5>
+    <h5 class="card-title fw-semibold mb-4">Frequent {{key}}-Itemset</h5>
 
     <table class="table">
       <thead>
         <tr>
-          <th scope="col">Itemset</th>
-          <th scope="col">Daftar Transaksi</th>
-          <th scope="col">Nilai Support</th>
+          <th scope="col">Kombinasi</th>
+          <th scope="col">TIDS</th>
+          <th scope="col">Support</th>
         </tr>
       </thead>
       <tbody>
+        {% for itemset, support, tids in k_value: %}
         <tr>
-          <td>Kode Item - Nama, Kode Item - Nama</td>
-          <td>ID1, ID2</td>
-          <td>20%</td>
+          <td>
+            {% for item in itemset %} {{ item }} {% if not loop.last %}, {%
+            endif %} {% endfor %}
+          </td>
+          <td>{{tids}}</td>
+          <td>{{support}}</td>
         </tr>
-        <tr>
-          <td>Kode Item - Nama, Kode Item - Nama</td>
-          <td>ID1</td>
-          <td>30%</td>
-        </tr>
-        <tr>
-          <td>Kode Item - Nama, Kode Item - Nama</td>
-          <td>ID1, ID2, ID3</td>
-          <td>10%</td>
-        </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>
-</div> -->
+</div>
+{% endfor %} {% endif %}
 
-{% if rules %}
+<!-- {% if rules %}
 <div class="card" id="rules-card">
   <div class="card-body">
     <div class="d-flex justify-content-between">
@@ -186,7 +181,9 @@ block content %}
     </table>
   </div>
 </div>
-{% endif %} {% if execution_time %}
+{% endif %} -->
+
+{% if execution_time %}
 <div class="card" id="card-time">
   <div class="card-body">
     <h5 class="card-title fw-semibold mb-4">Hasil Lainnya</h5>
