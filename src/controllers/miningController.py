@@ -43,9 +43,9 @@ def eclatMining():
     eclatInstance = Eclat(minsup=minsup)
     listOfItemInTransaction, verticalData, freqItems = eclatInstance.run()
     
-    # rules = associationRule(freqItems, listOfItemInTransaction, 0.7)
+    rules = associationRule(freqItems, listOfItemInTransaction, 0.1)
     
-    # time.sleep(5) 
+    time.sleep(5) 
     end_time = time.time()
     execution_time = end_time - start_time
     
@@ -54,6 +54,6 @@ def eclatMining():
                            parameters_label_mapping=parameters_label_mapping,
                            verticalData=verticalData, 
                            lenOfTransaction=lenOfTransaction, 
-                        #    rules=rules,
+                           rules=rules,
                            freqItems=freqItems,
                            execution_time=execution_time)

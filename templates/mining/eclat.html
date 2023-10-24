@@ -116,8 +116,8 @@ block content %}
     <table class="table">
       <thead>
         <tr>
-          <th scope="col">Kombinasi</th>
-          <th scope="col">TIDS</th>
+          <th scope="col">Frequent Itemset</th>
+          <th scope="col">Daftar Transaksi</th>
           <th scope="col">Support</th>
         </tr>
       </thead>
@@ -136,9 +136,7 @@ block content %}
     </table>
   </div>
 </div>
-{% endfor %} {% endif %}
-
-<!-- {% if rules %}
+{% endfor %} {% endif %} {% if rules %}
 <div class="card" id="rules-card">
   <div class="card-body">
     <div class="d-flex justify-content-between">
@@ -181,9 +179,7 @@ block content %}
     </table>
   </div>
 </div>
-{% endif %} -->
-
-{% if execution_time %}
+{% endif %} {% if execution_time %}
 <div class="card" id="card-time">
   <div class="card-body">
     <h5 class="card-title fw-semibold mb-4">Hasil Lainnya</h5>
