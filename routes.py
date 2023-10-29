@@ -7,7 +7,7 @@ from src.controllers.authController import registerPost, loginPost
 from src.controllers.userController import getProfile, editProfile, updateProfile, updatePassword
 from src.controllers.datasetController import importIndex, doImportFile
 from src.controllers.miningController import eclatIndex, eclatMining
-from src.controllers.miningHistoryController import historyIndex
+from src.controllers.miningHistoryController import historyIndex, detailMiningProcess
 
 auth_blueprint = Blueprint('auth_blueprint', __name__, url_prefix='/')
 dashboard_blueprint = Blueprint('dashboard_blueprint', __name__)
@@ -124,6 +124,11 @@ def eclat_mining():
 def mining_history():
     if request.method == 'GET': return historyIndex()
     else: return "Method not allowed"
+    
+@mining_history_blueprint.route("/mining-history/<process_id>/detail", methods=["GET"])
+@login_required
+def detail_mining_history(process_id):
+    return detailMiningProcess(process_id)
 
 
 # ---------------------------------------------------------------------

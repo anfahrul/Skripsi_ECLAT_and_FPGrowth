@@ -32,7 +32,7 @@ endblock %} {% block content %}
           <td>
             <div class="d-flex justify-content-left">
               <a
-                href="#{{process.id}}"
+                href="{{ url_for('mining_history_blueprint.detail_mining_history', process_id=process.id) }}"
                 class="btn btn-sm btn-outline-primary"
                 title="Lihat Detail"
                 aria-label="Lihat Detail"

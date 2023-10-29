@@ -1,0 +1,130 @@
+{% extends 'base_admin.html' %} {% block title %} Detail Transaksi {% endblock
+%} {% block content %}
+
+<div class="card">
+  <div class="card-body">
+    <h5 class="mb-3">Detail Penambangan</h5>
+
+    <table class="table table-borderless">
+      <tbody>
+        <tr>
+          <th scope="row" width="25%" style="padding: 5px 0px !important">
+            Algoritma
+          </th>
+          <td style="padding: 5px 0px !important">
+            {{ mining_process.algorithm }}
+          </td>
+        </tr>
+        <tr>
+          <th scope="row" style="padding: 5px 0px !important">
+            Periode Transaksi
+          </th>
+          <td style="padding: 5px 0px !important">
+            {{ mining_process.period_start }} s.d. {{mining_process.period_end}}
+          </td>
+        </tr>
+        <tr>
+          <th scope="row" style="padding: 5px 0px !important">
+            Minimum Support
+          </th>
+          <td style="padding: 5px 0px !important">
+            {{ mining_process.minimum_support }}
+          </td>
+        </tr>
+        <tr>
+          <th scope="row" style="padding: 5px 0px !important">
+            Minimum Confidence
+          </th>
+          <td style="padding: 5px 0px !important">
+            {{ mining_process.minimum_confidence }}
+          </td>
+        </tr>
+        <tr>
+          <th scope="row" style="padding: 5px 0px !important">Tanggal</th>
+          <td style="padding: 5px 0px !important">
+            {{ mining_process.created_at }}
+          </td>
+        </tr>
+        <tr>
+          <th scope="row" style="padding: 5px 0px !important">
+            Waktu Eksekusi
+          </th>
+          <td style="padding: 5px 0px !important">
+            {{ mining_process.execution_time }} Detik
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <a
+      href="{{ url_for('mining_history_blueprint.mining_history') }}"
+      class="btn btn-light mx-3 mt-3"
+    >
+      Kembali
+    </a>
+  </div>
+</div>
+
+<div class="card" id="rules-card">
+  <div class="card-body">
+    <div class="d-flex justify-content-between">
+      <h5 class="card-title fw-semibold mb-4">Hasil Asosiasi Produk</h5>
+      <div class="p-2">
+        <a
+          href="#"
+          class="btn btn-sm btn-outline-danger"
+          title="Cetak Asosiasi"
+          aria-label="Cetak Asosiasi"
+          ><span> <i class="ti ti-file-text"></i> Cetak PDF</span></a
+        >
+      </div>
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">No</th>
+          <th scope="col">Antecedent</th>
+          <th scope="col">Consequent</th>
+          <th scope="col">Support</th>
+          <th scope="col">Confidence</th>
+          <th scope="col">Lift Ratio</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for association_id, association in associations.items() %}
+        <tr>
+          <td>{{loop.index}}</td>
+          <td>{{ association.antecedent|join(', ') }}</td>
+          <td>{{ association.consequent|join(', ') }}</td>
+          <td>{{ association.support }}</td>
+          <td>{{ association.confidence }}</td>
+          <td>{{ association.lift }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+
+      <!-- <tbody>
+        {% for result in results %}
+        <tr>
+          <td>{{loop.index}}</td>
+          <td>{{result.association_result_id}}</td>
+          <td>
+            {% if result.is_antecedent %} {{ result.itemCode }} {% else %} {{
+            result.product_item_code }} {% endif %}
+          </td>
+          <td>
+            {% if result.is_antecedent %} Antecedent {% else %} Consequent {%
+            endif %}
+          </td>
+          <td>{{ result.support }}</td>
+          <td>{{ result.confidence }}</td>
+          <td>{{ result.lift }}</td>
+        </tr>
+        {% endfor %}
+      </tbody> -->
+    </table>
+  </div>
+</div>
+
+{% endblock %}

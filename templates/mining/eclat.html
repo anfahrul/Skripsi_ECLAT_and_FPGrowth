@@ -163,16 +163,16 @@ block content %}
         </tr>
       </thead>
       <tbody>
-        {% for row in rules %}
+        {% for key, value in rules.items() %}
         <tr>
-          <td>{{ loop.index }}</td>
+          <td>{{loop.index}}</td>
           <td>
-            Ketika membeli <b>{{ row[0] }}</b>, juga membeli
-            <b>{{ row[1] }}</b>
+            Ketika membeli <b> {{ key[0] | join(", ") }} </b>, juga membeli
+            <b> {{ key[1] | join(", ") }} </b>
           </td>
-          <td>{{ (row[2] / lenOfTransaction) * 100 }}%</td>
-          <td>{{ row[3] * 100 }}%</td>
-          <td>{{ row[4] }}</td>
+          <td>{{ value[0] / lenOfTransaction }}</td>
+          <td>{{ value[1] }}</td>
+          <td>{{ value[2] }}</td>
         </tr>
         {% endfor %}
       </tbody>
