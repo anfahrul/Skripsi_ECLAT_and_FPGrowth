@@ -7,6 +7,7 @@ from src.controllers.authController import registerPost, loginPost
 from src.controllers.userController import getProfile, editProfile, updateProfile, updatePassword
 from src.controllers.datasetController import importIndex, doImportFile
 from src.controllers.miningController import eclatIndex, eclatMining
+from src.controllers.miningHistoryController import historyIndex
 
 auth_blueprint = Blueprint('auth_blueprint', __name__, url_prefix='/')
 dashboard_blueprint = Blueprint('dashboard_blueprint', __name__)
@@ -14,6 +15,7 @@ dataset_blueprint = Blueprint('dataset_blueprint', __name__)
 product_blueprint = Blueprint('product_blueprint', __name__)
 transaction_blueprint = Blueprint('transaction_blueprint', __name__)
 mining_blueprint = Blueprint('mining_blueprint', __name__)
+mining_history_blueprint = Blueprint('mining_history_blueprint', __name__)
 user_blueprint = Blueprint('user_blueprint', __name__)
 
 
@@ -112,6 +114,15 @@ def detail_transaction(transaction_id):
 def eclat_mining():
     if request.method == 'GET': return eclatIndex()
     if request.method == 'POST': return eclatMining()
+    else: return "Method not allowed"
+
+
+# ---------------------------------------------------------------------
+# Mining History
+@mining_history_blueprint.route("/mining-history", methods=["GET"])
+@login_required
+def mining_history():
+    if request.method == 'GET': return historyIndex()
     else: return "Method not allowed"
 
 

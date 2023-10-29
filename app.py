@@ -40,7 +40,7 @@ def load_user(user_id):
 # def load_user(user_id):
 #     return User.get(user_id)
 
-from routes import auth_blueprint, dashboard_blueprint, dataset_blueprint, user_blueprint, product_blueprint, transaction_blueprint, mining_blueprint
+from routes import auth_blueprint, dashboard_blueprint, dataset_blueprint, user_blueprint, product_blueprint, transaction_blueprint, mining_blueprint, mining_history_blueprint
 app.register_blueprint(auth_blueprint)
 app.register_blueprint(dashboard_blueprint)
 app.register_blueprint(dataset_blueprint)
@@ -48,6 +48,7 @@ app.register_blueprint(user_blueprint)
 app.register_blueprint(product_blueprint)
 app.register_blueprint(transaction_blueprint)
 app.register_blueprint(mining_blueprint)
+app.register_blueprint(mining_history_blueprint)
   
   
 if __name__=="__main__":

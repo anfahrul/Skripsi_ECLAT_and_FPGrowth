@@ -103,7 +103,7 @@ def eclatMining():
     end_time = time.time()
     execution_time = end_time - start_time
 
-    eclatStoreMining(startDate, endDate, supportRatio, ConfidenceRatio, rules, lenOfTransaction, execution_time)
+    # eclatStoreMining(startDate, endDate, supportRatio, ConfidenceRatio, rules, lenOfTransaction, execution_time)
     
     return render_template("mining/eclat.html",
                            parameters=parameters,
