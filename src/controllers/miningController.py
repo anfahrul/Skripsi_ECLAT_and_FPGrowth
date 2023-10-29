@@ -4,10 +4,64 @@ from app import db
 from src.models.transaction import Transaction
 from src.mining_algorithms.eclat import Eclat
 from src.mining_algorithms.association_rule import associationRule
+from src.models.mining import MiningProcess, AssociationResult, AssociationResultProduct
 
 
 def eclatIndex():
     return render_template("mining/eclat.html")
+
+
+def eclatStoreMining(period_start, period_end, minimum_support, minimum_confidence, rules, lenOfTransaction, execution_time):
+    # Mining Process
+    mining_process = MiningProcess(
+        algorithm='ECLAT',
+        period_start=period_start,
+        period_end=period_end,
+        minimum_support=minimum_support,
+        minimum_confidence=minimum_confidence,
+        execution_time=execution_time
+    )
+    
+    db.session.add(mining_process)
+    db.session.commit()
+    
+    # Association Results    
+    for item in rules:
+        antecedent = item[0]
+        consequent = item[1]
+        support = item[2]
+        confidence = item[3]
+        lift = item[4]
+
+        # Membuat entri di tabel association_results
+        association_result = AssociationResult(
+            mining_process_id=mining_process.id,
+            support=support / lenOfTransaction,
+            confidence=confidence,
+            lift=lift
+        )
+        db.session.add(association_result)
+        db.session.flush()
+
+        # Memasukkan antecedent ke tabel association_product_results
+        for itemCode in antecedent:
+            association_result_product_antecedent = AssociationResultProduct(
+                association_result_id=association_result.id,
+                itemCode=itemCode,
+                is_antecedent=True
+            )
+            db.session.add(association_result_product_antecedent)
+
+        # Memasukkan consequent ke tabel association_product_results
+        for itemCode in consequent:
+            association_result_product_consequent = AssociationResultProduct(
+                association_result_id=association_result.id,
+                itemCode=itemCode,
+                is_antecedent=False
+            )
+            db.session.add(association_result_product_consequent)
+
+    db.session.commit()
 
 
 def eclatMining():
@@ -48,6 +102,8 @@ def eclatMining():
     time.sleep(2) 
     end_time = time.time()
     execution_time = end_time - start_time
+
+    eclatStoreMining(startDate, endDate, supportRatio, ConfidenceRatio, rules, lenOfTransaction, execution_time)
     
     return render_template("mining/eclat.html",
                            parameters=parameters,

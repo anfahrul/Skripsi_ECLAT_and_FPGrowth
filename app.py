@@ -21,6 +21,7 @@ db = SQLAlchemy(model_class=Base)
 from src.models.user import User
 from src.models.product import Product
 from src.models.transaction import Transaction, TransactionProduct
+from src.models.mining import MiningProcess, AssociationResult, AssociationResultProduct
 migrate = Migrate(app, db)
 
 
