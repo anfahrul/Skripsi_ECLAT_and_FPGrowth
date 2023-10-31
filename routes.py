@@ -81,7 +81,7 @@ def edit_product(itemCode):
     if request.method == 'POST': return update(itemCode)
     else: return "Method not allowed"
 
-@product_blueprint.route("/products/<process_id>/delete", methods=["POST"])
+@product_blueprint.route("/products/<itemCode>/delete", methods=["POST"])
 @login_required
 def delete_product(process_id):
     return delete(process_id)

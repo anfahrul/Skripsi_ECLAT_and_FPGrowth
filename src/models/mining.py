@@ -12,7 +12,7 @@ class MiningProcess(db.Model):
     minimum_support = db.Column(db.Float)
     minimum_confidence = db.Column(db.Float)
     execution_time = db.Column(db.Float)
-    created_at = db.Column(db.DateTime, server_default=db.func.now())
+    created_at = db.Column(db.DateTime)
     
     # Define the relationship with AssociationResult
     results = relationship('AssociationResult', backref='mining_process', cascade="all, delete-orphan")
