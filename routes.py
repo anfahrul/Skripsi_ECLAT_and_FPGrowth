@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_user, login_required, logout_user
 from app import bcrypt
+from src.controllers.dashboardController import dashboardIndex
 from src.controllers.productController import index, create, store, edit, update, delete
 from src.controllers.transactionController import indexTrans, createTrans, storeTrans, detailTrans
 from src.controllers.authController import registerPost, loginPost
@@ -46,7 +47,7 @@ def logout():
 @dashboard_blueprint.route("/dashboard", methods=["GET"])
 @login_required
 def dashboard():
-    return render_template('dashboard.html')
+    return dashboardIndex()
 
 
 # ---------------------------------------------------------------------

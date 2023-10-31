@@ -1,13 +1,127 @@
 {% extends 'base_admin.html' %} {% block title %} Home Page {% endblock %} {%
 block content %}
-<div class="card">
-  <div class="card-body">
-    <h3>Dashboard</h3>
-
-    <p>
-      Lelah itu biasa. Jangan berhenti apalagi menjadi pemalas. Terus belajar,
-      terus bertumbuh! Anjay, Semangat Boy!!!
-    </p>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-body">
+          <div class="row alig n-items-start">
+            <div class="col-8">
+              <h5 class="card-title mb-9 fw-semibold">Master Produk</h5>
+              <h4 class="fw-semibold mb-3">{{products|length}}</h4>
+              <div class="d-flex align-items-center pb-1">
+                <!-- <span
+                  class="me-2 rounded-circle bg-light-danger round-20 d-flex align-items-center justify-content-center"
+                >
+                  <i class="ti ti-arrow-down-right text-danger"></i>
+                </span> -->
+                <p class="text-dark me-1 fs-3 mb-0">Total Produk</p>
+                <p class="fs-3 mb-0"></p>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="d-flex justify-content-end">
+                <div
+                  class="text-white bg-secondary rounded-circle p-6 d-flex align-items-center justify-content-center"
+                >
+                  <i class="ti ti-apple fs-6"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-body">
+          <div class="row alig n-items-start">
+            <div class="col-8">
+              <h5 class="card-title mb-9 fw-semibold">Transaksi</h5>
+              <h4 class="fw-semibold mb-3">{{transactions|length}}</h4>
+              <div class="d-flex align-items-center pb-1">
+                <!-- <span
+                  class="me-2 rounded-circle bg-light-danger round-20 d-flex align-items-center justify-content-center"
+                >
+                  <i class="ti ti-arrow-down-right text-danger"></i>
+                </span> -->
+                <p class="text-dark me-1 fs-3 mb-0">Total Transaksi</p>
+                <p class="fs-3 mb-0"></p>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="d-flex justify-content-end">
+                <div
+                  class="text-white bg-secondary rounded-circle p-6 d-flex align-items-center justify-content-center"
+                >
+                  <i class="ti ti-shopping-cart fs-6"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-body">
+          <div class="row alig n-items-start">
+            <div class="col-8">
+              <h5 class="card-title mb-9 fw-semibold">Pengguna</h5>
+              <h4 class="fw-semibold mb-3">{{users|length}}</h4>
+              <div class="d-flex align-items-center pb-1">
+                <!-- <span
+                  class="me-2 rounded-circle bg-light-danger round-20 d-flex align-items-center justify-content-center"
+                >
+                  <i class="ti ti-arrow-down-right text-danger"></i>
+                </span> -->
+                <p class="text-dark me-1 fs-3 mb-0">Total Pengguna</p>
+                <p class="fs-3 mb-0"></p>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="d-flex justify-content-end">
+                <div
+                  class="text-white bg-secondary rounded-circle p-6 d-flex align-items-center justify-content-center"
+                >
+                  <i class="ti ti-users fs-6"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-body">
+          <div class="row alig n-items-start">
+            <div class="col-8">
+              <h5 class="card-title mb-9 fw-semibold">Riwayat Penambangan</h5>
+              <h4 class="fw-semibold mb-3">{{miningProcess|length}}</h4>
+              <div class="d-flex align-items-center pb-1">
+                <!-- <span
+                  class="me-2 rounded-circle bg-light-danger round-20 d-flex align-items-center justify-content-center"
+                >
+                  <i class="ti ti-arrow-down-right text-danger"></i>
+                </span> -->
+                <p class="text-dark me-1 fs-3 mb-0">Total Penambangan</p>
+                <p class="fs-3 mb-0"></p>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="d-flex justify-content-end">
+                <div
+                  class="text-white bg-secondary rounded-circle p-6 d-flex align-items-center justify-content-center"
+                >
+                  <i class="ti ti-diamond fs-6"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
