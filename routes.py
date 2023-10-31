@@ -7,7 +7,7 @@ from src.controllers.authController import registerPost, loginPost
 from src.controllers.userController import getProfile, editProfile, updateProfile, updatePassword
 from src.controllers.datasetController import importIndex, doImportFile
 from src.controllers.miningController import eclatIndex, eclatMining
-from src.controllers.miningHistoryController import historyIndex, detailMiningProcess
+from src.controllers.miningHistoryController import historyIndex, detailMiningProcess, deleteMiningProcess
 
 auth_blueprint = Blueprint('auth_blueprint', __name__, url_prefix='/')
 dashboard_blueprint = Blueprint('dashboard_blueprint', __name__)
@@ -81,10 +81,10 @@ def edit_product(itemCode):
     if request.method == 'POST': return update(itemCode)
     else: return "Method not allowed"
 
-@product_blueprint.route("/products/<itemCode>/delete", methods=["POST"])
+@product_blueprint.route("/products/<process_id>/delete", methods=["POST"])
 @login_required
-def delete_product(itemCode):
-    return delete(itemCode)
+def delete_product(process_id):
+    return delete(process_id)
 
 
 # ---------------------------------------------------------------------
@@ -129,6 +129,12 @@ def mining_history():
 @login_required
 def detail_mining_history(process_id):
     return detailMiningProcess(process_id)
+
+
+@mining_history_blueprint.route("/mining-history/<process_id>/delete", methods=["POST"])
+@login_required
+def delete_mining_history(process_id):
+    return deleteMiningProcess(process_id)
 
 
 # ---------------------------------------------------------------------

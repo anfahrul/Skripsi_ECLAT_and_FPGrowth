@@ -25,13 +25,21 @@ def eclatStoreMining(period_start, period_end, minimum_support, minimum_confiden
     db.session.add(mining_process)
     db.session.commit()
     
-    # Association Results    
-    for item in rules:
-        antecedent = item[0]
-        consequent = item[1]
-        support = item[2]
-        confidence = item[3]
-        lift = item[4]
+    # Association Results
+    print("rules", rules)
+    # for item in rules:
+        # antecedent = item[0]
+        # consequent = item[1]
+        # support = item[2]
+        # confidence = item[3]
+        # lift = item[4]
+    for item in rules.items():
+        print("item", item)
+        antecedent = item[0][0]
+        consequent = item[0][1]
+        support = item[1][0]
+        confidence = item[1][1]
+        lift = item[1][2]
 
         # Membuat entri di tabel association_results
         association_result = AssociationResult(
@@ -103,7 +111,7 @@ def eclatMining():
     end_time = time.time()
     execution_time = end_time - start_time
 
-    # eclatStoreMining(startDate, endDate, supportRatio, ConfidenceRatio, rules, lenOfTransaction, execution_time)
+    eclatStoreMining(startDate, endDate, supportRatio, ConfidenceRatio, rules, lenOfTransaction, execution_time)
     
     return render_template("mining/eclat.html",
                            parameters=parameters,

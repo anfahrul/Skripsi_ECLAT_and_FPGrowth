@@ -38,6 +38,38 @@ endblock %} {% block content %}
                 aria-label="Lihat Detail"
                 ><span> <i class="ti ti-eye"></i> </span
               ></a>
+
+              <form
+                method="post"
+                action="{{ url_for('mining_history_blueprint.delete_mining_history', process_id=process.id) }}"
+                onsubmit="return deleteMiningHistoryConfirmation('{{ process.id }}')"
+              >
+                <button
+                  type="submit"
+                  class="btn btn-sm btn-outline-danger"
+                  style="margin-left: 5px"
+                  title="Hapus"
+                  aria-label="Hapus"
+                >
+                  <span><i class="ti ti-trash"></i></span>
+                </button>
+              </form>
+
+              <script>
+                function deleteMiningHistoryConfirmation(item) {
+                  if (
+                    confirm(
+                      "Anda yakin ingin menghapus riwayat mining id: " +
+                        item +
+                        " dari database?"
+                    )
+                  ) {
+                    return true;
+                  } else {
+                    return false;
+                  }
+                }
+              </script>
             </div>
           </td>
         </tr>

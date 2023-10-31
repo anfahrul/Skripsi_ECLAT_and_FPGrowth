@@ -12,6 +12,19 @@ def historyIndex():
     return render_template("mining_history/history_index.html", mining_process=mining_process)
 
 
+def deleteMiningProcess(process_id):
+    mining_process = MiningProcess.query.get(process_id)
+
+    if mining_process:
+        db.session.delete(mining_process)
+        db.session.commit()
+        print(f"Data mining process dengan ID {process_id} telah dihapus.")
+    else:
+        print(f"Data mining process dengan ID {process_id} tidak ditemukan.")
+    
+    return redirect(url_for('mining_history_blueprint.mining_history'))
+    
+
 def detailMiningProcess(process_id):
     mining_process = MiningProcess.query.get(process_id)
     
