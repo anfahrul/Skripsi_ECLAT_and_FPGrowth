@@ -5,6 +5,7 @@ from src.models.transaction import Transaction
 from src.mining_algorithms.eclat import Eclat
 from src.mining_algorithms.association_rule import associationRule
 from src.models.mining import MiningProcess, AssociationResult, AssociationResultProduct
+import datetime
 
 
 def eclatIndex():
@@ -19,14 +20,14 @@ def eclatStoreMining(period_start, period_end, minimum_support, minimum_confiden
         period_end=period_end,
         minimum_support=minimum_support,
         minimum_confidence=minimum_confidence,
-        execution_time=execution_time
+        execution_time=execution_time,
+         created_at=datetime.datetime.now()
     )
     
     db.session.add(mining_process)
     db.session.commit()
     
     # Association Results
-    print("rules", rules)
     # for item in rules:
         # antecedent = item[0]
         # consequent = item[1]

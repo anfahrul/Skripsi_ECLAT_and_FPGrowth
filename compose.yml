@@ -9,5 +9,6 @@ services:
       - POSTGRES_USER=anfahrul
       - POSTGRES_PASSWORD=pass7890
       - POSTGRES_DB=sinarmartanalytics
+      - TZ=Asia/Singapore
     ports:
       - "5432:5432"
