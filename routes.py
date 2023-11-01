@@ -8,7 +8,7 @@ from src.controllers.authController import registerPost, loginPost
 from src.controllers.userController import getProfile, editProfile, updateProfile, updatePassword
 from src.controllers.datasetController import importIndex, doImportFile
 from src.controllers.miningController import eclatIndex, eclatMining
-from src.controllers.miningHistoryController import historyIndex, detailMiningProcess, deleteMiningProcess
+from src.controllers.miningHistoryController import historyIndex, detailMiningProcess, deleteMiningProcess, generateReport
 
 auth_blueprint = Blueprint('auth_blueprint', __name__, url_prefix='/')
 dashboard_blueprint = Blueprint('dashboard_blueprint', __name__)
@@ -136,6 +136,11 @@ def detail_mining_history(process_id):
 @login_required
 def delete_mining_history(process_id):
     return deleteMiningProcess(process_id)
+
+@mining_history_blueprint.route("/mining-history/<process_id>/report", methods=["GET"])
+@login_required
+def mining_history_report(process_id):
+    return generateReport(process_id)
 
 
 # ---------------------------------------------------------------------

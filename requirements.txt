@@ -11,5 +11,6 @@ Flask-Excel
 pyexcel-xlsx
 pyexcel-xls
 pyexcel-handsontable
+fpdf
 
 # -e .

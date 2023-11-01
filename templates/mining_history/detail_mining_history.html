@@ -71,11 +71,11 @@
       <h5 class="card-title fw-semibold mb-4">Hasil Asosiasi Produk</h5>
       <div class="p-2">
         <a
-          href="#"
+          href="{{ url_for('mining_history_blueprint.mining_history_report', process_id=mining_process.id) }}"
           class="btn btn-sm btn-outline-danger"
           title="Cetak Asosiasi"
           aria-label="Cetak Asosiasi"
-          ><span> <i class="ti ti-file-text"></i> Cetak PDF</span></a
+          ><span> <i class="ti ti-file-text"></i> Cetak Laporan (PDF)</span></a
         >
       </div>
     </div>
