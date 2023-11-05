@@ -4,6 +4,7 @@ from src.models.transaction import Transaction, TransactionProduct
 from src.models.product import Product
 import flask_excel as excel
 import pandas as pd
+from sqlalchemy import func
 
 
 def importIndex():
@@ -24,14 +25,13 @@ def doImportFile():
         df = pd.read_excel(file)
 
         for index, row in df.iterrows():
-            item_code = str(row['Kode Barang'])
-            name = row['Nama Barang']
-            price = row['Harga']
-            quantity = row['Qty']
-            transaction_id = row['ID Transaksi']
-            date = row['Tanggal']
-            discount = row['Diskon']
-            subtotal = row['Subtotal']
+            date = row['TANGGAL']
+            transaction_id = row['NO. FAKTUR']
+            item_code = str(row['KODE BARANG'])
+            name = row['NAMA BARANG']
+            quantity = row['QTY']
+            price = row['HARGA']
+            # subtotal = row['SUBTOTAL']
 
             # Menyimpan data produk ke tabel 'product'
             existing_product = Product.query.filter_by(itemCode=item_code).first()
@@ -55,12 +55,34 @@ def doImportFile():
                 # Jika belum ada, tambahkan data baru ke tabel 'transaction_products'
                 transaction_product = TransactionProduct(transaction_id=transaction_id, itemCode=item_code, quantity=quantity)
                 db.session.add(transaction_product)
+                existing_transaction_product = transaction_product
               
                 # Update total price  
-                subtotal_for_product = price * quantity
-                existing_transaction.total_price += subtotal_for_product
+                # subtotal_for_product = price * quantity
+                # existing_transaction.total_price += subtotal
+            else:
+                existing_transaction_product.quantity = quantity
+        
+        
+        # Query untuk menghitung total_price dari tabel transaction_products
+        subtotal_query = db.session.query(
+            TransactionProduct.transaction_id,
+            func.sum(TransactionProduct.quantity * Product.price).label('subtotal')
+        ).join(
+            Product,
+            TransactionProduct.itemCode == Product.itemCode
+        ).group_by(TransactionProduct.transaction_id).subquery()
 
+        # Update total_price di tabel transactions
+        db.session.query(Transaction).filter(
+            Transaction.transaction_id == subtotal_query.c.transaction_id
+        ).update(
+            {Transaction.total_price: subtotal_query.c.subtotal},
+            synchronize_session=False
+        )
+         
         db.session.commit()
+        
         
         dataframe_html = df.to_html(classes='table table-bordered', index=False, escape=False,
                                     render_links=True, 
