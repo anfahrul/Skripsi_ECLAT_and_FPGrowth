@@ -11,6 +11,12 @@
     />
     <!-- <link rel="stylesheet" href="../assets/css/styles.min.css" /> -->
     <link rel="stylesheet" href="/static/css/styles.min.css" />
+
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.css"
+    />
   </head>
 
   <body>
@@ -270,6 +276,24 @@
     <script src="/static/libs/apexcharts/dist/apexcharts.min.js"></script>
     <script src="/static/libs/simplebar/dist/simplebar.js"></script>
     <script src="/static/js/dashboard.js"></script>
+
+    <script
+      type="text/javascript"
+      charset="utf8"
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      charset="utf8"
+      src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"
+    ></script>
+    <script
+      type="text/javascript"
+      charset="utf8"
+      src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.js"
+    ></script>
+
+    {% block scripts %}{% endblock %}
 
     <script>
       function logoutConfirmation() {
