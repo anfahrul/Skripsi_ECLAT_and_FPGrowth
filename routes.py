@@ -7,7 +7,7 @@ from src.controllers.transactionController import indexTrans, createTrans, store
 from src.controllers.authController import registerPost, loginPost
 from src.controllers.userController import getProfile, editProfile, updateProfile, updatePassword
 from src.controllers.datasetController import importIndex, doImportFile
-from src.controllers.miningController import eclatIndex, eclatMining
+from src.controllers.miningController import eclatIndex, eclatMining, fpGrowthIndex, fpGrowthMining
 from src.controllers.miningHistoryController import historyIndex, detailMiningProcess, deleteMiningProcess, generateReport
 
 auth_blueprint = Blueprint('auth_blueprint', __name__, url_prefix='/')
@@ -115,6 +115,13 @@ def detail_transaction(transaction_id):
 def eclat_mining():
     if request.method == 'GET': return eclatIndex()
     if request.method == 'POST': return eclatMining()
+    else: return "Method not allowed"
+    
+@mining_blueprint.route("/fp-growth", methods=["GET", "POST"])
+@login_required
+def fpgrowth_mining():
+    if request.method == 'GET': return fpGrowthIndex()
+    if request.method == 'POST': return fpGrowthMining()
     else: return "Method not allowed"
 
 

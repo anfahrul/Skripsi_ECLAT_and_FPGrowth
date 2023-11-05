@@ -126,6 +126,19 @@
               <li class="sidebar-item">
                 <a
                   class="sidebar-link"
+                  href="{{ url_for('mining_blueprint.fpgrowth_mining') }}"
+                  aria-expanded="false"
+                >
+                  <span>
+                    <i class="ti ti-diamond"></i>
+                  </span>
+                  <span class="hide-menu">Mining FP-Growth</span>
+                </a>
+              </li>
+
+              <li class="sidebar-item">
+                <a
+                  class="sidebar-link"
                   href="{{ url_for('mining_history_blueprint.mining_history') }}"
                   aria-expanded="false"
                 >

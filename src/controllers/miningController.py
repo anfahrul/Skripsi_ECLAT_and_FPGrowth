@@ -122,3 +122,46 @@ def eclatMining():
                            rules=rules,
                            freqItems=freqItems,
                            execution_time=execution_time)
+    
+
+def fpGrowthIndex():
+    return render_template("mining/fp-growth.html")
+
+
+def fpGrowthMining():
+    start_time = time.time()
+
+    request_form = request.form.to_dict()
+    
+    startDate = request_form['start-date']
+    endDate = request_form['end-date']
+    supportRatio = float(request_form['support'])
+    ConfidenceRatio = float(request_form['confidence'])
+    
+    parameters = {
+        'startDate': startDate,
+        'endDate': endDate,
+        'supportRatio': supportRatio,
+        'ConfidenceRatio': ConfidenceRatio
+        }
+    
+    parameters_label_mapping = {
+        'startDate': 'Tanggal Mulai',
+        'endDate': 'Tanggal Akhir',
+        'supportRatio': 'Minimum Support',
+        'ConfidenceRatio': 'Minimum Confidence'
+    }
+
+    
+    transactions = Transaction.query.all()
+    lenOfTransaction = len(transactions)
+    
+    # Algorithm here
+    
+    
+    time.sleep(2) 
+    end_time = time.time()
+    execution_time = end_time - start_time
+    
+    return render_template("mining/fp-growth.html",
+                           execution_time=execution_time)
