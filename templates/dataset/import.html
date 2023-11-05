@@ -1,12 +1,39 @@
 {% extends 'base_admin.html' %} {% block title %} Dataset {% endblock %} {%
 block content %}
+
+<h3 class="mb-5">Import Data Penjualan</h3>
+
+<div class="card">
+  <div class="card-body">
+    <h5>Ketentuan</h5>
+    <ul>
+      <li>- Data merupakan laporan transaksi penjualan</li>
+      <li>
+        - Tidak masalah jika transaksi yang sama sudah pernah diimport
+        sebelumnya
+      </li>
+      <li>- Format file <b>.xls</b> atau <b>.xlsx</b></li>
+      <li>
+        - Nama kolom yaitu
+        <b>TANGGAL, NO. FAKTUR, KODE BARANG, NAMA BARANG, SATUAN, QTY,</b>dan
+        <b>HARGA</b>
+      </li>
+    </ul>
+    <img
+      src="/static/images/dataset/sales-data-rules.png"
+      height="200"
+      alt=""
+    />
+  </div>
+</div>
+
 <div class="card">
   <div class="card-body">
     {% with messages = get_flashed_messages() %} {% if messages %}
     <div class="alert alert-success" role="alert">{{ messages[0] }}</div>
     {% endif %} {% endwith %}
 
-    <h3>Dataset</h3>
+    <h5>Formulir</h5>
 
     <form action="" method="post" enctype="multipart/form-data">
       <p>
@@ -22,7 +49,10 @@ block content %}
 
 {% if dataframe_html %}
 <div class="card">
-  <div class="card-body">{{ dataframe_html | safe }}</div>
+  <div class="card-body">
+    <h5 class="mb-3">Data Diimport</h5>
+    {{ dataframe_html | safe }}
+  </div>
 </div>
 {% endif %}
 

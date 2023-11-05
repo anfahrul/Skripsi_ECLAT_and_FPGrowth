@@ -26,7 +26,7 @@ def doImportFile():
 
         for index, row in df.iterrows():
             date = row['TANGGAL']
-            transaction_id = row['NO. FAKTUR']
+            transaction_id = str(row['NO. FAKTUR'])
             item_code = str(row['KODE BARANG'])
             name = row['NAMA BARANG']
             quantity = row['QTY']
@@ -88,5 +88,5 @@ def doImportFile():
                                     render_links=True, 
                                     formatters={"header": lambda x: f'<th style="text-align: center;">{x}</th>'})
     
-    flash('Dataset berhasil diimport.')
+    flash('Data transaksi penjualan berhasil diimport.')
     return render_template('dataset/import.html', dataframe_html=dataframe_html)
