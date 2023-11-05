@@ -1,16 +1,16 @@
 {% extends 'base_admin.html' %} {% block title %} Tambah Produk {% endblock %}
 {% block content %}
 
+<h3 class="mb-5">Tambah Barang</h3>
+
 <div class="card">
   <div class="card-body">
-    <h3>Tambah Produk</h3>
-
     <form
       action="{{ url_for('product_blueprint.create_product') }}"
       method="POST"
     >
       <div class="mb-3">
-        <label for="exampleInputEmail1" class="form-label">Kode Produk</label>
+        <label for="exampleInputEmail1" class="form-label">Kode Barang</label>
         <input
           type="text"
           class="form-control"
@@ -20,7 +20,7 @@
         />
       </div>
       <div class="mb-3">
-        <label for="exampleInputEmail1" class="form-label">Nama Produk</label>
+        <label for="exampleInputEmail1" class="form-label">Nama Barang</label>
         <input
           type="text"
           class="form-control"
@@ -30,7 +30,7 @@
         />
       </div>
       <div class="mb-3">
-        <label for="exampleInputEmail1" class="form-label">Harga</label>
+        <label for="exampleInputEmail1" class="form-label">Harga Jual</label>
         <input
           type="number"
           class="form-control"
@@ -40,7 +40,7 @@
         />
       </div>
 
-      <button type="submit" class="btn btn-primary">Tambah Produk</button>
+      <button type="submit" class="btn btn-primary">Simpan</button>
       <a
         href="{{ url_for('product_blueprint.list_product') }}"
         class="btn btn-light mx-3"

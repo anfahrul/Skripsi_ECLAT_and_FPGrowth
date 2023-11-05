@@ -84,8 +84,8 @@ def edit_product(itemCode):
 
 @product_blueprint.route("/products/<itemCode>/delete", methods=["POST"])
 @login_required
-def delete_product(process_id):
-    return delete(process_id)
+def delete_product(itemCode):
+    return delete(itemCode)
 
 
 # ---------------------------------------------------------------------

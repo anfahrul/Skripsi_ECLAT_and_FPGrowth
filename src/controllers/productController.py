@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, flash
 from app import db
 from src.models.product import Product
 
@@ -28,6 +28,8 @@ def store():
     # products = Product.query.all()
     
     # return render_template('product/list_product.html', products=products)
+    flash('Barang baru berhasil disimpan.')
+    
     return redirect(url_for('product_blueprint.list_product'))
 
 
@@ -50,7 +52,14 @@ def update(itemCode):
 
 
 def delete(itemCode):
-    Product.query.filter_by(itemCode=itemCode).delete()
-    db.session.commit()
+    print("itemCode", itemCode)
+    product = Product.query.filter_by(itemCode=itemCode).first()
+    
+    if product:
+        # Hapus produk berdasarkan 'itemCode'
+        db.session.delete(product)
+        db.session.commit()
+    
+    flash('Barang dengan kode {} berhasil dihapus.'.format(itemCode))
     
     return redirect(url_for('product_blueprint.list_product'))
