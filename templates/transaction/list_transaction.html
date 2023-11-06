@@ -1,26 +1,27 @@
 {% extends 'base_admin.html' %} {% block title %} Daftar Transaksi {% endblock
 %} {% block content %}
 
+<div class="d-flex justify-content-between mb-5">
+  <h3>Data Transaksi</h3>
+  <div>
+    <a
+      href="{{ url_for('transaction_blueprint.create_transaction') }}"
+      class="btn btn-primary"
+      >Tambah Transaksi</a
+    >
+  </div>
+</div>
+
 <div class="card">
   <div class="card-body">
-    <h3>Transaksi Penjualan</h3>
-
-    <div class="my-3">
-      <a
-        href="{{ url_for('transaction_blueprint.create_transaction') }}"
-        class="btn btn-primary"
-        >Tambah Transaksi</a
-      >
-    </div>
-
-    <table class="table">
+    <table id="transactionData" class="table">
       <thead>
         <tr>
           <th scope="col">No</th>
-          <th scope="col">ID Transaksi</th>
+          <th scope="col">No. Faktur</th>
           <th scope="col">Tanggal Transaksi</th>
           <th scope="col">Total Bayar</th>
-          <th scope="col">Aksi</th>
+          <th scope="col">Tindakan</th>
         </tr>
       </thead>
       <tbody>
@@ -28,8 +29,8 @@
         <tr>
           <td>{{ loop.index }}</td>
           <td>{{ transaction.transaction_id }}</td>
-          <td>{{ transaction.date }}</td>
-          <td>{{ transaction.total_price }}</td>
+          <td id="transactionDate">{{ transaction.date }}</td>
+          <td id="price">{{ transaction.total_price }}</td>
           <td>
             <div class="d-flex justify-content-left">
               <a
@@ -37,8 +38,8 @@
                 class="btn btn-sm btn-outline-primary"
                 title="Lihat Detail"
                 aria-label="Lihat Detail"
-                ><span> <i class="ti ti-eye"></i> </span
-              ></a>
+                ><span> <i class="ti ti-eye"></i> Detail </span></a
+              >
             </div>
           </td>
         </tr>
@@ -48,4 +49,40 @@
   </div>
 </div>
 
+{% endblock %} {% block scripts %}
+<script>
+  $(document).ready(function () {
+    $("#transactionData").DataTable();
+  });
+
+  function formatToRupiah(price) {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+    }).format(Number(price));
+  }
+
+  // Mengambil semua elemen dengan id "price" dan mengonversi nilainya
+  var priceElements = document.querySelectorAll("#price");
+  priceElements.forEach(function (element) {
+    var price = element.textContent;
+    element.textContent = formatToRupiah(price);
+  });
+
+  // Ubah format tanggal transaksi
+  var transactionDateElements = document.querySelectorAll("#transactionDate");
+
+  transactionDateElements.forEach(function (element) {
+    var dateString = element.textContent;
+
+    var dateParts = dateString.split("-");
+    var year = dateParts[0];
+    var month = dateParts[1];
+    var day = dateParts[2];
+
+    var formattedDate = day + "-" + month + "-" + year;
+
+    element.textContent = formattedDate;
+  });
+</script>
 {% endblock %}

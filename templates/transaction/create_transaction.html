@@ -1,16 +1,15 @@
 {% extends 'base_admin.html' %} {% block title %} Tambah Transaksi {% endblock
 %} {% block content %}
+<h3 class="mb-5">Tambah Transaksi</h3>
+
 <div class="card">
   <div class="card-body">
-    <h3>Tambah Transaksi</h3>
-
     <form
       action="{{ url_for('transaction_blueprint.create_transaction') }}"
       method="POST"
       onsubmit="logSelectedProducts()"
     >
       <div class="mb-3">
-        <!-- <label for="transaction_id" class="form-label">ID Transaksi</label> -->
         <input
           type="text"
           class="form-control"
@@ -37,22 +36,18 @@
             <!-- Initial product field -->
             <div class="product-field">
               <div class="d-flex justify-content-start">
-                <div class="d-flex flex-column">
+                <div class="d-flex flex-column p-3">
                   <label for="disabledSelect" class="form-label"
                     >Pilih Produk</label
                   >
-                  <select
-                    id="disabledSelect"
-                    class="form-select"
-                    name="itemCode[]"
-                  >
-                    <option>Select...</option>
+                  <select class="form-select product-select" name="itemCode[]">
+                    <option></option>
                     {% for item in products %}
                     <option value="{{ item.itemCode }}">{{ item.name }}</option>
                     {% endfor %}
                   </select>
                 </div>
-                <div class="d-flex flex-column">
+                <div class="d-flex flex-column p-3">
                   <label for="quantity" class="form-label">Kuantitas</label>
                   <input
                     type="number"
@@ -61,14 +56,12 @@
                     min="1"
                   />
                 </div>
-                <div class="d-flex flex-column">
+                <div class="d-flex flex-column p-3">
                   <button
                     type="button"
                     class="btn btn-outline-danger remove-product mt-auto"
                   >
-                    <span>
-                      <i class="ti ti-trash"></i>
-                    </span>
+                    <span> <i class="ti ti-trash"></i> Hapus </span>
                   </button>
                 </div>
               </div>
@@ -77,7 +70,7 @@
 
           <button
             type="button"
-            class="btn btn-outline-primary mt-3"
+            class="btn btn-outline-primary mt-3 ms-3"
             id="add-product"
           >
             Tambah Produk
@@ -93,56 +86,85 @@
       </button>
       <a
         href="{{ url_for('transaction_blueprint.list_transaction') }}"
-        class="btn btn-light mx-3 mt-3"
+        class="btn btn-light mt-3"
       >
         Batal
       </a>
     </form>
   </div>
 </div>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- Pastikan jQuery sudah di-include -->
+{% endblock %} {% block scripts %}
+<!-- Pastikan jQuery dan select2 sudah di-include -->
 
 <script>
   // Fungsi untuk menambahkan produk
   $("#add-product").click(function () {
-    var productField = $(".product-field:first").clone(); // Clone elemen produk pertama
-    productField.find("select").val("Select..."); // Reset select box ke "Select..."
-    productField.find("input[name='quantity[]']").val(""); // Reset input kuantitas
-    productField.appendTo("#product-fields"); // Tambahkan elemen yang di-clone ke daftar produk
+    var productField = createProductField();
+    productField.appendTo("#product-fields");
+
+    // Setel lebar elemen select setiap kali elemen baru ditambahkan
+    productField.find(".product-select").select2({
+      width: "300px",
+      placeholder: "Select...",
+    });
 
     checkSubmitButtonVisibility();
   });
 
+  // Fungsi untuk membuat elemen produk baru
+  function createProductField() {
+    var productField = $("<div class='product-field'></div>");
+
+    productField.html(`
+      <div class="d-flex justify-content-start">
+        <div class="d-flex flex-column p-3">
+          <label for="disabledSelect" class="form-label">Pilih Produk</label>
+          <select class="form-select product-select" name="itemCode[]">
+            <option></option>
+            {% for item in products %}
+            <option value="{{ item.itemCode }}">{{ item.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="d-flex flex-column p-3">
+          <label for="quantity" class="form-label">Kuantitas</label>
+          <input type="number" class="form-control" name="quantity[]" min="1" />
+        </div>
+        <div class="d-flex flex-column p-3">
+          <button type="button" class="btn btn-outline-danger remove-product mt-auto">
+            <span> <i class="ti ti-trash"></i> Hapus </span>
+          </button>
+        </div>
+      </div>
+    `);
+
+    return productField;
+  }
+
   // Fungsi untuk menghapus produk
   $("#product-fields").on("click", ".remove-product", function () {
     if ($("#product-fields .product-field").length > 1) {
-      $(this).closest(".product-field").remove(); // Hapus elemen produk yang dipilih
-
+      $(this).closest(".product-field").remove();
       checkSubmitButtonVisibility();
     }
   });
 
   function checkSubmitButtonVisibility() {
     if ($("#product-fields .product-field").length > 0) {
-      // Jika ada setidaknya satu produk yang dipilih
-      $("#submit-transaction").removeClass("d-none"); // Tampilkan tombol "Simpan Transaksi"
+      $("#submit-transaction").removeClass("d-none");
     } else {
-      $("#submit-transaction").addClass("d-none"); // Sembunyikan tombol "Simpan Transaksi"
+      $("#submit-transaction").addClass("d-none");
     }
   }
 
   function logSelectedProducts() {
     var selectedProducts = [];
 
-    // Loop melalui setiap elemen produk
     $(".product-field").each(function () {
-      var productSelect = $(this).find("select");
+      var productSelect = $(this).find(".product-select");
       var productQuantity = $(this).find("input[name='quantity[]']").val();
 
-      if (productSelect.val() !== "Select..." && productQuantity !== "") {
-        // Hanya tambahkan produk yang telah dipilih dan memiliki kuantitas
+      if (productSelect.val() && productQuantity !== "") {
         var productName = productSelect.find(":selected").text();
         selectedProducts.push({
           name: productName,
@@ -154,6 +176,12 @@
     console.log("Daftar Produk yang Diproses:");
     console.log(selectedProducts);
   }
+
+  // Menginisialisasi Select2 pada elemen yang sudah ada
+  $(".product-select").select2({
+    width: "300px",
+    placeholder: "Select...",
+  });
 </script>
 
 {% endblock %}

@@ -1,6 +1,8 @@
 {% extends 'base_admin.html' %} {% block title %} Detail Transaksi {% endblock
 %} {% block content %}
 
+<h3 class="mb-5">Detail Transaksi</h3>
+
 <div class="card">
   <div class="card-body">
     <h5>Detail Transaksi</h5>
@@ -9,7 +11,7 @@
       <tbody>
         <tr>
           <th scope="row" width="15%" style="padding: 5px 0px !important">
-            ID Transaksi
+            No. Faktur
           </th>
           <td style="padding: 5px 0px !important">
             {{ transaction.transaction_id }}
@@ -17,12 +19,14 @@
         </tr>
         <tr>
           <th scope="row" style="padding: 5px 0px !important">Tanggal</th>
-          <td style="padding: 5px 0px !important">{{ transaction.date }}</td>
+          <td id="transactionDate" style="padding: 5px 0px !important">
+            {{ transaction.date }}
+          </td>
         </tr>
         <tr>
           <th scope="row" style="padding: 5px 0px !important">Total Bayar</th>
-          <td style="padding: 5px 0px !important">
-            Rp.{{ transaction.total_price }}
+          <td id="totalPrice" style="padding: 5px 0px !important">
+            {{ transaction.total_price }}
           </td>
         </tr>
       </tbody>
@@ -30,7 +34,7 @@
 
     <a
       href="{{ url_for('transaction_blueprint.list_transaction') }}"
-      class="btn btn-light mx-3 mt-3"
+      class="btn btn-light mt-3"
     >
       Kembali
     </a>
@@ -39,15 +43,15 @@
 
 <div class="card">
   <div class="card-body">
-    <h5 class="my-3">Daftar Produk</h5>
+    <h5 class="my-3">Daftar Produk Dalam Transaksi</h5>
 
-    <table class="table">
+    <table class="table" id="transactionProductsData">
       <thead>
         <tr>
           <th scope="col">No</th>
-          <th scope="col">Kode Produk</th>
-          <th scope="col">Nama</th>
-          <th scope="col">Harga</th>
+          <th scope="col">Kode Barang</th>
+          <th scope="col">Nama Barang</th>
+          <th scope="col">Harga Jual</th>
           <th scope="col">Kuantitas</th>
           <th scope="col">Sub Total</th>
         </tr>
@@ -58,9 +62,9 @@
           <td>{{ loop.index }}</td>
           <td>{{ item.itemCode }}</td>
           <td>{{ itemName }}</td>
-          <td>{{ itemPrice }}</td>
+          <td id="itemPrice">{{ itemPrice }}</td>
           <td>{{ item.quantity }}</td>
-          <td>{{ itemPrice * item.quantity }}</td>
+          <td id="subTotalPrice">{{ itemPrice * item.quantity }}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -68,4 +72,43 @@
   </div>
 </div>
 
+{% endblock %} {% block scripts %}
+<script>
+  // datatable
+  $(document).ready(function () {
+    $("#transactionProductsData").DataTable();
+  });
+
+  // Konversi integer ke nilai rupiah
+  function formatToRupiah(price) {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+    }).format(Number(price));
+  }
+
+  var priceElement = document.querySelector("#totalPrice");
+  var totalPrice = priceElement.textContent;
+  priceElement.textContent = formatToRupiah(totalPrice);
+
+  var priceElements = document.querySelectorAll("#itemPrice, #subTotalPrice");
+
+  priceElements.forEach(function (element) {
+    var price = element.textContent;
+    element.textContent = formatToRupiah(price);
+  });
+
+  // Ubah format tanggal transaksi
+  var transactionDateElement = document.querySelector("#transactionDate");
+  var dateString = transactionDateElement.textContent;
+
+  var dateParts = dateString.split("-");
+  var year = dateParts[0];
+  var month = dateParts[1];
+  var day = dateParts[2];
+
+  var formattedDate = day + "-" + month + "-" + year;
+
+  transactionDateElement.textContent = formattedDate;
+</script>
 {% endblock %}
