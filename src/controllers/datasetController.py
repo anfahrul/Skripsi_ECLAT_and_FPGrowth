@@ -29,6 +29,7 @@ def doImportFile():
             transaction_id = str(row['NO. FAKTUR'])
             item_code = str(row['KODE BARANG'])
             name = row['NAMA BARANG']
+            unit = row['SATUAN']
             quantity = row['QTY']
             price = row['HARGA']
             # subtotal = row['SUBTOTAL']
@@ -37,9 +38,10 @@ def doImportFile():
             existing_product = Product.query.filter_by(itemCode=item_code).first()
             if existing_product:
                 existing_product.name = name
+                existing_product.unit = unit
                 existing_product.price = price
             else:
-                product = Product(itemCode=item_code, name=name, price=price)
+                product = Product(itemCode=item_code, name=name, unit=unit, price=price)
                 db.session.add(product)
 
             # Menyimpan data transaksi ke tabel 'transaction'
