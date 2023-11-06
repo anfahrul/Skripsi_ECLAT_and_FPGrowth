@@ -50,6 +50,8 @@ def doImportFile():
                 transaction = Transaction(transaction_id=transaction_id, date=date, total_price=0)  # Total harga akan dihitung nanti
                 db.session.add(transaction)
                 existing_transaction = transaction
+            else:
+                existing_transaction.date = date
             
             # Menyimpan data produk transaksi ke tabel 'transaction_products'
             existing_transaction_product = TransactionProduct.query.filter_by(transaction_id=transaction_id, itemCode=item_code).first()
