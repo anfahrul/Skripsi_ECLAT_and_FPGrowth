@@ -106,7 +106,7 @@ def associationRule(freqItemSetDict, itemSetList, minConf):
                 s_tuple = frozenset(s)
                 if s_tuple in itemSetSupport and itemSetSupport[s_tuple] > 0:
                     confidence = float(itemSetSup / itemSetSupport[s_tuple])
-                    if confidence > minConf:
+                    if confidence >= minConf:
                         # Hitung Lift Ratio
                         lift_ratio = confidence / (itemSetSupport[frozenset(itemSet.difference(s))] / len(itemSetList))
                         

@@ -1,63 +1,89 @@
 {% extends 'base_admin.html' %} {% block title %} Mining ECLAT {% endblock %} {%
 block content %}
 
+<h3 class="mb-5">Analisis Algoritma ECLAT</h3>
+
 <div class="card">
   <div class="card-body">
-    <h5 class="card-title fw-semibold mb-4">Input Parameter</h5>
+    {% with messages = get_flashed_messages() %} {% if messages %} {% if
+    messages[0] == 'Tidak ada transaksi pada periode tersebut.' %}
+    <div class="alert alert-warning" role="alert">{{ messages[0] }}</div>
+    {% endif %} {% endif %} {% endwith %}
+    <h5 class="card-title fw-semibold mb-4">Masukkan Parameter</h5>
 
     <form action="{{ url_for('mining_blueprint.eclat_mining') }}" method="POST">
-      <div class="d-flex bd-highlight">
+      <div class="d-flex justify-content-between">
         <div class="p-2 d-flex flex-column">
-          <label for="exampleFormControlInput1">Periode Transaksi</label>
-          <input
-            type="date"
-            name="start-date"
-            class="form-control"
-            id="exampleFormControlInput1"
-            required
-          />
+          <div class="d-flex justify-content-start">
+            <div>
+              <label for="exampleFormControlInput1">Periode Transaksi</label>
+              <input
+                type="date"
+                name="start-date"
+                class="form-control"
+                id="exampleFormControlInput1"
+                required
+                style="
+                  border-top-right-radius: 0 !important;
+                  border-bottom-right-radius: 0 !important;
+                "
+              />
+            </div>
+            <!-- <div class="mt-auto">
+              <p class="d-flex align-items-center">s/d</p>
+            </div> -->
+            <div class="input-group mt-auto">
+              <div class="input-group-prepend">
+                <div
+                  class="input-group-text"
+                  style="border-radius: 0; border: 1px solid rgb(208, 206, 206)"
+                >
+                  s/d
+                </div>
+              </div>
+              <input
+                type="date"
+                name="end-date"
+                class="form-control"
+                id="exampleFormControlInput1"
+                required
+              />
+            </div>
+          </div>
         </div>
-        <div class="p-2 d-flex flex-column"><p class="mt-auto">s/d</p></div>
         <div class="p-2 d-flex flex-column">
-          <input
-            type="date"
-            name="end-date"
-            class="form-control mt-auto"
-            id="exampleFormControlInput1"
-            required
-          />
-        </div>
-        <div class="p-2 d-flex flex-column">
-          <label for="exampleFormControlInput1">Minimum Support</label>
+          <label for="exampleFormControlInput1">Minimum Support (%)</label>
           <input
             type="number"
-            name="support"
+            name="minimumSupport"
             class="form-control"
             id="exampleFormControlInput1"
-            placeholder="0.1"
-            step="0.01"
-            value="0.1"
-            min="0.01"
+            placeholder="Contoh: 5"
+            step="1"
+            min="1"
+            max="100"
             required
           />
+          <div id="itemCode" class="form-text">Range 1 sampai 100</div>
         </div>
         <div class="p-2 d-flex flex-column">
-          <label for="exampleFormControlInput1">Minimum Confidence</label>
+          <label for="exampleFormControlInput1">Minimum Confidence (%)</label>
           <input
             type="number"
-            name="confidence"
+            name="minimumConfidence"
             class="form-control"
             id="exampleFormControlInput1"
-            placeholder="0.5"
-            step="0.01"
-            value="0.1"
-            min="0.01"
+            placeholder="Contoh: 70"
+            step="1"
+            min="1"
+            max="100"
             required
           />
+          <div id="itemCode" class="form-text">Range 1 sampai 100</div>
         </div>
 
         <div class="p-2 d-flex flex-column">
-          <button type="submit" class="btn btn-primary mt-auto">Proses</button>
+          <button type="submit" class="btn btn-primary my-auto">Proses</button>
         </div>
       </div>
     </form>
@@ -65,20 +91,66 @@ block content %}
 </div>
 
 {% if parameters %}
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title fw-semibold mb-4">Parameter</h5>
-
-    <table class="table table-borderless">
-      <tbody>
-        {% for key, value in parameters.items() %}
-        <tr>
-          <th scope="row" width="25%">{{ parameters_label_mapping[key] }}</th>
-          <td>{{ value }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+<div class="row">
+  <div class="col-lg-4">
+    <div class="card border border-primary">
+      <div class="card-body">
+        <div class="row alig n-items-start">
+          <p class="text-dark fs-3">Periode Transaksi</p>
+          <div class="d-flex align-items-center pb-1">
+            <p>
+              <h5 class="card-title fw-semibold">
+                <span id="dateOfPeriod">{{parameters['startDate']}}</span>
+              </h5>
+              <h6>&nbsp;&nbsp;s/d&nbsp;&nbsp;</h6>
+              <h5 class="card-title fw-semibold">
+                <span id="dateOfPeriod">{{parameters['endDate']}}</span>
+              </h5>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-2">
+    <div class="card border border-primary">
+      <div class="card-body">
+        <div class="row alig n-items-start">
+          <p class="text-dark fs-3">Total Transaksi</p>
+          <div class="d-flex align-items-center pb-1">
+            <h5 class="card-title fw-semibold">{{lenOfTransaction}}</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-3">
+    <div class="card border border-primary">
+      <div class="card-body">
+        <div class="row alig n-items-start">
+          <p class="text-dark fs-3">Minimum Support</p>
+          <div class="d-flex align-items-center pb-1">
+            <h5 class="card-title fw-semibold">
+              {{parameters['minimumSupport']}}%
+            </h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-3">
+    <div class="card border border-primary">
+      <div class="card-body">
+        <div class="row alig n-items-start">
+          <p class="text-dark fs-3">Minimum Confidence</p>
+          <div class="d-flex align-items-center pb-1">
+            <h5 class="card-title fw-semibold">
+              {{parameters['minimumConfidence']}}%
+            </h5>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 {% endif %} {% if verticalData %}
@@ -88,20 +160,24 @@ block content %}
       Transformasi Data ke Bentuk Vertikal
     </h5>
 
-    <table class="table">
+    <table id="verticalData" class="table display">
       <thead>
         <tr>
-          <th scope="col">Item Produk</th>
-          <th scope="col">Daftar Transaksi</th>
-          <th scope="col">Nilai Support</th>
+          <th scope="col">No.</th>
+          <th scope="col">Item (Kode Barang)</th>
+          <th scope="col">Daftar Transaksi (No. Faktur)</th>
+          <th scope="col">Jumlah Transaksi</th>
+          <th scope="col">Nilai Support (%)</th>
         </tr>
       </thead>
       <tbody>
         {% for key, value in verticalData.items() %}
         <tr>
+          <td>{{ loop.index }}</td>
           <td>{{ key }}</td>
-          <td>{{ value.tids }}</td>
-          <td>{{ (value.support / lenOfTransaction) }}</td>
+          <td>{{ ', '.join(value.tids) }}</td>
+          <td>{{ (value.support) }}</td>
+          <td>{{ (value.support / lenOfTransaction) * 100 }}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -113,66 +189,76 @@ block content %}
   <div class="card-body">
     <h5 class="card-title fw-semibold mb-4">Frequent {{key}}-Itemset</h5>
 
-    <table class="table">
+    <table id="frequentKItemset" class="table display">
       <thead>
         <tr>
-          <th scope="col">Frequent Itemset</th>
-          <th scope="col">Daftar Transaksi</th>
-          <th scope="col">Support</th>
+          <th scope="col">No</th>
+          <th scope="col">Frequent Itemset (Kode Barang)</th>
+          <th scope="col">Daftar Transaksi (No. Faktur)</th>
+          <th scope="col">Jumlah Transaksi</th>
+          <th scope="col">Nilai Support (%)</th>
         </tr>
       </thead>
       <tbody>
         {% for itemset, support, tids in k_value: %}
         <tr>
+          <td>{{loop.index}}</td>
           <td>
-            {% for item in itemset %} {{ item }} {% if not loop.last %}, {%
-            endif %} {% endfor %}
+            {% for item in itemset %} {{ item }}{% if not loop.last %}, {% endif
+            %} {% endfor %}
           </td>
-          <td>{{tids}}</td>
+          <td>{{ ', '.join(tids) }}</td>
           <td>{{support}}</td>
+          <td>{{ (support / lenOfTransaction) * 100 }}</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
 </div>
-{% endfor %} {% endif %} {% if rules %}
+{% endfor %} {% endif %} {% if associated_rules %}
 <div class="card" id="rules-card">
   <div class="card-body">
     <div class="d-flex justify-content-between">
-      <h5 class="card-title fw-semibold mb-4">Hasil Asosiasi Produk</h5>
-      <div class="p-2">
+      <h5 class="card-title fw-semibold mb-4">Hasil Analisis</h5>
+      <div>
         <a
-          href="#"
-          class="btn btn-sm btn-outline-primary"
-          title="Cetak Asosiasi"
+        href="{{ url_for('mining_history_blueprint.mining_history_report', process_id=mining_process_id) }}"
+        class="btn btn-sm btn-outline-danger"
+          title="Download Hasil Analisis"
           aria-label="Cetak Asosiasi"
-          ><span> <i class="ti ti-file-text"></i> Soon </span></a
+          ><span> <i class="ti ti-file-text"></i> Download Hasil Analisis (PDF) </span></a
         >
       </div>
     </div>
 
-    <table class="table">
+    <table id="associated_rules" class="table display">
       <thead>
         <tr>
-          <th scope="col">No</th>
-          <th scope="col">Asosiasi</th>
-          <th scope="col">Support</th>
-          <th scope="col">Confidence</th>
+          <th scope="col">No.</th>
+          <th scope="col">Aturan Asosiasi</th>
+          <th scope="col">Nilai Support (%)</th>
+          <th scope="col">Nilai Confidence (%)</th>
           <th scope="col">Lift Ratio</th>
         </tr>
       </thead>
       <tbody>
-        {% for key, value in rules.items() %}
+        {% for rule in associated_rules %}
         <tr>
           <td>{{loop.index}}</td>
           <td>
-            Ketika membeli <b> {{ key[0] | join(", ") }} </b>, juga membeli
-            <b> {{ key[1] | join(", ") }} </b>
+            Jika membeli <br />
+            {% for item in rule.antecedent_with_names %}
+            <b>{{ item }}</b> <br />
+            {% endfor %} Maka berpotensi membeli <br />
+            {% for item in rule.consequent_with_names %}
+            <b>{{ item }}</b> <br />
+            {% endfor %}
           </td>
-          <td>{{ value[0] / lenOfTransaction }}</td>
-          <td>{{ value[1] }}</td>
-          <td>{{ value[2] }}</td>
+
+          <td>{{ (rule.support / lenOfTransaction) * 100 }}</td>
+          <td>{{ rule.confidence * 100 }}</td>
+          <td>{{ rule.lift }}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -187,6 +273,10 @@ block content %}
     <div class="d-flex justify-content-between">
       <div class="p-2">Waktu Eksekusi</div>
       <div class="p-2"><b>{{ execution_time }}</b> Detik</div>
+    </div>
+    <div class="d-flex justify-content-between">
+      <div class="p-2">Konsumsi Memori</div>
+      <div class="p-2"><b>1024</b> Kilobyte</div>
     </div>
   </div>
 </div>
@@ -237,7 +327,28 @@ block content %}
   }
 </style>
 
+<!-- <script>
+  document.querySelector("form").addEventListener("submit", function () {
+    // Show the loading animation
+    document.getElementById("loading").style.display = "flex";
+
+    // Set a timeout to hide the loading animation after 5 seconds
+    setTimeout(function () {
+      document.getElementById("loading").style.display = "none";
+    }, 5000); // 5000 milliseconds = 5 seconds
+  });
+</script> -->
+
+{% endblock %} {% block scripts %}
 <script>
+  $(document).ready(function () {
+    $("#verticalData").DataTable();
+  });
+  
+  $(document).ready(function () {
+    $("#associated_rules").DataTable();
+  });
+
   document.querySelector("form").addEventListener("submit", function () {
     // Show the loading animation
     document.getElementById("loading").style.display = "flex";
@@ -257,18 +368,20 @@ block content %}
     // Start checking for the "card-time" element
     checkCardTime();
   });
-</script>
 
-<!-- <script>
-  document.querySelector("form").addEventListener("submit", function () {
-    // Show the loading animation
-    document.getElementById("loading").style.display = "flex";
+  var transactionDateElements = document.querySelectorAll("#dateOfPeriod");
 
-    // Set a timeout to hide the loading animation after 5 seconds
-    setTimeout(function () {
-      document.getElementById("loading").style.display = "none";
-    }, 5000); // 5000 milliseconds = 5 seconds
+  transactionDateElements.forEach(function (element) {
+    var dateString = element.textContent;
+
+    var dateParts = dateString.split("-");
+    var year = dateParts[0];
+    var month = dateParts[1];
+    var day = dateParts[2];
+
+    var formattedDate = day + "-" + month + "-" + year;
+
+    element.textContent = formattedDate;
   });
-</script> -->
-
+</script>
 {% endblock %}

@@ -23,14 +23,14 @@ class Eclat:
         
         self.item_count = 0
         self.data = {}
-        itemsetInTransactionDict = {}
-        listOfItemInTransaction = []
+        itemsInEachTransactionDict = {}
+        listOfItemInEachTransaction = []
         
         for item in transactionsProducts:
-            if item.transaction_id not in itemsetInTransactionDict:
-                itemsetInTransactionDict[item.transaction_id] = []
+            if item.transaction_id not in itemsInEachTransactionDict:
+                itemsInEachTransactionDict[item.transaction_id] = []
                 
-            itemsetInTransactionDict[item.transaction_id].append(item.itemCode)
+            itemsInEachTransactionDict[item.transaction_id].append(item.itemCode)
             
             if item.itemCode not in self.data:
                 self.data[item.itemCode] = Itemset(item.itemCode)
@@ -42,9 +42,9 @@ class Eclat:
         for _, value in self.data.items():
                 value.support = len(value.tids)
             
-        listOfItemInTransaction = [values for values in itemsetInTransactionDict.values()]
+        listOfItemInEachTransaction = [values for values in itemsInEachTransactionDict.values()]
         
-        return listOfItemInTransaction
+        return listOfItemInEachTransaction
 
     
     def prune_and_sort_items(self):
@@ -89,7 +89,7 @@ class Eclat:
     
     
     def run(self):
-        listOfItemInTransaction = self.read_data()
+        listOfItemInEachTransaction = self.read_data()
         self.prune_and_sort_items()
         minsup = self.minsup
         frequent_itemsets = {} 
@@ -100,4 +100,4 @@ class Eclat:
         for item in items:
             self.eclat_mine({item}, items.difference({item}), minsup, 1, frequent_itemsets)
 
-        return listOfItemInTransaction, verticalData, frequent_itemsets
+        return listOfItemInEachTransaction, verticalData, frequent_itemsets
