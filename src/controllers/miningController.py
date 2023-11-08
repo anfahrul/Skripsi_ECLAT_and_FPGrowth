@@ -44,8 +44,8 @@ def eclatStoreMining(period_start, period_end, minimum_support, minimum_confiden
         # Membuat entri di tabel association_results
         association_result = AssociationResult(
             mining_process_id=mining_process.id,
-            support=support / lenOfTransaction,
-            confidence=confidence,
+            support=(support / lenOfTransaction) * 100,
+            confidence=confidence * 100,
             lift=lift
         )
         db.session.add(association_result)

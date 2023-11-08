@@ -1,20 +1,19 @@
 {% extends 'base_admin.html' %} {% block title %} Riwayat Penambangan {%
 endblock %} {% block content %}
+<h3 class="mb-5">Riwayat Analisis</h3>
 
 <div class="card">
   <div class="card-body">
-    <h5 class="card-title fw-semibold mb-4">Riwayat Penambangan</h5>
-
-    <table class="table">
+    <table id="miningHistoryData" class="table display">
       <thead>
         <tr>
           <th scope="col">No</th>
           <th scope="col">Algoritma</th>
-          <th scope="col" colspan="2">Periode Transaksi</th>
-          <th scope="col">Minsupp</th>
-          <th scope="col">Minconf</th>
-          <th scope="col">Tanggal</th>
-          <th scope="col">Waktu Eksekusi</th>
+          <th scope="col">Periode Transaksi</th>
+          <th scope="col">Minimum Support (%)</th>
+          <th scope="col">Minimum Confidence (%)</th>
+          <th scope="col">Waktu Analisis</th>
+          <!-- <th scope="col">Waktu Eksekusi</th> -->
           <th scope="col">Aksi</th>
         </tr>
       </thead>
@@ -23,12 +22,14 @@ endblock %} {% block content %}
         <tr>
           <td>{{loop.index}}</td>
           <td>{{process.algorithm}}</td>
-          <td>{{process.period_start}}</td>
-          <td>{{process.period_end}}</td>
+          <td>
+            <span id="periodStart">{{process.period_start}}</span>
+            s.d
+            <span id="periodEnd">{{process.period_end}}</span>
+          </td>
           <td>{{process.minimum_support}}</td>
           <td>{{process.minimum_confidence}}</td>
-          <td>{{process.created_at}}</td>
-          <td>{{process.execution_time}} Detik</td>
+          <td class="analysisDate">{{process.created_at}}</td>
           <td>
             <div class="d-flex justify-content-left">
               <a
@@ -36,8 +37,12 @@ endblock %} {% block content %}
                 class="btn btn-sm btn-outline-primary"
                 title="Lihat Detail"
                 aria-label="Lihat Detail"
-                ><span> <i class="ti ti-eye"></i> </span
-              ></a>
+              >
+                <div class="d-flex align-items-center">
+                  <span><i class="ti ti-eye"></i></span>
+                  <span class="ml-2">&nbsp;Detail</span>
+                </div>
+              </a>
 
               <form
                 method="post"
@@ -51,7 +56,10 @@ endblock %} {% block content %}
                   title="Hapus"
                   aria-label="Hapus"
                 >
-                  <span><i class="ti ti-trash"></i></span>
+                  <div class="d-flex align-items-center">
+                    <span><i class="ti ti-eye"></i></span>
+                    <span class="ml-2">&nbsp;Hapus</span>
+                  </div>
                 </button>
               </form>
 
@@ -79,204 +87,43 @@ endblock %} {% block content %}
   </div>
 </div>
 
-<!-- <div class="row">
-  <div class="col-lg-4 d-flex align-items-stretch">
-    <div class="card w-100">
-      <div class="card-body p-4">
-        <div class="mb-4">
-          <h5 class="card-title fw-semibold">Riwayat Penambangan</h5>
-        </div>
-        <ul class="timeline-widget mb-0 position-relative mb-n5">
-          <li class="timeline-item d-flex position-relative overflow-hidden">
-            <div class="timeline-time text-dark flex-shrink-0 text-end">
-              2023-10-29 <br />
-              <small>03.30 pm</small>
-            </div>
-            <div
-              class="timeline-badge-wrap d-flex flex-column align-items-center"
-            >
-              <span
-                class="timeline-badge border-2 border border-info flex-shrink-0 my-8"
-              ></span>
-              <span class="timeline-badge-border d-block flex-shrink-0"></span>
-            </div>
-            <div class="timeline-desc fs-3 text-dark mt-n1 fw-semibold">
-              ECLAT
-              <a
-                href="javascript:void(0)"
-                class="text-primary d-block fw-normal"
-                >Lihat Detail</a
-              >
-            </div>
-          </li>
-          <li class="timeline-item d-flex position-relative overflow-hidden">
-            <div class="timeline-time text-dark flex-shrink-0 text-end">
-              2023-10-29 <br />
-              <small>03.30 pm</small>
-            </div>
-            <div
-              class="timeline-badge-wrap d-flex flex-column align-items-center"
-            >
-              <span
-                class="timeline-badge border-2 border border-info flex-shrink-0 my-8"
-              ></span>
-              <span class="timeline-badge-border d-block flex-shrink-0"></span>
-            </div>
-            <div class="timeline-desc fs-3 text-dark mt-n1 fw-semibold">
-              FP-Growth
-              <a
-                href="javascript:void(0)"
-                class="text-primary d-block fw-normal"
-                >Lihat Detail</a
-              >
-            </div>
-          </li>
-          <li class="timeline-item d-flex position-relative overflow-hidden">
-            <div class="timeline-time text-dark flex-shrink-0 text-end">
-              2023-10-29 <br />
-              <small>03.30 pm</small>
-            </div>
-            <div
-              class="timeline-badge-wrap d-flex flex-column align-items-center"
-            >
-              <span
-                class="timeline-badge border-2 border border-info flex-shrink-0 my-8"
-              ></span>
-              <span class="timeline-badge-border d-block flex-shrink-0"></span>
-            </div>
-            <div class="timeline-desc fs-3 text-dark mt-n1 fw-semibold">
-              ECLAT
-              <a
-                href="javascript:void(0)"
-                class="text-primary d-block fw-normal"
-                >Lihat Detail</a
-              >
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-  <div class="col-lg-8 d-flex align-items-stretch">
-    <div class="card w-100">
-      <div class="card-body p-4">
-        <h5 class="card-title fw-semibold mb-4">Detail Penambambangan</h5>
-        <div class="table-responsive">
-          <table class="table text-nowrap mb-0 align-middle">
-            <thead class="text-dark fs-4">
-              <tr>
-                <th class="border-bottom-0">
-                  <h6 class="fw-semibold mb-0">Id</h6>
-                </th>
-                <th class="border-bottom-0">
-                  <h6 class="fw-semibold mb-0">Assigned</h6>
-                </th>
-                <th class="border-bottom-0">
-                  <h6 class="fw-semibold mb-0">Name</h6>
-                </th>
-                <th class="border-bottom-0">
-                  <h6 class="fw-semibold mb-0">Priority</h6>
-                </th>
-                <th class="border-bottom-0">
-                  <h6 class="fw-semibold mb-0">Budget</h6>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="border-bottom-0">
-                  <h6 class="fw-semibold mb-0">1</h6>
-                </td>
-                <td class="border-bottom-0">
-                  <h6 class="fw-semibold mb-1">Sunil Joshi</h6>
-                  <span class="fw-normal">Web Designer</span>
-                </td>
-                <td class="border-bottom-0">
-                  <p class="mb-0 fw-normal">Elite Admin</p>
-                </td>
-                <td class="border-bottom-0">
-                  <div class="d-flex align-items-center gap-2">
-                    <span class="badge bg-primary rounded-3 fw-semibold"
-                      >Low</span
-                    >
-                  </div>
-                </td>
-                <td class="border-bottom-0">
-                  <h6 class="fw-semibold mb-0 fs-4">$3.9</h6>
-                </td>
-              </tr>
-              <tr>
-                <td class="border-bottom-0">
-                  <h6 class="fw-semibold mb-0">2</h6>
-                </td>
-                <td class="border-bottom-0">
-                  <h6 class="fw-semibold mb-1">Andrew McDownland</h6>
-                  <span class="fw-normal">Project Manager</span>
-                </td>
-                <td class="border-bottom-0">
-                  <p class="mb-0 fw-normal">Real Homes WP Theme</p>
-                </td>
-                <td class="border-bottom-0">
-                  <div class="d-flex align-items-center gap-2">
-                    <span class="badge bg-secondary rounded-3 fw-semibold"
-                      >Medium</span
-                    >
-                  </div>
-                </td>
-                <td class="border-bottom-0">
-                  <h6 class="fw-semibold mb-0 fs-4">$24.5k</h6>
-                </td>
-              </tr>
-              <tr>
-                <td class="border-bottom-0">
-                  <h6 class="fw-semibold mb-0">3</h6>
-                </td>
-                <td class="border-bottom-0">
-                  <h6 class="fw-semibold mb-1">Christopher Jamil</h6>
-                  <span class="fw-normal">Project Manager</span>
-                </td>
-                <td class="border-bottom-0">
-                  <p class="mb-0 fw-normal">MedicalPro WP Theme</p>
-                </td>
-                <td class="border-bottom-0">
-                  <div class="d-flex align-items-center gap-2">
-                    <span class="badge bg-danger rounded-3 fw-semibold"
-                      >High</span
-                    >
-                  </div>
-                </td>
-                <td class="border-bottom-0">
-                  <h6 class="fw-semibold mb-0 fs-4">$12.8k</h6>
-                </td>
-              </tr>
-              <tr>
-                <td class="border-bottom-0">
-                  <h6 class="fw-semibold mb-0">4</h6>
-                </td>
-                <td class="border-bottom-0">
-                  <h6 class="fw-semibold mb-1">Nirav Joshi</h6>
-                  <span class="fw-normal">Frontend Engineer</span>
-                </td>
-                <td class="border-bottom-0">
-                  <p class="mb-0 fw-normal">Hosting Press HTML</p>
-                </td>
-                <td class="border-bottom-0">
-                  <div class="d-flex align-items-center gap-2">
-                    <span class="badge bg-success rounded-3 fw-semibold"
-                      >Critical</span
-                    >
-                  </div>
-                </td>
-                <td class="border-bottom-0">
-                  <h6 class="fw-semibold mb-0 fs-4">$2.4k</h6>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-</div> -->
+{% endblock %} {% block scripts %}
+<script>
+  $(document).ready(function () {
+    $("#miningHistoryData").DataTable();
+  });
 
+  $(document).ready(function () {
+    $("#periodStart, #periodEnd").each(function () {
+      var dateElement = $(this);
+      var date = new Date(dateElement.text());
+
+      var day = date.getDate();
+      var month = date.getMonth() + 1; // Perhatikan bahwa bulan dimulai dari 0, sehingga perlu ditambahkan 1
+      var year = date.getFullYear();
+
+      var formattedDate = day + "/" + month + "/" + year;
+
+      dateElement.text(formattedDate);
+    });
+  });
+
+  $(document).ready(function () {
+    $(".analysisDate").each(function () {
+      var dateElement = $(this);
+      var date = new Date(dateElement.text());
+
+      var day = date.getDate();
+      var month = date.getMonth() + 1; // Perlu ditambah 1 karena bulan dimulai dari 0
+      var year = date.getFullYear();
+      var time = date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
+      var formattedDate = day + "/" + month + "/" + year + ", " + time;
+      dateElement.text(formattedDate);
+    });
+  });
+</script>
 {% endblock %}

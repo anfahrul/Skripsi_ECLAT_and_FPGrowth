@@ -1,9 +1,11 @@
 {% extends 'base_admin.html' %} {% block title %} Detail Transaksi {% endblock
 %} {% block content %}
 
+<h3 class="mb-5">Detail Analisis</h3>
+
 <div class="card">
   <div class="card-body">
-    <h5 class="mb-3">Detail Penambangan</h5>
+    <h5 class="mb-3">Info Analisis</h5>
 
     <table class="table table-borderless">
       <tbody>
@@ -20,7 +22,8 @@
             Periode Transaksi
           </th>
           <td style="padding: 5px 0px !important">
-            {{ mining_process.period_start }} s.d. {{mining_process.period_end}}
+            <span id="periodStart">{{ mining_process.period_start }}</span> s.d.
+            <span id="periodEnd"> {{mining_process.period_end}} </span>
           </td>
         </tr>
         <tr>
@@ -28,7 +31,7 @@
             Minimum Support
           </th>
           <td style="padding: 5px 0px !important">
-            {{ mining_process.minimum_support }}
+            {{ mining_process.minimum_support }}%
           </td>
         </tr>
         <tr>
@@ -36,12 +39,14 @@
             Minimum Confidence
           </th>
           <td style="padding: 5px 0px !important">
-            {{ mining_process.minimum_confidence }}
+            {{ mining_process.minimum_confidence }}%
           </td>
         </tr>
         <tr>
-          <th scope="row" style="padding: 5px 0px !important">Tanggal</th>
-          <td style="padding: 5px 0px !important">
+          <th scope="row" style="padding: 5px 0px !important">
+            Waktu Analisis
+          </th>
+          <td class="analysisDate" style="padding: 5px 0px !important">
             {{ mining_process.created_at }}
           </td>
         </tr>
@@ -58,7 +63,7 @@
 
     <a
       href="{{ url_for('mining_history_blueprint.mining_history') }}"
-      class="btn btn-light mx-3 mt-3"
+      class="btn btn-light mt-3"
     >
       Kembali
     </a>
@@ -69,25 +74,26 @@
   <div class="card-body">
     <div class="d-flex justify-content-between">
       <h5 class="card-title fw-semibold mb-4">Hasil Asosiasi Produk</h5>
-      <div class="p-2">
+      <div>
         <a
           href="{{ url_for('mining_history_blueprint.mining_history_report', process_id=mining_process.id) }}"
           class="btn btn-sm btn-outline-danger"
           title="Cetak Asosiasi"
           aria-label="Cetak Asosiasi"
-          ><span> <i class="ti ti-file-text"></i> Cetak Laporan (PDF)</span></a
+          ><span>
+            <i class="ti ti-file-text"></i> Cetak Hasil Analisis (PDF)</span
+          ></a
         >
       </div>
     </div>
 
-    <table class="table">
+    <table id="associated_rules_history" class="table display">
       <thead>
         <tr>
           <th scope="col">No</th>
-          <th scope="col">Antecedent</th>
-          <th scope="col">Consequent</th>
-          <th scope="col">Support</th>
-          <th scope="col">Confidence</th>
+          <th scope="col">Aturan Asosiasi</th>
+          <th scope="col">Nilai Support (%)</th>
+          <th scope="col">Nilai Confidence (%)</th>
           <th scope="col">Lift Ratio</th>
         </tr>
       </thead>
@@ -95,36 +101,66 @@
         {% for association_id, association in associations.items() %}
         <tr>
           <td>{{loop.index}}</td>
-          <td>{{ association.antecedent|join(', ') }}</td>
-          <td>{{ association.consequent|join(', ') }}</td>
+          <td>
+            Jika membeli
+            <br />
+            {% for item in association.antecedent %}
+            <b>{{ item[0] }} - {{ item[1] }}</b>
+            <br />
+            {% endfor %} Maka berpotensi membeli
+            <br />
+            {% for item in association.consequent %}
+            <b>{{ item[0] }} - {{ item[1] }}</b>
+            <br />
+            {% endfor %}
+          </td>
           <td>{{ association.support }}</td>
           <td>{{ association.confidence }}</td>
           <td>{{ association.lift }}</td>
         </tr>
         {% endfor %}
       </tbody>
-
-      <!-- <tbody>
-        {% for result in results %}
-        <tr>
-          <td>{{loop.index}}</td>
-          <td>{{result.association_result_id}}</td>
-          <td>
-            {% if result.is_antecedent %} {{ result.itemCode }} {% else %} {{
-            result.product_item_code }} {% endif %}
-          </td>
-          <td>
-            {% if result.is_antecedent %} Antecedent {% else %} Consequent {%
-            endif %}
-          </td>
-          <td>{{ result.support }}</td>
-          <td>{{ result.confidence }}</td>
-          <td>{{ result.lift }}</td>
-        </tr>
-        {% endfor %}
-      </tbody> -->
     </table>
   </div>
 </div>
 
+{% endblock %} {% block scripts %}
+<script>
+  $(document).ready(function () {
+    $("#associated_rules_history").DataTable();
+  });
+
+  $(document).ready(function () {
+    $("#periodStart, #periodEnd").each(function () {
+      var dateElement = $(this);
+      var date = new Date(dateElement.text());
+
+      var day = date.getDate();
+      var month = date.getMonth() + 1; // Perhatikan bahwa bulan dimulai dari 0, sehingga perlu ditambahkan 1
+      var year = date.getFullYear();
+
+      var formattedDate = day + "/" + month + "/" + year;
+
+      dateElement.text(formattedDate);
+    });
+  });
+
+  $(document).ready(function () {
+    $(".analysisDate").each(function () {
+      var dateElement = $(this);
+      var date = new Date(dateElement.text());
+
+      var day = date.getDate();
+      var month = date.getMonth() + 1; // Perlu ditambah 1 karena bulan dimulai dari 0
+      var year = date.getFullYear();
+      var time = date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
+      var formattedDate = day + "/" + month + "/" + year + ", " + time;
+      dateElement.text(formattedDate);
+    });
+  });
+</script>
 {% endblock %}
