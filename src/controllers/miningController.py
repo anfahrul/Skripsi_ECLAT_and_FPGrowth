@@ -135,8 +135,8 @@ def eclatMining():
     end_time = time.time()
     execution_time = end_time - start_time
 
-    # mining_process_id = eclatStoreMining(startDate, endDate, minimumSupport, minimumConfidence, rules, lenOfTransaction, execution_time)
-    mining_process_id = 'test123'
+    mining_process_id = eclatStoreMining(startDate, endDate, minimumSupport, minimumConfidence, rules, lenOfTransaction, execution_time)
+    # mining_process_id = 'test123'
     associated_rules_with_names = associateItemCodeWithName(rules=rules)
     
     return render_template("mining/eclat.html",

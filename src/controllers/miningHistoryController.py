@@ -27,40 +27,6 @@ def deleteMiningProcess(process_id):
 
 
 def getMiningProcess(process_id):
-    # mining_process = MiningProcess.query.get(process_id)
-    
-    # query = db.session.query(
-    #     AssociationResultProduct.association_result_id,
-    #     AssociationResultProduct.is_antecedent,
-    #     AssociationResult.support,
-    #     AssociationResult.confidence,
-    #     AssociationResult.lift,\
-    #     Product.name.label("item_name")
-    # ).join(AssociationResult).filter(AssociationResult.mining_process_id == process_id)
-
-    # query_antecedent = query.join(Product, AssociationResultProduct.itemCode == Product.itemCode)
-    # query_consequent = query.join(Product, AssociationResultProduct.itemCode == Product.itemCode)
-
-    # results_antecedent = query_antecedent.filter(AssociationResultProduct.is_antecedent == True).all()
-    # results_consequent = query_consequent.filter(AssociationResultProduct.is_antecedent == False).all()
-
-    # associations = {}
-    # for result_antecedent in results_antecedent:
-    #     association_id = result_antecedent.association_result_id
-    #     if association_id not in associations:
-    #         associations[association_id] = {
-    #             'antecedent': set(),
-    #             'consequent': set(),
-    #             'support': result_antecedent.support,
-    #             'confidence': result_antecedent.confidence,
-    #             'lift': result_antecedent.lift,
-    #         }
-    #     associations[association_id]['antecedent'].add(result_antecedent.item_name)
-
-    # for result_consequent in results_consequent:
-    #     association_id = result_consequent.association_result_id
-    #     associations[association_id]['consequent'].add(result_consequent.item_name)
-    
     mining_process = MiningProcess.query.get(process_id)
 
     query = db.session.query(
@@ -120,45 +86,68 @@ def generateReport(process_id):
     pdf.cell(page_width, 0.0, 'Jl. D.I Panjaitan No 88 A, Lepo - Lepo', align='L')
     pdf.ln(10)
     pdf.set_font('Arial', 'B', 12.0)
-    pdf.cell(page_width, 0.0, 'LAPORAN PENAMBANGAN ASOSIASI', align='L')
+    pdf.cell(page_width, 0.0, 'LAPORAN HASIL ANALISIS ASOSIASI', align='L')
     pdf.ln(5)
     
-    no_col_width = page_width/20
-    col_width = (page_width - no_col_width)/5
+    no_col_width = 10
+    col_width_temp = (page_width - no_col_width)/4
+    association_col_width = (col_width_temp * 2) - no_col_width
+    col_width = (page_width - association_col_width - no_col_width)/3
         
     th = pdf.font_size
     
     pdf.set_font('Arial', 'B', 11)
     pdf.set_fill_color(235, 235, 235)
     pdf.cell(no_col_width, th + 5, 'No.', border=1, align='C', fill=True)
-    pdf.cell(col_width, th + 5, 'Antecedent', border=1, align='C', fill=True)
-    pdf.cell(col_width, th + 5, 'Consequent', border=1, align='C', fill=True)
-    pdf.cell(col_width, th + 5, 'Support', border=1, align='C', fill=True)
-    pdf.cell(col_width, th + 5, 'Confidence', border=1, align='C', fill=True)
-    pdf.cell(col_width, th + 5, 'Lift', border=1, align='C', fill=True)
+    pdf.cell(association_col_width, th + 5, 'Aturan Asosiasi', border=1, align='C', fill=True)
+    pdf.cell(col_width, th + 5, 'Support (%)', border=1, align='C', fill=True)
+    pdf.cell(col_width, th + 5, 'Confidence (%)', border=1, align='C', fill=True)
+    pdf.cell(col_width, th + 5, 'Nilai Lift', border=1, align='C', fill=True)
     pdf.ln(th + 5)
     
     pdf.set_font('Arial', '', 11)
     
     mining_process, associations = getMiningProcess(process_id)
+   
     row_number = 1
-    for association in associations.items():
+    for association_id, association in associations.items():
         pdf.set_fill_color(255, 255, 255)
-        pdf.cell(no_col_width, th + 5, str(row_number), border=1, align='C')
+
+        antecedent_text = "\n".join([f"{item[0]} - {item[1]}" for item in association['antecedent']])
+        consequent_text = "\n".join([f"{item[0]} - {item[1]}" for item in association['consequent']])
+        combined_text = f"Jika membeli:\n{antecedent_text}\nMaka berpotensi membeli:\n{consequent_text}"
+
+        # Calculate the height of the multi-cell content
+        lines = combined_text.split('\n')
+        multi_cell_height = (th + 2) * len(lines)
+    
+        # Nomor dan aturan asosiasi
+        pdf.cell(no_col_width, multi_cell_height, str(row_number), border=1, align='C')
+        
+        currrent_x = pdf.get_x()
+        currrent_y = pdf.get_y()
+
+        pdf.multi_cell(association_col_width, th + 2, combined_text, border=1)
+        
+        # Support, confidence, dan lift
+        pdf.set_xy(currrent_x + association_col_width, currrent_y)
+        pdf.cell(col_width, multi_cell_height, str(association['support']), border=1, align='C')
+        pdf.cell(col_width, multi_cell_height, str(association['confidence']), border=1, align='C')
+        pdf.cell(col_width, multi_cell_height, "{:.2f}".format(association['lift']), border=1, align='C')
+
+        # Pindah ke baris berikutnya
+        pdf.ln()
+        
+        currrent_x = pdf.get_x()
+        currrent_y = pdf.get_y()
+        pdf.set_xy(currrent_x, currrent_y)
+        
+
         row_number += 1
 
-        antecedent = ', '.join(map(str, association[1]['antecedent']))
-        consequent = ', '.join(map(str, association[1]['consequent']))
-        pdf.cell(col_width, th + 5, antecedent, border=1)
-        pdf.cell(col_width, th + 5, consequent, border=1)
-        pdf.cell(col_width, th + 5, str(association[1]['support']), border=1, align='C')
-        pdf.cell(col_width, th + 5, str(association[1]['confidence']), border=1, align='C')
 
-        lift = "{:.2f}".format(association[1]['lift'])
-        pdf.cell(col_width, th + 5, str(lift), border=1, align='C')
-        pdf.ln()  # Pindah ke baris berikutnya
-        
     pdf.ln(10)
+    
     
     pdf.set_font('Times', '', 10.0)
     pdf.cell(page_width, 0.0, '- end of report -', align='C')
