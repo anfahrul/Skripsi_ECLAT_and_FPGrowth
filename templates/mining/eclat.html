@@ -1,4 +1,4 @@
-{% extends 'base_admin.html' %} {% block title %} Mining ECLAT {% endblock %} {%
+{% extends 'base_admin.html' %} {% block title %} Analisis ECLAT {% endblock %} {%
 block content %}
 
 <h3 class="mb-5">Analisis Algoritma ECLAT</h3>
@@ -221,6 +221,7 @@ block content %}
   <div class="card-body">
     <div class="d-flex justify-content-between">
       <h5 class="card-title fw-semibold mb-4">Hasil Analisis</h5>
+      {% if miningProcessIsExist %}
       <div>
         <a
         href="{{ url_for('mining_history_blueprint.mining_history_report', process_id=mining_process_id) }}"
@@ -230,6 +231,13 @@ block content %}
           ><span> <i class="ti ti-file-text"></i> Download Hasil Analisis (PDF) </span></a
         >
       </div>
+      {% else %}
+      <div>
+        <div class="alert alert-warning" role="alert">
+          Hasil analisis tidak bisa didownload, tidak tersimpan ke basis data!
+        </div>
+      </div>
+      {% endif %}
     </div>
 
     <table id="associated_rules" class="table display">

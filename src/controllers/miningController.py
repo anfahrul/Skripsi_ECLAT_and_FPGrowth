@@ -4,7 +4,8 @@ from app import db
 from src.models.transaction import Transaction
 from src.models.product import Product
 from src.mining_algorithms.eclat import Eclat
-from src.mining_algorithms.association_rule import associationRule
+from src.mining_algorithms.fpgrowth import FPGrowth
+from src.mining_algorithms.association_rule import associationRule, associationRuleFpGrowth
 from src.models.mining import MiningProcess, AssociationResult, AssociationResultProduct
 import datetime
 import uuid
@@ -135,14 +136,21 @@ def eclatMining():
     end_time = time.time()
     execution_time = end_time - start_time
 
-    mining_process_id = eclatStoreMining(startDate, endDate, minimumSupport, minimumConfidence, rules, lenOfTransaction, execution_time)
-    # mining_process_id = 'test123'
+    # mining_process_id = eclatStoreMining(startDate, endDate, minimumSupport, minimumConfidence, rules, lenOfTransaction, execution_time)
+    mining_process_id = 'test123'
+    miningProcessIsExist = False
+    miningProcess = MiningProcess.query.filter_by(id=mining_process_id).first()
+    
+    if miningProcess:
+        miningProcessIsExist= True
+        
     associated_rules_with_names = associateItemCodeWithName(rules=rules)
     
     return render_template("mining/eclat.html",
                            parameters=parameters,
                            verticalData=verticalData, 
                            lenOfTransaction=lenOfTransaction, 
+                           miningProcessIsExist=miningProcessIsExist,
                            associated_rules=associated_rules_with_names,
                            mining_process_id=mining_process_id,
                            freqItems=freqItems,
@@ -157,36 +165,53 @@ def fpGrowthMining():
     start_time = time.time()
 
     request_form = request.form.to_dict()
-    
     startDate = request_form['start-date']
     endDate = request_form['end-date']
-    supportRatio = float(request_form['support'])
-    ConfidenceRatio = float(request_form['confidence'])
+    minimumSupport = float(request_form['minimumSupport'])
+    minimumConfidence = float(request_form['minimumConfidence'])
     
     parameters = {
         'startDate': startDate,
         'endDate': endDate,
-        'supportRatio': supportRatio,
-        'ConfidenceRatio': ConfidenceRatio
+        'minimumSupport': minimumSupport,
+        'minimumConfidence': minimumConfidence
         }
     
-    parameters_label_mapping = {
-        'startDate': 'Tanggal Mulai',
-        'endDate': 'Tanggal Akhir',
-        'supportRatio': 'Minimum Support',
-        'ConfidenceRatio': 'Minimum Confidence'
-    }
-
+    # transactions = Transaction.query.all()
+    transactions_in_period = Transaction.query.filter(Transaction.date.between(startDate, endDate)).all()
+    lenOfTransaction = len(transactions_in_period)
+    if lenOfTransaction <=0:
+        flash('Tidak ada transaksi pada periode tersebut.')
+        return render_template("mining/fp-growth.html")
     
-    transactions = Transaction.query.all()
-    lenOfTransaction = len(transactions)
+    minimumSupportFreq = (minimumSupport / 100) * len(transactions_in_period)
+    minimumConfidenceRatio = minimumConfidence / 100
     
     # Algorithm here
+    fpGrowthInstance = FPGrowth(minimumSupportFreq, 0.75)
+    freqentItemset, listOfItemset, minimumConfidenceRes = fpGrowthInstance.run()
     
+    rules = associationRuleFpGrowth(freqentItemset, listOfItemset, minConf=minimumConfidenceRes)
     
-    time.sleep(2) 
+    # time.sleep(2) 
     end_time = time.time()
     execution_time = end_time - start_time
     
+    # mining_process_id = eclatStoreMining(startDate, endDate, minimumSupport, minimumConfidence, rules, lenOfTransaction, execution_time)
+    mining_process_id = 'test123'
+    # mining_process_id = '2a863b34-2201-4003-b3d7-4c2535cc421b'
+    miningProcessIsExist = False
+    miningProcess = MiningProcess.query.filter_by(id=mining_process_id).first()
+    
+    if miningProcess:
+        miningProcessIsExist= True
+        
+    associated_rules_with_names = associateItemCodeWithName(rules=rules)
+    
     return render_template("mining/fp-growth.html",
+                           parameters=parameters,
+                           lenOfTransaction=lenOfTransaction,
+                           miningProcessIsExist=miningProcessIsExist,
+                           associated_rules=associated_rules_with_names,
+                           mining_process_id=mining_process_id,
                            execution_time=execution_time)
