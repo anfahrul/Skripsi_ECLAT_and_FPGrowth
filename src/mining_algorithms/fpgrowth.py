@@ -29,6 +29,7 @@ class FPGrowth:
         self.minimumSupportRatio = minimumSupportRatio
         self.minimumConfidence = minimumConfidence
         self.listOfItemset = []
+        self.dictOfFilteredItems = {}
         self.frequencyOfTransaction = []
 
 
@@ -47,6 +48,31 @@ class FPGrowth:
         for _, itemset in dictOfItemset.items():
             self.listOfItemset.append(itemset)
             self.frequencyOfTransaction.append(1)
+            
+        self.dictOfFilteredItems = dictOfItemset
+            
+    
+    def getFrequentItemset(self):
+        dictOfItemFrequency = {}
+        
+        for i, itemset in enumerate(self.listOfItemset):
+            for item in itemset:
+                if item not in dictOfItemFrequency:
+                    dictOfItemFrequency[item] = 0
+                
+                dictOfItemFrequency[item] += 1
+        
+        return {item: frequency for item, frequency in dictOfItemFrequency.items() if frequency >= self.minimumSupportRatio}
+
+    
+    def filteredTransactionItems(self, dictOfItemFrequency):
+        nested_dict = {key: [self.dictOfFilteredItems[key]] +
+                            [sorted([item for item in itemset if item in dictOfItemFrequency], key=lambda x: dictOfItemFrequency.get(x, 0), reverse=True)
+                            for itemset in [self.dictOfFilteredItems[key]]]
+                    for key in self.dictOfFilteredItems}
+
+
+        return nested_dict
     
     
     def updateHeaderTable(self, item, targetNode, headerTable):
@@ -165,6 +191,10 @@ class FPGrowth:
     def run(self):
         self.read_data()
         
+        dictOfItemFrequency = self.getFrequentItemset()
+        
+        filteredItemset = self.filteredTransactionItems(dictOfItemFrequency)
+        
         self.minimumSupport = len(self.listOfItemset) * self.minimumSupportRatio
         fpTree, headerTable = self.constructFPTree()
 
@@ -174,4 +204,4 @@ class FPGrowth:
             freqentItemset = []
             self.miningTrees(headerTable, set(), freqentItemset)
             
-            return freqentItemset, self.listOfItemset, self.minimumConfidence
+            return dictOfItemFrequency, filteredItemset, freqentItemset, self.listOfItemset, self.minimumConfidence

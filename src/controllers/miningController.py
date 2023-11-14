@@ -189,7 +189,7 @@ def fpGrowthMining():
     
     # Algorithm here
     fpGrowthInstance = FPGrowth(minimumSupportFreq, 0.75)
-    freqentItemset, listOfItemset, minimumConfidenceRes = fpGrowthInstance.run()
+    dictOfItemFrequency, filteredItemset, freqentItemset, listOfItemset, minimumConfidenceRes = fpGrowthInstance.run()
     
     rules = associationRuleFpGrowth(freqentItemset, listOfItemset, minConf=minimumConfidenceRes)
     
@@ -211,6 +211,8 @@ def fpGrowthMining():
     return render_template("mining/fp-growth.html",
                            parameters=parameters,
                            lenOfTransaction=lenOfTransaction,
+                           dictOfItemFrequency=dictOfItemFrequency,
+                           filteredItemset=filteredItemset,
                            miningProcessIsExist=miningProcessIsExist,
                            associated_rules=associated_rules_with_names,
                            mining_process_id=mining_process_id,

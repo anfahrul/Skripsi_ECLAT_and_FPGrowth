@@ -155,6 +155,70 @@ block content %}
 </div>
 {% endif %}
 
+
+{% if dictOfItemFrequency %}
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title fw-semibold mb-4">
+      Frequent Item
+    </h5>
+
+    <table id="dictOfItemFrequency" class="table display">
+      <thead>
+        <tr>
+          <th scope="col">No.</th>
+          <th scope="col">Item (Kode Barang)</th>
+          <th scope="col">Frekuensi</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for key, value in dictOfItemFrequency.items() %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ key }}</td>
+          <td>{{ (value) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+
+
+{% if filteredItemset %}
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title fw-semibold mb-4">
+      Daftar Transaksi Setelah Diurut dan Difilter
+    </h5>
+
+    <table id="filteredItemset" class="table display">
+      <thead>
+        <tr>
+          <th scope="col">No.</th>
+          <th scope="col">No. Faktur</th>
+          <th scope="col">Daftar Item (Kode Barang)</th>
+          <th scope="col">Daftar Item (Kode Barang) Setelah difilter</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for key, value in filteredItemset.items() %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ key }}</td>
+          <td>{{ value[0]|join(', ') }}</td>
+          <td>{{ value[1]|join(', ') }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+
 {% if associated_rules %}
 <div class="card" id="rules-card">
   <div class="card-body">
@@ -279,7 +343,11 @@ block content %}
 {% block scripts %}
 <script>
   $(document).ready(function () {
-    $("#verticalData").DataTable();
+    $("#dictOfItemFrequency").DataTable();
+  });
+  
+  $(document).ready(function () {
+    $("#filteredItemset").DataTable();
   });
   
   $(document).ready(function () {
