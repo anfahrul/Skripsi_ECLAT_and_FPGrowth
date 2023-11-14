@@ -24,8 +24,8 @@
           <th scope="col">No.</th>
           <th scope="col">Kode Barang</th>
           <th scope="col">Nama Barang</th>
-          <th scope="col">Satuan</th>
-          <th scope="col">Harga Jual</th>
+          <!-- <th scope="col">Satuan</th> -->
+          <!-- <th scope="col">Harga Jual</th> -->
           <th scope="col">Tindakan</th>
         </tr>
       </thead>
@@ -35,18 +35,18 @@
           <td>{{ loop.index }}</td>
           <td>{{ item.itemCode }}</td>
           <td>{{ item.name }}</td>
-          <td>{{ item.unit }}</td>
-          <td id="price">{{ item.price }}</td>
+          <!-- <td>{{ item.unit }}</td> -->
+          <!-- <td id="price">{{ item.price }}</td> -->
           <td>
             <div class="d-flex justify-content-left">
-              <!-- <a
+              <a
                 href="{{ url_for('product_blueprint.edit_product', itemCode=item.itemCode) }}"
                 class="btn btn-sm btn-outline-primary"
                 title="Edit"
                 aria-label="Edit"
-                ><span> <i class="ti ti-edit"></i> </span
-              ></a> -->
-              <form
+                ><span> <i class="ti ti-edit"></i> Edit </span></a
+              >
+              <!-- <form
                 method="post"
                 action="{{ url_for('product_blueprint.delete_product', itemCode=item.itemCode) }}"
                 onsubmit="return deleteProductConfirmation('{{ item.name }}')"
@@ -60,7 +60,7 @@
                 >
                   <span><i class="ti ti-trash"></i> Hapus</span>
                 </button>
-              </form>
+              </form> -->
             </div>
           </td>
           <!-- <td>

@@ -19,7 +19,9 @@ def store():
     new_item = Product(
         itemCode = request_form['itemCode'],
         name = request_form['name'],
-        price = request_form['price'],
+        # price = request_form['price'],
+        price = 0,
+        unit=""
         )
     
     db.session.add(new_item)
@@ -44,9 +46,12 @@ def update(itemCode):
     product = Product.query.get(itemCode)
     
     product.name = request_form['name']
-    product.price = request_form['price']
+    # product.price = request_form['price']
+    product.price = 0
 
     db.session.commit()
+    
+    flash('Barang dengan kode \'{}\' berhasil diperbarui.'.format(product.itemCode))
     
     return redirect(url_for('product_blueprint.list_product'))
 
