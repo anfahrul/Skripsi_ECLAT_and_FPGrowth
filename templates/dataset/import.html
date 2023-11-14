@@ -29,9 +29,16 @@ block content %}
 
 <div class="card">
   <div class="card-body">
-    {% with messages = get_flashed_messages() %} {% if messages %}
+    <!-- {% with messages = get_flashed_messages() %} {% if messages %}
     <div class="alert alert-success" role="alert">{{ messages[0] }}</div>
-    {% endif %} {% endwith %}
+    {% endif %} {% endwith %} -->
+
+    {% with messages = get_flashed_messages() %} {% if messages %} {% if
+    messages[0] == 'Data transaksi penjualan berhasil diimport.' %}
+    <div class="alert alert-success" role="alert">{{ messages[0] }}</div>
+    {% else %}
+    <div class="alert alert-warning" role="alert">{{ messages[0] }}</div>
+    {% endif %} {% endif %} {% endwith %}
 
     <h5>Formulir</h5>
 
