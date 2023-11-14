@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, flash
 from app import db
 from src import utils
 import uuid
@@ -55,6 +55,8 @@ def storeTrans():
 
     new_transaction.total_price = total_price
     db.session.commit()
+    
+    flash('Transaksi baru berhasil ditambahkan.')
     
     return redirect(url_for('transaction_blueprint.list_transaction'))
 

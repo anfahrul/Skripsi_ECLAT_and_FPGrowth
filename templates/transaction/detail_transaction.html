@@ -23,12 +23,12 @@
             {{ transaction.date }}
           </td>
         </tr>
-        <tr>
+        <!-- <tr>
           <th scope="row" style="padding: 5px 0px !important">Total Bayar</th>
           <td id="totalPrice" style="padding: 5px 0px !important">
             {{ transaction.total_price }}
           </td>
-        </tr>
+        </tr> -->
       </tbody>
     </table>
 
@@ -51,9 +51,9 @@
           <th scope="col">No</th>
           <th scope="col">Kode Barang</th>
           <th scope="col">Nama Barang</th>
-          <th scope="col">Harga Jual</th>
+          <!-- <th scope="col">Harga Jual</th>
           <th scope="col">Kuantitas</th>
-          <th scope="col">Sub Total</th>
+          <th scope="col">Sub Total</th> -->
         </tr>
       </thead>
       <tbody>
@@ -62,9 +62,9 @@
           <td>{{ loop.index }}</td>
           <td>{{ item.itemCode }}</td>
           <td>{{ itemName }}</td>
-          <td id="itemPrice">{{ itemPrice }}</td>
+          <!-- <td id="itemPrice">{{ itemPrice }}</td>
           <td>{{ item.quantity }}</td>
-          <td id="subTotalPrice">{{ itemPrice * item.quantity }}</td>
+          <td id="subTotalPrice">{{ itemPrice * item.quantity }}</td> -->
         </tr>
         {% endfor %}
       </tbody>

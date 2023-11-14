@@ -14,13 +14,17 @@
 
 <div class="card">
   <div class="card-body">
+    {% with messages = get_flashed_messages() %} {% if messages %}
+    <div class="alert alert-success" role="alert">{{ messages[0] }}</div>
+    {% endif %} {% endwith %}
+
     <table id="transactionData" class="table">
       <thead>
         <tr>
           <th scope="col">No</th>
           <th scope="col">No. Faktur</th>
           <th scope="col">Tanggal Transaksi</th>
-          <th scope="col">Total Bayar</th>
+          <!-- <th scope="col">Total Bayar</th> -->
           <th scope="col">Tindakan</th>
         </tr>
       </thead>
@@ -30,7 +34,7 @@
           <td>{{ loop.index }}</td>
           <td>{{ transaction.transaction_id }}</td>
           <td id="transactionDate">{{ transaction.date }}</td>
-          <td id="price">{{ transaction.total_price }}</td>
+          <!-- <td id="price">{{ transaction.total_price }}</td> -->
           <td>
             <div class="d-flex justify-content-left">
               <a
