@@ -1,6 +1,7 @@
 from optparse import OptionParser
 from src.models.product import Product
 from src.models.transaction import TransactionProduct, Transaction
+from memory_profiler import profile
 
 
 class Itemset:
@@ -88,6 +89,7 @@ class Eclat:
             self.eclat_mine(new_prefix, new_items, minsup, k + 1, frequent_itemsets)
     
     
+    # @profile
     def run(self):
         listOfItemInEachTransaction = self.read_data()
         self.prune_and_sort_items()

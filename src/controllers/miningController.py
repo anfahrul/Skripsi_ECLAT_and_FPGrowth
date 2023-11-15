@@ -9,6 +9,7 @@ from src.mining_algorithms.association_rule import associationRule, associationR
 from src.models.mining import MiningProcess, AssociationResult, AssociationResultProduct
 import datetime
 import uuid
+from memory_profiler import profile
 
 
 def eclatIndex():
@@ -128,7 +129,8 @@ def eclatMining():
     # minconf = 0.75
     
     eclatInstance = Eclat(minsup=minimumSupportFreq)
-    listOfItemInEachTransaction, verticalData, freqItems = eclatInstance.run()
+    # listOfItemInEachTransaction, verticalData, freqItems = eclatInstance.run()
+    listOfItemInEachTransaction, verticalData, freqItems = profile(eclatInstance.run)()
     
     rules = associationRule(freqItems, listOfItemInEachTransaction, minConf=minimumConfidenceRatio)
     

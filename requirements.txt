@@ -12,5 +12,6 @@ pyexcel-xlsx
 pyexcel-xls
 pyexcel-handsontable
 fpdf
+memory_profiler
 
 # -e .
