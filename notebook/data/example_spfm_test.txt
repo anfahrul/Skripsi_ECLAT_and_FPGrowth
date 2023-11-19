@@ -1,0 +1,11 @@
+@CONVERTED_FROM_TEXT
+@ITEM=111=apel
+@ITEM=222=belimbing
+@ITEM=333=ceri
+@ITEM=444=delima
+@ITEM=55=edamame
+@ITEM=65=fresa
+111 222 333
+111 333 444 55 66
+111 222 333
+444 55
