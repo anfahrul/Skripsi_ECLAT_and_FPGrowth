@@ -1,5 +1,5 @@
-{% extends 'base_admin.html' %} {% block title %} Detail Transaksi {% endblock
-%} {% block content %}
+{% extends 'base_admin.html' %} {% block title %} Detail Riwayat Analisis {%
+endblock %} {% block content %}
 
 <h3 class="mb-5">Detail Analisis</h3>
 
@@ -127,7 +127,11 @@
 {% endblock %} {% block scripts %}
 <script>
   $(document).ready(function () {
-    $("#associated_rules_history").DataTable();
+    $("#associated_rules_history").DataTable({
+      language: {
+        url: "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json",
+      },
+    });
   });
 
   $(document).ready(function () {

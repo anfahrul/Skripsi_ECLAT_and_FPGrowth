@@ -288,9 +288,9 @@
             {% endfor %}
           </td>
 
-          <td>{{ (rule.support / lenOfTransaction) * 100 }}</td>
-          <td>{{ rule.confidence * 100 }}</td>
-          <td>{{ rule.lift }}</td>
+          <td>{{ '%.2f' | format(rule.support / lenOfTransaction * 100) }}</td>
+          <td>{{ '%.2f' | format(rule.confidence * 100) }}</td>
+          <td>{{ '%.2f' | format(rule.lift) }}</td>
         </tr>
         {% endfor %}
       </tbody>
