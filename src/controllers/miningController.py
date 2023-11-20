@@ -96,8 +96,9 @@ def associateItemCodeWithName(rules):
             'confidence': confidence,
             'lift': lift
         })
-        
-    return associated_rules_with_names
+    
+    sorted_rules = sorted(associated_rules_with_names, key=lambda x: x['confidence'], reverse=True)
+    return sorted_rules
 
 
 def eclatMining():

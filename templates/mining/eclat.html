@@ -59,12 +59,12 @@ block content %}
             class="form-control"
             id="exampleFormControlInput1"
             placeholder="Contoh: 5"
-            step="1"
-            min="1"
+            step="0.0001"
+            min="0.0001"
             max="100"
             required
           />
-          <div id="itemCode" class="form-text">Range 1 sampai 100</div>
+          <div id="itemCode" class="form-text">Range 0.0001 sampai 100</div>
         </div>
         <div class="p-2 d-flex flex-column">
           <label for="exampleFormControlInput1">Minimum Confidence (%)</label>
@@ -189,7 +189,7 @@ block content %}
   <div class="card-body">
     <h5 class="card-title fw-semibold mb-4">Frequent {{key}}-Itemset</h5>
 
-    <table id="frequentKItemset" class="table display">
+    <table id="frequentKItemset" class="table display frequentKItemset">
       <thead>
         <tr>
           <th scope="col">No</th>
@@ -234,7 +234,7 @@ block content %}
       {% else %}
       <div>
         <div class="alert alert-warning" role="alert">
-          Hasil analisis tidak bisa didownload, tidak tersimpan ke basis data!
+          Fitur download hasil analisis dinonaktifkan!
         </div>
       </div>
       {% endif %}
@@ -281,10 +281,6 @@ block content %}
     <div class="d-flex justify-content-between">
       <div class="p-2">Waktu Eksekusi</div>
       <div class="p-2"><b>{{ execution_time }}</b> Detik</div>
-    </div>
-    <div class="d-flex justify-content-between">
-      <div class="p-2">Konsumsi Memori</div>
-      <div class="p-2"><b>{{ mem_usage_result }}</b> Kilobyte</div>
     </div>
   </div>
 </div>
@@ -350,11 +346,33 @@ block content %}
 {% endblock %} {% block scripts %}
 <script>
   $(document).ready(function () {
-    $("#verticalData").DataTable();
+    $("#verticalData").DataTable({
+      language: {
+        url: "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json",
+      },
+    });
   });
-  
+
+
   $(document).ready(function () {
-    $("#associated_rules").DataTable();
+    $(".frequentKItemset").DataTable({
+      language: {
+        url: "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json",
+      },
+    });
+  });
+
+  // $(document).ready(function () {
+  //   // Inisialisasi DataTable untuk semua elemen tabel dengan kelas "frequentKItemset"
+  //   $(".frequentKItemset").DataTable();
+  // });
+
+  $(document).ready(function () {
+    $("#associated_rules").DataTable({
+      language: {
+        url: "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json",
+      },
+    });
   });
 
   document.querySelector("form").addEventListener("submit", function () {
