@@ -1,5 +1,23 @@
-{% extends 'base_admin.html' %} {% block title %} Analisis ECLAT {% endblock %} {%
-block content %}
+{% extends 'base_admin.html' %} {% block title %} Analisis ECLAT {% endblock %}
+
+{% block styles %} 
+<style>
+  .sticky-top-section {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    background-color: white; /* Ganti dengan warna latar belakang yang sesuai */
+    z-index: 1000; /* Sesuaikan z-index agar elemen tetap di atas elemen lainnya */
+  }
+
+  .card-no-margin {
+    margin-bottom: 0px !important;
+  }
+</style>
+
+{% endblock %}
+
+{% block content %}
 
 <h3 class="mb-5">Analisis Algoritma ECLAT</h3>
 
@@ -59,12 +77,12 @@ block content %}
             class="form-control"
             id="exampleFormControlInput1"
             placeholder="Contoh: 5"
-            step="0.0001"
-            min="0.0001"
+            step="0.01"
+            min="0.01"
             max="100"
             required
           />
-          <div id="itemCode" class="form-text">Range 0.0001 sampai 100</div>
+          <div id="itemCode" class="form-text">Range 0.01 sampai 100</div>
         </div>
         <div class="p-2 d-flex flex-column">
           <label for="exampleFormControlInput1">Minimum Confidence (%)</label>
@@ -73,13 +91,13 @@ block content %}
             name="minimumConfidence"
             class="form-control"
             id="exampleFormControlInput1"
-            placeholder="Contoh: 70"
+            placeholder="Contoh: 60"
             step="1"
-            min="1"
+            min="60"
             max="100"
             required
           />
-          <div id="itemCode" class="form-text">Range 1 sampai 100</div>
+          <div id="itemCode" class="form-text">Range 60 sampai 100</div>
         </div>
 
         <div class="p-2 d-flex flex-column">
@@ -91,62 +109,68 @@ block content %}
 </div>
 
 {% if parameters %}
-<div class="row">
-  <div class="col-lg-4">
-    <div class="card border border-primary">
-      <div class="card-body">
-        <div class="row alig n-items-start">
-          <p class="text-dark fs-3">Periode Transaksi</p>
-          <div class="d-flex align-items-center pb-1">
-            <p>
-              <h5 class="card-title fw-semibold">
-                <span id="dateOfPeriod">{{parameters['startDate']}}</span>
-              </h5>
-              <h6>&nbsp;&nbsp;s/d&nbsp;&nbsp;</h6>
-              <h5 class="card-title fw-semibold">
-                <span id="dateOfPeriod">{{parameters['endDate']}}</span>
-              </h5>
-            </p>
+<div class="sticky-top-section">
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="card border border-primary card-no-margin">
+            <div class="card-body card-no-shadow">
+              <div class="row alig n-items-start">
+                <p class="text-dark fs-3">Periode Transaksi</p>
+                <div class="d-flex align-items-center pb-1">
+                  <p>
+                    <h5 class="card-title fw-semibold">
+                      <span id="dateOfPeriod">{{parameters['startDate']}}</span>
+                    </h5>
+                    <h6>&nbsp;&nbsp;s/d&nbsp;&nbsp;</h6>
+                    <h5 class="card-title fw-semibold">
+                      <span id="dateOfPeriod">{{parameters['endDate']}}</span>
+                    </h5>
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-lg-2">
-    <div class="card border border-primary">
-      <div class="card-body">
-        <div class="row alig n-items-start">
-          <p class="text-dark fs-3">Total Transaksi</p>
-          <div class="d-flex align-items-center pb-1">
-            <h5 class="card-title fw-semibold">{{lenOfTransaction}}</h5>
+        <div class="col-lg-2">
+          <div class="card border border-primary card-no-margin">
+            <div class="card-body">
+              <div class="row alig n-items-start">
+                <p class="text-dark fs-3">Total Transaksi</p>
+                <div class="d-flex align-items-center pb-1">
+                  <h5 class="card-title fw-semibold">{{lenOfTransaction}}</h5>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-lg-3">
-    <div class="card border border-primary">
-      <div class="card-body">
-        <div class="row alig n-items-start">
-          <p class="text-dark fs-3">Minimum Support</p>
-          <div class="d-flex align-items-center pb-1">
-            <h5 class="card-title fw-semibold">
-              {{parameters['minimumSupport']}}%
-            </h5>
+        <div class="col-lg-3">
+          <div class="card border border-primary card-no-margin">
+            <div class="card-body">
+              <div class="row alig n-items-start">
+                <p class="text-dark fs-3">Minimum Support</p>
+                <div class="d-flex align-items-center pb-1">
+                  <h5 class="card-title fw-semibold">
+                    {{parameters['minimumSupport']}}%
+                  </h5>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-lg-3">
-    <div class="card border border-primary">
-      <div class="card-body">
-        <div class="row alig n-items-start">
-          <p class="text-dark fs-3">Minimum Confidence</p>
-          <div class="d-flex align-items-center pb-1">
-            <h5 class="card-title fw-semibold">
-              {{parameters['minimumConfidence']}}%
-            </h5>
+        <div class="col-lg-3">
+          <div class="card border border-primary card-no-margin">
+            <div class="card-body">
+              <div class="row alig n-items-start">
+                <p class="text-dark fs-3">Minimum Confidence</p>
+                <div class="d-flex align-items-center pb-1">
+                  <h5 class="card-title fw-semibold">
+                    {{parameters['minimumConfidence']}}%
+                  </h5>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
