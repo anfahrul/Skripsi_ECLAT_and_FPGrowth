@@ -87,35 +87,115 @@ def getSupport(testSet, itemSetList):
 
 #     return rules
 
+# Code Sebelumnya 
+# def associationRule(freqItemSetDict, itemSetList, minConf):
+#     rules = {}
+    
+#     # Menghitung dukungan setiap itemset dalam freqItemSet
+#     itemSetSupport = {}
+#     for k, itemSets in freqItemSetDict.items():
+#         for itemSet, support, tids in itemSets:
+#             itemSetTuple = frozenset(itemSet)  # Konversi set menjadi frozenset
+#             itemSetSupport[itemSetTuple] = support
+            
+#     for k, itemSets in freqItemSetDict.items():
+#         for itemSet, support, tids in itemSets:
+#             subsets = powerset(itemSet)
+#             itemSetSup = itemSetSupport[frozenset(itemSet)]  # Mengambil dukungan itemSet
+
+#             for s in subsets:
+#                 s_tuple = frozenset(s)
+#                 if s_tuple in itemSetSupport and itemSetSupport[s_tuple] > 0:
+#                     confidence = float(itemSetSup / itemSetSupport[s_tuple])
+#                     if confidence >= minConf:
+#                         # Hitung Lift Ratio
+#                         lift_ratio = confidence / (itemSetSupport[frozenset(itemSet.difference(s))] / len(itemSetList))
+                        
+#                         # Buat key untuk aturan asosiasi
+#                         rule_key = (frozenset(s), frozenset(itemSet.difference(s)))
+                        
+#                         rules[rule_key] = [support, confidence, lift_ratio]
+
+#     return rules
+
+
+# def associationRule(freqItemSetDict, itemSetList, minConf):
+#     rules = {}
+
+#     # Menghitung dukungan setiap itemset dalam freqItemSet
+#     itemSetSupport = {}
+#     for k, itemSets in freqItemSetDict.items():
+#         for itemSet, support, tids in itemSets:
+#             itemSetTuple = tuple(itemSet)
+#             itemSetSupport[itemSetTuple] = support
+
+#     print("itemSetSupport", itemSetSupport)
+#     for k, itemSets in freqItemSetDict.items():
+#         for itemSet, support, tids in itemSets:
+#             subsets = powerset(itemSet)
+#             itemSetSup = itemSetSupport[tuple(itemSet)]  # Mengambil dukungan itemSet
+
+#             for s in subsets:
+#                 s_set = set(s)
+#                 s_set_tuple = tuple(s_set)  # Konversi set ke tuple
+#                 # print("s_set_tuple", s_set_tuple)
+#                 if s_set_tuple in itemSetSupport and itemSetSupport[s_set_tuple] > 0:
+#                     confidence = float(itemSetSup / itemSetSupport[s_set_tuple])
+#                     if confidence >= minConf:
+#                         # Hitung Lift Ratio
+#                         s_difference = set(itemSet).difference(s_set)
+#                         s_difference_tuple = tuple(sorted(s_difference))  # Konversi set ke tuple, diurutkan agar selalu konsisten
+#                         lift_ratio = confidence / (itemSetSupport[s_difference_tuple] / len(itemSetList))
+
+#                         # Buat key untuk aturan asosiasi
+#                         rule_key = (tuple(s), s_difference_tuple)
+
+#                         rules[rule_key] = [support, confidence, lift_ratio]
+
+#     return rules
+
+
+
 def associationRule(freqItemSetDict, itemSetList, minConf):
     rules = {}
-    
+
     # Menghitung dukungan setiap itemset dalam freqItemSet
     itemSetSupport = {}
     for k, itemSets in freqItemSetDict.items():
         for itemSet, support, tids in itemSets:
-            itemSetTuple = frozenset(itemSet)  # Konversi set menjadi frozenset
+            itemSetTuple = tuple(itemSet)
             itemSetSupport[itemSetTuple] = support
-            
-    for k, itemSets in freqItemSetDict.items():
-        for itemSet, support, tids in itemSets:
-            subsets = powerset(itemSet)
-            itemSetSup = itemSetSupport[frozenset(itemSet)]  # Mengambil dukungan itemSet
 
-            for s in subsets:
-                s_tuple = frozenset(s)
-                if s_tuple in itemSetSupport and itemSetSupport[s_tuple] > 0:
-                    confidence = float(itemSetSup / itemSetSupport[s_tuple])
-                    if confidence >= minConf:
-                        # Hitung Lift Ratio
-                        lift_ratio = confidence / (itemSetSupport[frozenset(itemSet.difference(s))] / len(itemSetList))
-                        
-                        # Buat key untuk aturan asosiasi
-                        rule_key = (frozenset(s), frozenset(itemSet.difference(s)))
-                        
-                        rules[rule_key] = [support, confidence, lift_ratio]
+    for itemSetTuple in itemSetSupport.keys():
+        print("itemSetTuple", itemSetTuple)
+        
+        itemSet = set(itemSetTuple)
+        print("itemset", itemSet)
+        
+        itemSetSup = itemSetSupport[itemSetTuple]
+        
+        subsets = powerset(itemSetTuple)
+
+        for s in subsets:
+            s_set = set(s)
+            s_set_tuple = tuple(s_set)
+            
+            if s_set_tuple in itemSetSupport and itemSetSupport[s_set_tuple] > 0:
+                confidence = float(itemSetSup / itemSetSupport[s_set_tuple])
+
+                if confidence >= minConf:
+                    # Hitung Lift Ratio
+                    s_difference = itemSet.difference(s_set)
+                    s_difference_tuple = tuple(sorted(s_difference))
+                    lift_ratio = confidence / (itemSetSupport[s_difference_tuple] / len(itemSetList))
+
+                    # Buat key untuk aturan asosiasi
+                    rule_key = (tuple(s_set), s_difference_tuple)
+
+                    rules[rule_key] = [itemSetSupport[itemSetTuple], confidence, lift_ratio]
 
     return rules
+
 
 
 def associationRuleFpGrowth(freqentItemset, listOfItemset, minConf):

@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect, url_for, flash
 import time
 from app import db
-from src.models.transaction import Transaction
+from src.models.transaction import Transaction, TransactionProduct
 from src.models.product import Product
 from src.mining_algorithms.eclat import Eclat
 from src.mining_algorithms.fpgrowth import FPGrowth
@@ -118,23 +118,31 @@ def eclatMining():
         }
     
     # transactions = Transaction.query.all()
-    transactions_in_period = Transaction.query.filter(Transaction.date.between(startDate, endDate)).all()
-    lenOfTransaction = len(transactions_in_period)
+    lenOfTransaction = Transaction.query.filter(Transaction.date.between(startDate, endDate)).count()
+    transactions_in_period = (
+        db.session.query(TransactionProduct)
+        .join(Transaction, TransactionProduct.transaction_id == Transaction.transaction_id)
+        .filter(Transaction.date.between(startDate, endDate))
+        .all()
+    )
+    
+    # lenOfTransaction = len(transactions_in_period)
     if lenOfTransaction <=0:
         flash('Tidak ada transaksi pada periode tersebut.')
         return render_template("mining/eclat.html")
     
-    minimumSupportFreq = (minimumSupport / 100) * len(transactions_in_period)
+    minimumSupportFreq = (minimumSupport / 100) * lenOfTransaction
     minimumConfidenceRatio = minimumConfidence / 100
     # minsup = 2
     # minconf = 0.75
     
     eclatInstance = Eclat(minsup=minimumSupportFreq)
-    # listOfItemInEachTransaction, verticalData, freqItems = eclatInstance.run()
-    listOfItemInEachTransaction, verticalData, freqItems = profile(eclatInstance.run)()
+    listOfItemInEachTransaction = eclatInstance.read_data(transactions_in_period)
+    # verticalData, freqItems = eclatInstance.run()
+    verticalData, freqItems = profile(eclatInstance.run)()
     
     rules = associationRule(freqItems, listOfItemInEachTransaction, minConf=minimumConfidenceRatio)
-    
+    # rules = ""
     # time.sleep(2) 
     end_time = time.time()
     execution_time = end_time - start_time
