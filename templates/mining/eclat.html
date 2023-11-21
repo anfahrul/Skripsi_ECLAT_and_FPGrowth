@@ -322,7 +322,7 @@
 <div id="loading" class="loading">
   <!-- <p>Loading...</p> -->
   <div class="spinner"></div>
-  <p id="countdown">0 seconds</p>
+  <p id="loading-time">0 detik</p>
 </div>
 
 <style>
@@ -348,10 +348,11 @@
     animation: spin 1s linear infinite;
   }
 
-  #countdown {
+  #loading-time {
     /* margin-top: 10px; */
     font-size: 16px;
     color: white;
+    display: none;
   }
 
   @keyframes spin {
@@ -363,18 +364,6 @@
     }
   }
 </style>
-
-<!-- <script>
-  document.querySelector("form").addEventListener("submit", function () {
-    // Show the loading animation
-    document.getElementById("loading").style.display = "flex";
-
-    // Set a timeout to hide the loading animation after 5 seconds
-    setTimeout(function () {
-      document.getElementById("loading").style.display = "none";
-    }, 5000); // 5000 milliseconds = 5 seconds
-  });
-</script> -->
 
 {% endblock %} {% block scripts %}
 <script>
@@ -443,4 +432,5 @@
     element.textContent = formattedDate;
   });
 </script>
+
 {% endblock %}
