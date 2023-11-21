@@ -33,34 +33,22 @@ class Eclat:
 
         list_of_items_in_each_transaction = list(items_in_each_transaction.values())
         
+        
+        print("Finish reading the data")
         return list_of_items_in_each_transaction
 
     
-    def prune_and_sort_items(self):
-        # keys_to_delete = [key for key, itemset in self.vertical_data.items() if itemset.support < self.minsup]
-
-        # for key in keys_to_delete:
-        #     del self.vertical_data[key]
-
-        # self.vertical_data = {k: v for k, v in sorted(self.vertical_data.items(), key=lambda item: item[1].support)}
-        
+    def prune_items(self):
         self.vertical_data = {k: v for k, v in self.vertical_data.items() if v.support >= self.minsup}
 
         sorted_items = sorted(self.vertical_data.items(), key=lambda item: item[1].support)
-        self.vertical_data = dict(sorted_items)        
+        self.vertical_data = dict(sorted_items)
+        print("Finish pruning the data")  
     
-    # def calculate_support(self, itemset):
-    #     common_tids = set()
-
-    #     if itemset:
-    #         common_tids = set(self.vertical_data[itemset[0]].tids)
-
-    #         for item in itemset[1:]:
-    #             common_tids.intersection_update(self.vertical_data[item].tids)
-
-    #     return len(common_tids), common_tids
-
-
+    
+    def sorting_item_freq(self):
+        return sorted(self.vertical_data, key=lambda item: self.vertical_data[item].support)
+    
 
     def calculate_support(self, itemset):
         common_tids = None
@@ -75,125 +63,31 @@ class Eclat:
         return len(common_tids), common_tids
     
     
+    # STABLE VERSION
     # def eclat_mine(self, prefix, diff_items, minsup, k, frequent_itemsets):
     #     support, common_tids = self.calculate_support(prefix)
 
     #     if support >= minsup:
     #         frequent_itemsets[k] = frequent_itemsets.get(k, [])
-    #         itemset_data = (frozenset(prefix), support, common_tids)
+    #         itemset_data = (tuple(prefix), support, common_tids)
     #         if itemset_data not in frequent_itemsets[k]:
     #             frequent_itemsets[k].append(itemset_data)
 
     #     if support < minsup or k < 1:
     #         return
 
-    #     for item in diff_items:
-    #         new_prefix = prefix | {item}
-    #         new_items = diff_items.difference({item})
-
-    #         self.eclat_mine(new_prefix, new_items, minsup, k + 1, frequent_itemsets)
-    
-    
-    # def eclat_mine(self, prefix, diff_items, minsup, k, frequent_itemsets):
-    #     support, common_tids = self.calculate_support(prefix)
-
-    #     if support >= minsup:
-    #         frequent_itemsets[k] = frequent_itemsets.get(k, [])
-    #         itemset_data = (frozenset(prefix), support, common_tids)
-    #         if itemset_data not in frequent_itemsets[k]:
-    #             frequent_itemsets[k].append(itemset_data)
-
-    #     if support < minsup or k < 1:
-    #         return
-
-    #     print("test k:", k, " prefix:", prefix, " diff:", diff_items)
-    #     for i in range(len(diff_items)):
-    #         # Lakukan deep-first search untuk setiap item di diff_items
-    #         item = diff_items[i]
-    #         new_prefix = prefix | {item}
-    #         new_items = diff_items[i+1:]
-
-    #         self.eclat_mine(new_prefix, new_items, minsup, k + 1, frequent_itemsets)
-
-    
-    # def eclat_mine(self, prefix, diff_items, minsup, k, frequent_itemsets):
-    #     support, common_tids = self.calculate_support(prefix)
-
-    #     if support >= minsup:
-    #         frequent_itemsets[k] = frequent_itemsets.get(k, [])
-    #         itemset_data = (frozenset(prefix), support, common_tids)
-    #         if itemset_data not in frequent_itemsets[k]:
-    #             frequent_itemsets[k].append(itemset_data)
-
-    #     if support < minsup or k < 1:
-    #         return
-
-    #     print("test k:", k, " prefix:", prefix, " diff:", diff_items)
-    #     # Urutkan diff_items berdasarkan support
-    #     diff_items = sorted(diff_items, key=lambda item: self.vertical_data[item].support, reverse=True)
-
-    #     for i in range(len(diff_items)):
-    #         # Lakukan deep-first search untuk setiap item di diff_items
-    #         item = diff_items[i]
-    #         new_prefix = prefix | {item}
-    #         new_items = diff_items[:i] + diff_items[i+1:]
-
-    #         self.eclat_mine(new_prefix, new_items, minsup, k + 1, frequent_itemsets)
-
-
-    # def eclat_mine(self, prefix, diff_items, minsup, k, frequent_itemsets):
-    #     support, common_tids = self.calculate_support(prefix)
-
-    #     if support >= minsup:
-    #         frequent_itemsets[k] = frequent_itemsets.get(k, [])
-    #         itemset_data = (frozenset(prefix), support, common_tids)
-    #         if itemset_data not in frequent_itemsets[k]:
-    #             frequent_itemsets[k].append(itemset_data)
-
-    #     if support < minsup or k < 1:
-    #         return
-
-    #     print("test k:", k, " prefix:", prefix, " diff:", diff_items)
-    #     # Urutkan diff_items berdasarkan support secara ascending
-    #     diff_items = sorted(diff_items, key=lambda item: self.vertical_data[item].support)
-
-    #     for i in range(len(diff_items)):
-    #         # Lakukan deep-first search untuk setiap item di diff_items
-    #         item = diff_items[i]
-    #         new_prefix = prefix | {item}
-    #         new_items = sorted(diff_items[i+1:], key=lambda x: self.vertical_data[x].support)
-
-    #         self.eclat_mine(new_prefix, new_items, minsup, k + 1, frequent_itemsets)
-
-
-    # Hampir benar
-    # def eclat_mine(self, prefix, diff_items, minsup, k, frequent_itemsets):
-    #     support, common_tids = self.calculate_support(prefix)
-
-    #     if support >= minsup:
-    #         frequent_itemsets[k] = frequent_itemsets.get(k, [])
-    #         itemset_data = (frozenset(prefix), support, common_tids)
-    #         if itemset_data not in frequent_itemsets[k]:
-    #             frequent_itemsets[k].append(itemset_data)
-
-    #     if support < minsup or k < 1:
-    #         return
-
-
-    #     sorted_diff_items = sorted(diff_items, key=lambda item: self.vertical_data[item].support)
-    #     print("test k:", k, " prefix:", prefix, " diff:", sorted_diff_items)
+    #     item_info = [(item, self.vertical_data[item].support) for item in diff_items]
+    #     item_info.sort(key=lambda x: x[1])
         
-    #     for i, prefix_item in enumerate(sorted_diff_items):
-    #         # Lakukan deep-first search untuk setiap item di diff_items
-    #         new_prefix = list(prefix)  # Konversi tuple ke list untuk mempertahankan urutan
+    #     for i, (prefix_item, _) in enumerate(item_info):
+    #         new_prefix = list(prefix)
     #         new_prefix.append(prefix_item)
-    #         # print("new prefix", new_prefix)
-            
-    #         new_diff_items = sorted(set(sorted_diff_items[i+1:]), key=lambda item: sorted_diff_items.index(item))
 
+    #         new_diff_items = [item for item, _ in item_info[i+1:]]
     #         self.eclat_mine(tuple(new_prefix), new_diff_items, minsup, k + 1, frequent_itemsets)
     
     
+    # TESTING VERSION
     def eclat_mine(self, prefix, diff_items, minsup, k, frequent_itemsets):
         support, common_tids = self.calculate_support(prefix)
 
@@ -202,44 +96,27 @@ class Eclat:
             itemset_data = (tuple(prefix), support, common_tids)
             if itemset_data not in frequent_itemsets[k]:
                 frequent_itemsets[k].append(itemset_data)
-        
-        
+
         if support < minsup or k < 1:
             return
 
-
-        sorted_diff_items = sorted(diff_items, key=lambda item: self.vertical_data[item].support)
-        # print("test k:", k, " prefix:", prefix, " diff:", sorted_diff_items)
-        
-        for i, prefix_item in enumerate(sorted_diff_items):
-            # Lakukan deep-first search untuk setiap item di diff_items
-            new_prefix = list(prefix)  # Konversi tuple ke list untuk mempertahankan urutan
+        for i, prefix_item in enumerate(diff_items):
+            new_prefix = list(prefix)
             new_prefix.append(prefix_item)
-            # print("new prefix", new_prefix)
-            
-            new_diff_items = sorted(set(sorted_diff_items[i+1:]), key=lambda item: sorted_diff_items.index(item))
 
+            new_diff_items = diff_items[i+1:]
             self.eclat_mine(tuple(new_prefix), new_diff_items, minsup, k + 1, frequent_itemsets)
- 
+
     
     def run(self):
-        self.prune_and_sort_items()
+        print("Running ECLAT Algorithm")
+        self.prune_items()
         frequent_itemsets = {} 
         
-        sorted_items = sorted(self.vertical_data, key=lambda item: self.vertical_data[item].support)
+        sorted_items = self.sorting_item_freq()
         for i, prefix_item in enumerate(sorted_items):
-            diff_items = sorted(set(sorted_items[i+1:]), key=lambda item: sorted_items.index(item))
+            diff_items = sorted_items[i+1:]
             self.eclat_mine({prefix_item}, diff_items, self.minsup, 1, frequent_itemsets)
-            # print({prefix_item}, diff_items)
         
-        # print("frequent_itemsets", frequent_itemsets)
-        
-        # for k, v in self.vertical_data.items():
-        #     self.eclat_mine({k}, items.difference({k}), self.minsup, 1, frequent_itemsets)
-        
-        # items = set(self.vertical_data.keys())
-
-        # for item in items:
-        #     self.eclat_mine({item}, items.difference({item}), self.minsup, 1, frequent_itemsets)
-
+        print("ECLAT Algorithm mining successfully")
         return self.vertical_data, frequent_itemsets

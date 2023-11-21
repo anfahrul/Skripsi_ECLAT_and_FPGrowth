@@ -29,7 +29,8 @@ def doImportFile():
             for index, row in df.iterrows():
                 transaction_id = str(row['No. Faktur'])
                 date = row['Tanggal Transaksi']
-                start_date_obj = datetime.strptime(date, '%d/%m/%Y')
+                date_str = date.strftime('%d/%m/%Y')
+                start_date_obj = datetime.strptime(date_str, '%d/%m/%Y')
                 start_date_iso_format = start_date_obj.strftime('%Y-%m-%d')
                 item_code = str(row['Kode Barang'])
                 name = row['Nama Barang']

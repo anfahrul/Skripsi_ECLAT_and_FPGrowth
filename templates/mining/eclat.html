@@ -297,14 +297,14 @@
     </table>
   </div>
 </div>
-{% endif %} {% if execution_time %}
+{% endif %} {% if execution_time_res %}
 <div class="card" id="card-time">
   <div class="card-body">
     <h5 class="card-title fw-semibold mb-4">Hasil Lainnya</h5>
 
     <div class="d-flex justify-content-between">
       <div class="p-2">Waktu Eksekusi</div>
-      <div class="p-2"><b>{{ execution_time }}</b> Detik</div>
+      <div class="p-2"><b>{{ execution_time_res }}</b> &nbsp;{{ execution_time_unit }} </div>
     </div>
   </div>
 </div>
@@ -313,7 +313,7 @@
 <div id="loading" class="loading">
   <!-- <p>Loading...</p> -->
   <div class="spinner"></div>
-  <!-- <p id="countdown">0 seconds</p> -->
+  <p id="countdown">0 seconds</p>
 </div>
 
 <style>

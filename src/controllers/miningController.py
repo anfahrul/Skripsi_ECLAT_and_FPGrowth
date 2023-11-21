@@ -101,6 +101,26 @@ def associateItemCodeWithName(rules):
     return sorted_rules
 
 
+def formattingExecutionTime(execution_time):
+    display_time = 0.0
+    unit = ""
+    
+    if execution_time < 1:
+        display_time = execution_time * 1000
+        unit = "milidetik"
+    elif execution_time < 60:
+        display_time = execution_time
+        unit = "detik"
+    elif execution_time < 3600:
+        display_time = execution_time / 60
+        unit = "menit"
+    else:
+        display_time = execution_time / 3600
+        unit = "jam"
+    
+    return display_time, unit
+    
+
 def eclatMining():
     start_time = time.time()
 
@@ -117,7 +137,6 @@ def eclatMining():
         'minimumConfidence': minimumConfidence
         }
     
-    # transactions = Transaction.query.all()
     lenOfTransaction = Transaction.query.filter(Transaction.date.between(startDate, endDate)).count()
     transactions_in_period = (
         db.session.query(TransactionProduct)
@@ -126,26 +145,22 @@ def eclatMining():
         .all()
     )
     
-    # lenOfTransaction = len(transactions_in_period)
-    if lenOfTransaction <=0:
+    if lenOfTransaction <= 0:
         flash('Tidak ada transaksi pada periode tersebut.')
         return render_template("mining/eclat.html")
     
     minimumSupportFreq = (minimumSupport / 100) * lenOfTransaction
     minimumConfidenceRatio = minimumConfidence / 100
-    # minsup = 2
-    # minconf = 0.75
-    
     eclatInstance = Eclat(minsup=minimumSupportFreq)
     listOfItemInEachTransaction = eclatInstance.read_data(transactions_in_period)
     # verticalData, freqItems = eclatInstance.run()
     verticalData, freqItems = profile(eclatInstance.run)()
     
-    rules = associationRule(freqItems, listOfItemInEachTransaction, minConf=minimumConfidenceRatio)
-    # rules = ""
-    # time.sleep(2) 
     end_time = time.time()
     execution_time = end_time - start_time
+    execution_time_res, execution_time_unit = formattingExecutionTime(execution_time)
+    
+    rules = associationRule(freqItems, listOfItemInEachTransaction, minConf=minimumConfidenceRatio)
 
     # mining_process_id = eclatStoreMining(startDate, endDate, minimumSupport, minimumConfidence, rules, lenOfTransaction, execution_time)
     mining_process_id = 'test123'
@@ -165,7 +180,8 @@ def eclatMining():
                            associated_rules=associated_rules_with_names,
                            mining_process_id=mining_process_id,
                            freqItems=freqItems,
-                           execution_time=execution_time)
+                           execution_time_res=execution_time_res,
+                           execution_time_unit=execution_time_unit)
     
 
 def fpGrowthIndex():
