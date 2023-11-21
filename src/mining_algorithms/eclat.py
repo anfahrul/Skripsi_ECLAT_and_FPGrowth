@@ -12,9 +12,10 @@ class Itemset:
         
 
 class Eclat:
-    def __init__(self, minsup):
+    def __init__(self, minsup, verbose):
         self.minsup = minsup
         self.vertical_data = {}
+        self.verbose = verbose
 
     def read_data(self, transactions):
         self.vertical_data = {}
@@ -107,16 +108,47 @@ class Eclat:
             new_diff_items = diff_items[i+1:]
             self.eclat_mine(tuple(new_prefix), new_diff_items, minsup, k + 1, frequent_itemsets)
 
+            
+    def eclat_mine_without_verbose(self, prefix, diff_items, minsup, frequent_itemsets):
+        support, common_tids = self.calculate_support(prefix)
+
+        if support >= minsup:
+            itemset_data = (tuple(prefix), support, common_tids)
+            frequent_itemsets.append(itemset_data)
+
+        if support < minsup or not diff_items:
+            return
+
+        for i, prefix_item in enumerate(diff_items):
+            new_prefix = list(prefix)
+            new_prefix.append(prefix_item)
+
+            new_diff_items = diff_items[i+1:]
+            self.eclat_mine_without_verbose(tuple(new_prefix), new_diff_items, minsup, frequent_itemsets)
+
+
     
     def run(self):
         print("Running ECLAT Algorithm")
         self.prune_items()
-        frequent_itemsets = {} 
         
         sorted_items = self.sorting_item_freq()
-        for i, prefix_item in enumerate(sorted_items):
-            diff_items = sorted_items[i+1:]
-            self.eclat_mine({prefix_item}, diff_items, self.minsup, 1, frequent_itemsets)
         
-        print("ECLAT Algorithm mining successfully")
-        return self.vertical_data, frequent_itemsets
+        if self.verbose == True:
+            frequent_itemsets = {}
+            for i, prefix_item in enumerate(sorted_items):
+                diff_items = sorted_items[i+1:]
+                self.eclat_mine({prefix_item}, diff_items, self.minsup, 1, frequent_itemsets)
+            
+            print("ECLAT Algorithm mining successfully")
+            print(frequent_itemsets)
+            return self.vertical_data, frequent_itemsets
+        else:
+            frequent_itemsets = []
+            for i, prefix_item in enumerate(sorted_items):
+                diff_items = sorted_items[i+1:]
+                self.eclat_mine_without_verbose({prefix_item}, diff_items, self.minsup, frequent_itemsets)
+                
+            print("ECLAT Algorithm mining successfully")
+            return frequent_itemsets
+        

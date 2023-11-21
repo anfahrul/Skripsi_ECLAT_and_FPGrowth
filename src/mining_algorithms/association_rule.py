@@ -191,13 +191,63 @@ def associationRule(freqItemSetDict, itemSetList, minConf):
 
                     rule_key = (s_tuple, s_difference)
                     
+                    support = itemSetSup
+                    
                     rules[rule_key] = [
-                        itemSetSupport[itemSetTuple], 
+                        support, 
                         confidence, 
                         lift_ratio
                         ]
 
     return rules
+
+
+def associationRuleEclatWithoutVerbose(freqItemSetList, itemSetList, minConf):
+    rules = {}
+
+    # Menghitung dukungan setiap itemset dalam freqItemSet
+    itemSetSupport = {}
+    for itemSet, support, tids in freqItemSetList:
+        itemSetTuple = frozenset(itemSet)
+        itemSetSupport[itemSetTuple] = support
+
+    for itemSet, support, tids in freqItemSetList:
+        subsets = powerset(itemSet)
+        itemSetSup = itemSetSupport[frozenset(itemSet)]
+        
+        
+        for s in subsets:
+            s_tuple = frozenset(s)
+            
+            
+            if s_tuple in itemSetSupport and itemSetSupport[s_tuple] > 0:
+                # Menghitung dukungan itemset B
+                itemSet_B = tuple(item for item in itemSet if item not in s)
+                itemSet_B_support = itemSetSupport[frozenset(itemSet_B)]
+                
+                # print( "itemSetSup:", itemSetSup, "itemset A:", s_tuple, " supp A:", itemSetSupport[s_tuple])                
+                confidence = float(itemSetSup / itemSetSupport[s_tuple])
+
+                if confidence >= minConf:
+                    support_B = itemSet_B_support  # Tidak perlu dibagi len(itemSetList)
+                    # print("confidence", confidence, "B:", itemSet_B, "supp:", support_B)
+                    
+                    lift_ratio = confidence / (support_B / len(itemSetList))
+                    
+                    s_difference = frozenset(itemSet_B)
+
+                    rule_key = (s_tuple, s_difference)
+                    
+                    support = itemSetSup
+                    
+                    rules[rule_key] = [
+                        support, 
+                        confidence, 
+                        lift_ratio
+                    ]
+
+    return rules
+
 
 
 def associationRuleFpGrowth(freqentItemset, listOfItemset, minConf):

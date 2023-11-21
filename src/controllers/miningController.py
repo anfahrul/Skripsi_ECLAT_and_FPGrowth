@@ -5,7 +5,7 @@ from src.models.transaction import Transaction, TransactionProduct
 from src.models.product import Product
 from src.mining_algorithms.eclat import Eclat
 from src.mining_algorithms.fpgrowth import FPGrowth
-from src.mining_algorithms.association_rule import associationRule, associationRuleFpGrowth
+from src.mining_algorithms.association_rule import associationRule, associationRuleEclatWithoutVerbose, associationRuleFpGrowth
 from src.models.mining import MiningProcess, AssociationResult, AssociationResultProduct
 import datetime
 import uuid
@@ -129,6 +129,7 @@ def eclatMining():
     endDate = request_form['end-date']
     minimumSupport = float(request_form['minimumSupport'])
     minimumConfidence = float(request_form['minimumConfidence'])
+    verbose = bool(request.form.get('verbose'))
     
     parameters = {
         'startDate': startDate,
@@ -151,17 +152,32 @@ def eclatMining():
     
     minimumSupportFreq = (minimumSupport / 100) * lenOfTransaction
     minimumConfidenceRatio = minimumConfidence / 100
-    eclatInstance = Eclat(minsup=minimumSupportFreq)
+    eclatInstance = Eclat(minsup=minimumSupportFreq, verbose=verbose)
     listOfItemInEachTransaction = eclatInstance.read_data(transactions_in_period)
     # verticalData, freqItems = eclatInstance.run()
-    verticalData, freqItems = profile(eclatInstance.run)()
     
+    verticalData = {}
+    freqItems = {}
+    if verbose:
+        result = profile(eclatInstance.run)()
+        verticalDataRes, freqItemsRes = result
+        verticalData = verticalDataRes
+        freqItems = freqItemsRes
+    else:
+        result = profile(eclatInstance.run)()
+        freqItemsRes = result
+        freqItems = freqItemsRes
+
     end_time = time.time()
     execution_time = end_time - start_time
     execution_time_res, execution_time_unit = formattingExecutionTime(execution_time)
     
-    rules = associationRule(freqItems, listOfItemInEachTransaction, minConf=minimumConfidenceRatio)
+    if verbose:
+        rules = associationRule(freqItems, listOfItemInEachTransaction, minConf=minimumConfidenceRatio)
+    else:
+        rules = associationRuleEclatWithoutVerbose(freqItems, listOfItemInEachTransaction, minConf=minimumConfidenceRatio)
 
+    # print("rules", rules)
     # mining_process_id = eclatStoreMining(startDate, endDate, minimumSupport, minimumConfidence, rules, lenOfTransaction, execution_time)
     mining_process_id = 'test123'
     miningProcessIsExist = False
@@ -172,16 +188,27 @@ def eclatMining():
         
     associated_rules_with_names = associateItemCodeWithName(rules=rules)
     
-    return render_template("mining/eclat.html",
-                           parameters=parameters,
-                           verticalData=verticalData, 
-                           lenOfTransaction=lenOfTransaction, 
-                           miningProcessIsExist=miningProcessIsExist,
-                           associated_rules=associated_rules_with_names,
-                           mining_process_id=mining_process_id,
-                           freqItems=freqItems,
-                           execution_time_res=execution_time_res,
-                           execution_time_unit=execution_time_unit)
+    
+    if verbose:
+        return render_template("mining/eclat.html",
+                            parameters=parameters,
+                            verticalData=verticalData, 
+                            lenOfTransaction=lenOfTransaction, 
+                            miningProcessIsExist=miningProcessIsExist,
+                            associated_rules=associated_rules_with_names,
+                            mining_process_id=mining_process_id,
+                            freqItems=freqItems,
+                            execution_time_res=execution_time_res,
+                            execution_time_unit=execution_time_unit)
+    else:
+        return render_template("mining/eclat.html",
+                            parameters=parameters,
+                            lenOfTransaction=lenOfTransaction, 
+                            miningProcessIsExist=miningProcessIsExist,
+                            associated_rules=associated_rules_with_names,
+                            mining_process_id=mining_process_id,
+                            execution_time_res=execution_time_res,
+                            execution_time_unit=execution_time_unit)
     
 
 def fpGrowthIndex():
