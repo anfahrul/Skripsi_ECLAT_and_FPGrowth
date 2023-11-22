@@ -367,70 +367,44 @@
 
 {% endblock %} {% block scripts %}
 <script>
-  $(document).ready(function () {
-    $("#verticalData").DataTable({
-      language: {
-        url: "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json",
-      },
-    });
-  });
-
-
-  $(document).ready(function () {
-    $(".frequentKItemset").DataTable({
-      language: {
-        url: "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json",
-      },
-    });
-  });
-
-  // $(document).ready(function () {
-  //   // Inisialisasi DataTable untuk semua elemen tabel dengan kelas "frequentKItemset"
-  //   $(".frequentKItemset").DataTable();
-  // });
-
-  $(document).ready(function () {
-    $("#associated_rules").DataTable({
-      language: {
-        url: "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json",
-      },
-    });
-  });
-
   document.querySelector("form").addEventListener("submit", function () {
-    // Show the loading animation
-    document.getElementById("loading").style.display = "flex";
+  // Show the loading animation
+  Swal.fire({
+    title: "Proses Analisis",
+    html: "Berjalan <b></b> silahkan tunggu!",
+    timerProgressBar: true,
+    showConfirmButton: false,
+    allowOutsideClick: false,
+    timer: 0,
+    didOpen: () => {
+      Swal.showLoading();
+      const timer = Swal.getPopup().querySelector("b");
+      let elapsedTime = 0;
 
-    // Function to check for the presence of the "card-time" element
-    function checkCardTime() {
-      const cardTimeElement = document.getElementById("card-time");
-      if (cardTimeElement) {
-        // Hide the loading animation
-        document.getElementById("loading").style.display = "none";
-      } else {
-        // Continue checking until "card-time" element appears
-        setTimeout(checkCardTime, 500); // Check every 500 milliseconds
+      const timerInterval = setInterval(() => {
+        elapsedTime += 100;
+        const seconds = Math.floor(elapsedTime / 1000); // Menghitung detik
+        // timer.innerHTML = `Elapsed Time: ${seconds} seconds`;
+        timer.textContent = `${seconds} detik`;
+      }, 100);
+
+      // Function to check for the presence of the "card-time" element
+      function checkCardTime() {
+        const cardTimeElement = document.getElementById("card-time");
+        if (cardTimeElement) {
+          // Hide the loading animation
+          Swal.close();
+          clearInterval(timerInterval); // Clear the timer interval when the card-time element appears
+        } else {
+          // Continue checking until "card-time" element appears
+          setTimeout(checkCardTime, 500); // Check every 500 milliseconds
+        }
       }
-    }
 
-    // Start checking for the "card-time" element
-    checkCardTime();
+      // Start checking for the "card-time" element
+      checkCardTime();
+    },
   });
-
-  var transactionDateElements = document.querySelectorAll("#dateOfPeriod");
-
-  transactionDateElements.forEach(function (element) {
-    var dateString = element.textContent;
-
-    var dateParts = dateString.split("-");
-    var year = dateParts[0];
-    var month = dateParts[1];
-    var day = dateParts[2];
-
-    var formattedDate = day + "-" + month + "-" + year;
-
-    element.textContent = formattedDate;
-  });
+});
 </script>
-
 {% endblock %}

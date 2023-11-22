@@ -141,7 +141,6 @@ class Eclat:
                 self.eclat_mine({prefix_item}, diff_items, self.minsup, 1, frequent_itemsets)
             
             print("ECLAT Algorithm mining successfully")
-            print(frequent_itemsets)
             return self.vertical_data, frequent_itemsets
         else:
             frequent_itemsets = []
