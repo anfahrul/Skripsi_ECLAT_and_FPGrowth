@@ -6,6 +6,7 @@ import flask_excel as excel
 import pandas as pd
 from sqlalchemy import func
 from datetime import datetime
+import time
 
 
 def importIndex():
@@ -98,6 +99,7 @@ def doImportFile():
             
             db.session.commit()
             
+            time.sleep(5)
             
             dataframe_html = df.to_html(classes='table table-bordered', index=False, escape=False,
                                         render_links=True, 

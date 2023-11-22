@@ -55,7 +55,7 @@ block content %}
 </div>
 
 {% if dataframe_html %}
-<div class="card">
+<div class="card" id="card-dataframe">
   <div class="card-body">
     <h5 class="mb-3">Data Diimport</h5>
     {{ dataframe_html | safe }}
@@ -69,4 +69,40 @@ block content %}
   }
 </style>
 
+{% endblock %} {% block scripts %}
+<script>
+  document.querySelector("form").addEventListener("submit", function () {
+    // Show the loading animation
+    const timerInterval = 0; // Deklarasikan di sini untuk mengaksesnya secara global
+
+    Swal.fire({
+      title: "Mengimport Data",
+      html: "Silahkan tunggu! Memerlukan waktu beberapa saat",
+      timerProgressBar: true,
+      showConfirmButton: false,
+      allowOutsideClick: false,
+      timer: 0,
+      didOpen: () => {
+        Swal.showLoading();
+
+        // Function to check for the presence of the "card-dataframe" element
+        function checkCardDataframe() {
+          const cardDataframeElement =
+            document.getElementById("card-dataframe");
+          if (cardDataframeElement) {
+            // Hide the loading animation
+            Swal.close();
+            clearInterval(timerInterval); // Clear the timer interval when the card-dataframe element appears
+          } else {
+            // Continue checking until "card-dataframe" element appears
+            setTimeout(checkCardDataframe, 500); // Check every 500 milliseconds
+          }
+        }
+
+        // Start checking for the "card-dataframe" element
+        checkCardDataframe();
+      },
+    });
+  });
+</script>
 {% endblock %}
