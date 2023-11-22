@@ -367,6 +367,31 @@
 
 {% endblock %} {% block scripts %}
 <script>
+  $(document).ready(function () {
+    $("#verticalData").DataTable({
+      language: {
+        url: "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json",
+      },
+    });
+  });
+
+
+  $(document).ready(function () {
+    $(".frequentKItemset").DataTable({
+      language: {
+        url: "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json",
+      },
+    });
+  });
+
+  $(document).ready(function () {
+    $("#associated_rules").DataTable({
+      language: {
+        url: "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json",
+      },
+    });
+  });
+
   document.querySelector("form").addEventListener("submit", function () {
   // Show the loading animation
   Swal.fire({
