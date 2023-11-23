@@ -90,9 +90,14 @@ def delete_product(itemCode):
 
 # ---------------------------------------------------------------------
 # Transaction
-@transaction_blueprint.route("/transaction/", methods=["GET"])
+@transaction_blueprint.route("/transaction/")
 @login_required
 def list_transaction():
+    return render_template('transaction/list_transaction.html')
+
+@transaction_blueprint.route("/transaction/data", methods=["GET"])
+@login_required
+def list_transaction_data():
     return indexTrans()
 
 @transaction_blueprint.route("/transaction/create", methods=["GET", "POST"])

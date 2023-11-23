@@ -1,15 +1,52 @@
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, jsonify
 from app import db
 from src import utils
 import uuid
 from src.models.transaction import Transaction, TransactionProduct
 from src.models.product import Product
+from sqlalchemy import text
+
 
 
 def indexTrans():
-    transactions = Transaction.query.all()
-    
-    return render_template('transaction/list_transaction.html', transactions=transactions)
+    try:
+        # Mengambil parameter paging dan sorting dari permintaan Ajax
+        draw = int(request.args.get('draw', 1))
+        start = int(request.args.get('start', 0))
+        length = int(request.args.get('length', 10))
+        order_column_index = int(request.args.get('order[0][column]', 1))
+        order_dir = request.args.get('order[0][dir]', 'asc')
+
+        # Menentukan kolom apa yang dapat diurutkan
+        sortable_columns = ['transaction_id', 'date']
+        order_column_name = sortable_columns[min(order_column_index, len(sortable_columns) - 1)]
+
+        # Menentukan arah pengurutan
+        if order_dir == 'asc':
+            order_clause = f"{order_column_name} ASC"
+        else:
+            order_clause = f"{order_column_name} DESC"
+
+        # Mengambil data untuk halaman tertentu dengan paging dan sorting
+        transactionsData = Transaction.query.order_by(text(order_clause)).offset(start).limit(length).all()
+        total_records = Transaction.query.count()
+
+        transactions = []
+        for transaction in transactionsData:
+            transactions.append({
+                'Faktur': transaction.transaction_id,
+                'Tanggal Transaksi': transaction.date.strftime('%d-%m-%Y'),
+            })
+
+        return jsonify({
+            'draw': draw,
+            'recordsTotal': total_records,
+            'recordsFiltered': total_records,
+            'data': transactions,
+        })
+    except Exception as e:
+        print(f"Error in indexTrans: {str(e)}")
+        return jsonify({'error': 'Internal Server Error'}), 500
 
 
 def createTrans():

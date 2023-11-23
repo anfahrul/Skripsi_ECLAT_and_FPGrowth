@@ -32,13 +32,12 @@
         {% for transaction in transactions %}
         <tr>
           <td>{{ loop.index }}</td>
-          <td>{{ transaction.transaction_id }}</td>
-          <td id="transactionDate">{{ transaction.date }}</td>
-          <!-- <td id="price">{{ transaction.total_price }}</td> -->
+          <td>{{ transaction.Faktur }}</td>
+          <td id="transactionDate">{{ transaction['Tanggal Transaksi'] }}</td>
           <td>
             <div class="d-flex justify-content-left">
               <a
-                href="{{ url_for('transaction_blueprint.detail_transaction', transaction_id=transaction.transaction_id) }}"
+                href="{{ url_for('transaction_blueprint.detail_transaction', transaction_id=transaction.Faktur) }}"
                 class="btn btn-sm btn-outline-primary"
                 title="Lihat Detail"
                 aria-label="Lihat Detail"
@@ -57,6 +56,41 @@
 <script>
   $(document).ready(function () {
     $("#transactionData").DataTable({
+      deferRender: true,
+      processing: true,
+      serverSide: true,
+      ajax: {
+        url: "/transaction/data",
+        type: "GET",
+      },
+      order: [[1, "asc"]],
+      columns: [
+        {
+          orderable: false,
+          data: null,
+          render: function (data, type, row, meta) {
+            return meta.row + meta.settings._iDisplayStart + 1;
+          },
+        },
+        { orderable: true, data: "Faktur", name: "Faktur" },
+        {
+          orderable: true,
+          data: "Tanggal Transaksi",
+          name: "Tanggal Transaksi",
+        },
+        {
+          orderable: false,
+          data: null,
+          render: function (data, type, row) {
+            return (
+              '<a href="/transaction/' +
+              row["Faktur"] +
+              "/detail" +
+              '" class="btn btn-sm btn-outline-primary" title="Lihat Detail" aria-label="Lihat Detail"><span> <i class="ti ti-eye"></i> Detail </span></a>'
+            );
+          },
+        },
+      ],
       language: {
         url: "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json",
       },
