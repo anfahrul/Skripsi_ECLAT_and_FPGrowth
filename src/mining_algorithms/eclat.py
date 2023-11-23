@@ -1,21 +1,15 @@
-from optparse import OptionParser
-from src.models.product import Product
-from src.models.transaction import TransactionProduct, Transaction
-from memory_profiler import profile
-
-
 class Itemset:
     def __init__(self, item):
         self.item = item
         self.support = 0
-        self.tids = set()
-        
+        self.tids = set()    
 
 class Eclat:
     def __init__(self, minsup, verbose):
         self.minsup = minsup
         self.vertical_data = {}
         self.verbose = verbose
+
 
     def read_data(self, transactions):
         self.vertical_data = {}
@@ -33,7 +27,6 @@ class Eclat:
             itemset.support += 1
 
         list_of_items_in_each_transaction = list(items_in_each_transaction.values())
-        
         
         print("Finish reading the data")
         return list_of_items_in_each_transaction
@@ -64,31 +57,6 @@ class Eclat:
         return len(common_tids), common_tids
     
     
-    # STABLE VERSION
-    # def eclat_mine(self, prefix, diff_items, minsup, k, frequent_itemsets):
-    #     support, common_tids = self.calculate_support(prefix)
-
-    #     if support >= minsup:
-    #         frequent_itemsets[k] = frequent_itemsets.get(k, [])
-    #         itemset_data = (tuple(prefix), support, common_tids)
-    #         if itemset_data not in frequent_itemsets[k]:
-    #             frequent_itemsets[k].append(itemset_data)
-
-    #     if support < minsup or k < 1:
-    #         return
-
-    #     item_info = [(item, self.vertical_data[item].support) for item in diff_items]
-    #     item_info.sort(key=lambda x: x[1])
-        
-    #     for i, (prefix_item, _) in enumerate(item_info):
-    #         new_prefix = list(prefix)
-    #         new_prefix.append(prefix_item)
-
-    #         new_diff_items = [item for item, _ in item_info[i+1:]]
-    #         self.eclat_mine(tuple(new_prefix), new_diff_items, minsup, k + 1, frequent_itemsets)
-    
-    
-    # TESTING VERSION
     def eclat_mine(self, prefix, diff_items, minsup, k, frequent_itemsets):
         support, common_tids = self.calculate_support(prefix)
 
@@ -127,7 +95,6 @@ class Eclat:
             self.eclat_mine_without_verbose(tuple(new_prefix), new_diff_items, minsup, frequent_itemsets)
 
 
-    
     def run(self):
         print("Running ECLAT Algorithm")
         self.prune_items()
