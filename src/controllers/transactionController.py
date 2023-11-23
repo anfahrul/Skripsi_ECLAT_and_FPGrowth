@@ -28,17 +28,16 @@ def indexTrans():
         else:
             order_clause = f"{order_column_name} DESC"
 
-        # Mengambil data untuk halaman tertentu dengan paging dan sorting
-        # transactionsData = Transaction.query.order_by(text(order_clause)).offset(start).limit(length).all()
-        
-        transactionsData = Transaction.query.filter(
+        # Mengambil data untuk halaman tertentu dengan paging dan sorting        
+        query = Transaction.query.filter(
             or_(
                 func.cast(Transaction.transaction_id, db.String).ilike(f"%{search_value}%"),
                 func.cast(Transaction.date, db.String).ilike(f"%{search_value}%"),
             )
-        ).order_by(text(order_clause)).offset(start).limit(length).all()
+        )
         
-        total_records = Transaction.query.count()
+        total_records = query.count()
+        transactionsData = query.order_by(text(order_clause)).offset(start).limit(length).all()
 
         transactions = []
         for transaction in transactionsData:

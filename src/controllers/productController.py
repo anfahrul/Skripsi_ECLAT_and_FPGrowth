@@ -25,15 +25,15 @@ def index():
             order_clause = f"{order_column_name} DESC"
 
         # Mengambil data untuk halaman tertentu dengan paging dan sorting
-        # productsData = Product.query.order_by(text(order_clause)).offset(start).limit(length).all()
-        
-        productsData = Product.query.filter(
+        query = Product.query.filter(
             or_(
                 Product.itemCode.ilike(f"%{search_value}%"),
                 Product.name.ilike(f"%{search_value}%"),
             )
-        ).order_by(text(order_clause)).offset(start).limit(length).all()
-        total_records = Product.query.count()
+        )
+        
+        total_records = query.count()
+        productsData = query.order_by(text(order_clause)).offset(start).limit(length).all()
 
         products = []
         for transaction in productsData:
