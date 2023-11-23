@@ -4,8 +4,8 @@ from src import utils
 import uuid
 from src.models.transaction import Transaction, TransactionProduct
 from src.models.product import Product
-from sqlalchemy import text
-
+from sqlalchemy import func, text, or_
+from datetime import datetime
 
 
 def indexTrans():
@@ -16,6 +16,7 @@ def indexTrans():
         length = int(request.args.get('length', 10))
         order_column_index = int(request.args.get('order[0][column]', 1))
         order_dir = request.args.get('order[0][dir]', 'asc')
+        search_value = request.args.get('search[value]', '')
 
         # Menentukan kolom apa yang dapat diurutkan
         sortable_columns = ['transaction_id', 'date']
@@ -28,14 +29,22 @@ def indexTrans():
             order_clause = f"{order_column_name} DESC"
 
         # Mengambil data untuk halaman tertentu dengan paging dan sorting
-        transactionsData = Transaction.query.order_by(text(order_clause)).offset(start).limit(length).all()
+        # transactionsData = Transaction.query.order_by(text(order_clause)).offset(start).limit(length).all()
+        
+        transactionsData = Transaction.query.filter(
+            or_(
+                func.cast(Transaction.transaction_id, db.String).ilike(f"%{search_value}%"),
+                func.cast(Transaction.date, db.String).ilike(f"%{search_value}%"),
+            )
+        ).order_by(text(order_clause)).offset(start).limit(length).all()
+        
         total_records = Transaction.query.count()
 
         transactions = []
         for transaction in transactionsData:
             transactions.append({
                 'Faktur': transaction.transaction_id,
-                'Tanggal Transaksi': transaction.date.strftime('%d-%m-%Y'),
+                'Tanggal Transaksi': transaction.date.strftime('%Y-%m-%d'),
             })
 
         return jsonify({

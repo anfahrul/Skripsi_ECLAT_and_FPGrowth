@@ -62,6 +62,9 @@
       ajax: {
         url: "/transaction/data",
         type: "GET",
+        data: function (d) {
+          d.search.value = $("#transactionData_filter input").val();
+        },
       },
       order: [[1, "asc"]],
       columns: [
@@ -112,19 +115,19 @@
   });
 
   // Ubah format tanggal transaksi
-  var transactionDateElements = document.querySelectorAll("#transactionDate");
+  // var transactionDateElements = document.querySelectorAll("#transactionDate");
 
-  transactionDateElements.forEach(function (element) {
-    var dateString = element.textContent;
+  // transactionDateElements.forEach(function (element) {
+  //   var dateString = element.textContent;
 
-    var dateParts = dateString.split("-");
-    var year = dateParts[0];
-    var month = dateParts[1];
-    var day = dateParts[2];
+  //   var dateParts = dateString.split("-");
+  //   var year = dateParts[0];
+  //   var month = dateParts[1];
+  //   var day = dateParts[2];
 
-    var formattedDate = day + "-" + month + "-" + year;
+  //   var formattedDate = day + "-" + month + "-" + year;
 
-    element.textContent = formattedDate;
-  });
+  //   element.textContent = formattedDate;
+  // });
 </script>
 {% endblock %}
