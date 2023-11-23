@@ -177,9 +177,8 @@ def eclatMining():
     else:
         rules = associationRuleEclatWithoutVerbose(freqItems, listOfItemInEachTransaction, minConf=minimumConfidenceRatio)
 
-    # print("rules", rules)
-    # mining_process_id = eclatStoreMining(startDate, endDate, minimumSupport, minimumConfidence, rules, lenOfTransaction, execution_time)
-    mining_process_id = 'test123'
+    mining_process_id = eclatStoreMining(startDate, endDate, minimumSupport, minimumConfidence, rules, lenOfTransaction, execution_time)
+    # mining_process_id = 'test123'
     miningProcessIsExist = False
     miningProcess = MiningProcess.query.filter_by(id=mining_process_id).first()
     

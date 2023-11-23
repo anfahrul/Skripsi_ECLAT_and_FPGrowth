@@ -72,6 +72,7 @@ def detailMiningProcess(process_id):
 
 def generateReport(process_id):
     pdf = FPDF()
+    pdf.add_font('Calibri', '', r"c:\WINDOWS\Fonts\Calibri.ttf", uni=True)
     margin_x = 15
     margin_y = 20
     pdf.set_margins(margin_x, margin_y)
@@ -91,21 +92,21 @@ def generateReport(process_id):
     
     no_col_width = 10
     col_width_temp = (page_width - no_col_width)/4
-    association_col_width = (col_width_temp * 2) - no_col_width
-    col_width = (page_width - association_col_width - no_col_width)/3
+    association_col_width = (col_width_temp * 2) + (no_col_width * 2) - no_col_width
+    col_width = (page_width - association_col_width - no_col_width)/2
         
     th = pdf.font_size
     
-    pdf.set_font('Arial', 'B', 11)
+    pdf.set_font('Arial', 'B', 10)
     pdf.set_fill_color(235, 235, 235)
     pdf.cell(no_col_width, th + 5, 'No.', border=1, align='C', fill=True)
     pdf.cell(association_col_width, th + 5, 'Aturan Asosiasi', border=1, align='C', fill=True)
     pdf.cell(col_width, th + 5, 'Support (%)', border=1, align='C', fill=True)
     pdf.cell(col_width, th + 5, 'Confidence (%)', border=1, align='C', fill=True)
-    pdf.cell(col_width, th + 5, 'Nilai Lift', border=1, align='C', fill=True)
+    # pdf.cell(col_width, th + 5, 'Nilai Lift', border=1, align='C', fill=True)
     pdf.ln(th + 5)
     
-    pdf.set_font('Arial', '', 11)
+    pdf.set_font('Calibri', '', 10)
     
     mining_process, associations = getMiningProcess(process_id)
    
@@ -131,9 +132,9 @@ def generateReport(process_id):
         
         # Support, confidence, dan lift
         pdf.set_xy(currrent_x + association_col_width, currrent_y)
-        pdf.cell(col_width, multi_cell_height, str(association['support']), border=1, align='C')
-        pdf.cell(col_width, multi_cell_height, str(association['confidence']), border=1, align='C')
-        pdf.cell(col_width, multi_cell_height, "{:.2f}".format(association['lift']), border=1, align='C')
+        pdf.cell(col_width, multi_cell_height, "{:.2f}".format(association['support']), border=1, align='C')
+        pdf.cell(col_width, multi_cell_height, "{:.2f}".format(association['confidence']), border=1, align='C')
+        # pdf.cell(col_width, multi_cell_height, "{:.2f}".format(association['lift']), border=1, align='C')
 
         # Pindah ke baris berikutnya
         pdf.ln()
