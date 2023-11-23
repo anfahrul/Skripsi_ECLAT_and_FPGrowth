@@ -1,12 +1,56 @@
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, jsonify
 from app import db
 from src.models.product import Product
+from sqlalchemy import text, or_
 
 
 def index():
-    products = Product.query.all()
-    
-    return render_template('product/list_product.html', products=products)
+    try:
+        # Mengambil parameter paging dan sorting dari permintaan Ajax
+        draw = int(request.args.get('draw', 1))
+        start = int(request.args.get('start', 0))
+        length = int(request.args.get('length', 10))
+        order_column_index = int(request.args.get('order[0][column]', 1))
+        order_dir = request.args.get('order[0][dir]', 'asc')
+        search_value = request.args.get('search[value]', '')
+
+        # Menentukan kolom apa yang dapat diurutkan
+        sortable_columns = ['itemCode', 'name']
+        order_column_name = sortable_columns[min(order_column_index, len(sortable_columns) - 1)]
+
+        # Menentukan arah pengurutan
+        if order_dir == 'asc':
+            order_clause = f"{order_column_name} ASC"
+        else:
+            order_clause = f"{order_column_name} DESC"
+
+        # Mengambil data untuk halaman tertentu dengan paging dan sorting
+        # productsData = Product.query.order_by(text(order_clause)).offset(start).limit(length).all()
+        
+        productsData = Product.query.filter(
+            or_(
+                Product.itemCode.ilike(f"%{search_value}%"),
+                Product.name.ilike(f"%{search_value}%"),
+            )
+        ).order_by(text(order_clause)).offset(start).limit(length).all()
+        total_records = Product.query.count()
+
+        products = []
+        for transaction in productsData:
+            products.append({
+                'Kode Barang': transaction.itemCode,
+                'Nama Barang': transaction.name,
+            })
+
+        return jsonify({
+            'draw': draw,
+            'recordsTotal': total_records,
+            'recordsFiltered': total_records,
+            'data': products,
+        })
+    except Exception as e:
+        print(f"Error in index: {str(e)}")
+        return jsonify({'error': 'Internal Server Error'}), 500
 
 
 def create():

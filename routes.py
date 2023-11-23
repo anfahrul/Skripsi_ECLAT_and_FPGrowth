@@ -62,11 +62,21 @@ def do_import():
 
 # ---------------------------------------------------------------------
 # Product
-@product_blueprint.route("/products/", methods=["GET"])
+# @product_blueprint.route("/products", methods=["GET"])
+# @login_required
+# def list_product():
+#     if request.method == 'GET': return index()
+#     else: return "Method not allowed"
+
+@product_blueprint.route("/products/")
 @login_required
 def list_product():
-    if request.method == 'GET': return index()
-    else: return "Method not allowed"
+    return render_template('product/list_product.html')
+
+@product_blueprint.route("/products/data", methods=["GET"])
+@login_required
+def list_product_data():
+    return index()
 
 @product_blueprint.route("/products/create", methods=["GET", "POST"])
 @login_required

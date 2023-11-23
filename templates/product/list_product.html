@@ -33,14 +33,14 @@
         {% for item in products %}
         <tr>
           <td>{{ loop.index }}</td>
-          <td>{{ item.itemCode }}</td>
-          <td>{{ item.name }}</td>
+          <td>{{ item['Kode Barang'] }}</td>
+          <td>{{ item['Nama Barang'] }}</td>
           <!-- <td>{{ item.unit }}</td> -->
           <!-- <td id="price">{{ item.price }}</td> -->
           <td>
             <div class="d-flex justify-content-left">
               <a
-                href="{{ url_for('product_blueprint.edit_product', itemCode=item.itemCode) }}"
+                href="{{ url_for('product_blueprint.edit_product', itemCode=item['Kode Barang']) }}"
                 class="btn btn-sm btn-outline-primary"
                 title="Edit"
                 aria-label="Edit"
@@ -91,6 +91,44 @@
 <script>
   $(document).ready(function () {
     $("#data").DataTable({
+      deferRender: true,
+      processing: true,
+      serverSide: true,
+      ajax: {
+        url: "/products/data",
+        type: "GET",
+        data: function (d) {
+          d.search.value = $("#data_filter input").val();
+        },
+      },
+      order: [[1, "asc"]],
+      columns: [
+        {
+          orderable: false,
+          data: null,
+          render: function (data, type, row, meta) {
+            return meta.row + meta.settings._iDisplayStart + 1;
+          },
+        },
+        { orderable: true, data: "Kode Barang", name: "Kode Barang" },
+        {
+          orderable: true,
+          data: "Nama Barang",
+          name: "Nama Barang",
+        },
+        {
+          orderable: false,
+          data: null,
+          render: function (data, type, row) {
+            return (
+              '<a href="/products/' +
+              row["Kode Barang"] +
+              "/edit" +
+              '" class="btn btn-sm btn-outline-primary" title="Lihat Detail" aria-label="Lihat Detail"><span> <i class="ti ti-eye"></i> Detail </span></a>'
+            );
+          },
+        },
+      ],
       language: {
         url: "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json",
       },
