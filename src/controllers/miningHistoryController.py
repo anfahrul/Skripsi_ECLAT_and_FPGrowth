@@ -59,15 +59,17 @@ def getMiningProcess(process_id):
         else:
             associations[association_id]['consequent'].add((result.itemCode, result.item_name))
 
-    return mining_process, associations
+    sorted_associations = sorted(associations.items(), key=lambda x: x[1]['confidence'], reverse=True)
+    
+    return mining_process, sorted_associations
 
 
 def detailMiningProcess(process_id):
     mining_process, associations = getMiningProcess(process_id)
     
-    print("mining_process", mining_process)
+    sorted_associations = sorted(associations, key=lambda x: x[1]['confidence'], reverse=True)
         
-    return render_template('mining_history/detail_mining_history.html', mining_process=mining_process, associations=associations)
+    return render_template('mining_history/detail_mining_history.html', mining_process=mining_process, associations=sorted_associations)
 
 
 def generateReport(process_id):
@@ -111,7 +113,7 @@ def generateReport(process_id):
     mining_process, associations = getMiningProcess(process_id)
    
     row_number = 1
-    for association_id, association in associations.items():
+    for association_id, association in associations:
         pdf.set_fill_color(255, 255, 255)
 
         antecedent_text = "\n".join([f"{item[0]} - {item[1]}" for item in association['antecedent']])
