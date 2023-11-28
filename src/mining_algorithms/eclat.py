@@ -8,6 +8,7 @@ class Eclat:
     def __init__(self, minsup, verbose):
         self.minsup = minsup
         self.vertical_data = {}
+        self.vertical_data_pruned = {}
         self.verbose = verbose
 
 
@@ -33,22 +34,22 @@ class Eclat:
 
     
     def prune_items(self):
-        self.vertical_data = {k: v for k, v in self.vertical_data.items() if v.support >= self.minsup}
+        self.vertical_data_pruned = {k: v for k, v in self.vertical_data.items() if v.support >= self.minsup}
 
-        sorted_items = sorted(self.vertical_data.items(), key=lambda item: item[1].support)
-        self.vertical_data = dict(sorted_items)
+        # sorted_items = sorted(self.vertical_data.items(), key=lambda item: item[1].support)
+        # self.vertical_data = dict(sorted_items)
         print("Finish pruning the data")  
     
     
     def sorting_item_freq(self):
-        return sorted(self.vertical_data, key=lambda item: self.vertical_data[item].support)
+        return sorted(self.vertical_data_pruned, key=lambda item: self.vertical_data_pruned[item].support)
     
 
     def calculate_support(self, itemset):
         common_tids = None
 
         for item in itemset:
-            item_data = self.vertical_data[item]
+            item_data = self.vertical_data_pruned[item]
             if common_tids is None:
                 common_tids = set(item_data.tids)
             else:

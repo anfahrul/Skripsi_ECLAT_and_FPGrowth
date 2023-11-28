@@ -306,7 +306,18 @@
     </table>
   </div>
 </div>
-{% endif %} {% if execution_time_res %}
+{% endif %}
+
+{% if associated_rules|length == 0 %}
+<div class="card" id="rules-card">
+  <div class="card-body">
+      <h5 class="card-title fw-semibold mb-4">Hasil Analisis</h5>
+      <p>Tidak ada rules yang dihasilkan.</p>
+  </div>
+</div>
+{% endif %}
+
+{% if execution_time_res %}
 <div class="card" id="card-time">
   <div class="card-body">
     <h5 class="card-title fw-semibold mb-4">Hasil Lainnya</h5>
