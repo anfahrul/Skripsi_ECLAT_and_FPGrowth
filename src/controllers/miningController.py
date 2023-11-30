@@ -215,58 +215,97 @@ def fpGrowthIndex():
 
 
 def fpGrowthMining():
-    start_time = time.time()
-
     request_form = request.form.to_dict()
     startDate = request_form['start-date']
     endDate = request_form['end-date']
-    minimumSupport = float(request_form['minimumSupport'])
+    minimumSupportCount = int(request_form['minimumSupport'])
     minimumConfidence = float(request_form['minimumConfidence'])
+    verbose = bool(request.form.get('verbose'))
     
     parameters = {
         'startDate': startDate,
         'endDate': endDate,
-        'minimumSupport': minimumSupport,
+        'minimumSupport': minimumSupportCount,
         'minimumConfidence': minimumConfidence
         }
     
-    # transactions = Transaction.query.all()
-    transactions_in_period = Transaction.query.filter(Transaction.date.between(startDate, endDate)).all()
-    lenOfTransaction = len(transactions_in_period)
-    if lenOfTransaction <=0:
+    lenOfTransaction = Transaction.query.filter(Transaction.date.between(startDate, endDate)).count()
+    transactions_in_period = (
+        db.session.query(TransactionProduct)
+        .join(Transaction, TransactionProduct.transaction_id == Transaction.transaction_id)
+        .filter(Transaction.date.between(startDate, endDate))
+        .all()
+    )
+    
+    if lenOfTransaction <= 0:
         flash('Tidak ada transaksi pada periode tersebut.')
         return render_template("mining/fp-growth.html")
     
-    minimumSupportFreq = (minimumSupport / 100) * len(transactions_in_period)
     minimumConfidenceRatio = minimumConfidence / 100
-    
-    # Algorithm here
-    fpGrowthInstance = FPGrowth(minimumSupportFreq, 0.75)
+    fpGrowthInstance = FPGrowth(minimumSupportCount, minimumConfidenceRatio)
+    fpGrowthInstance.read_data(transactions_in_period)
     dictOfItemFrequency, filteredItemset, freqentItemset, listOfItemset, minimumConfidenceRes = fpGrowthInstance.run()
     
-    rules = associationRuleFpGrowth(freqentItemset, listOfItemset, minConf=minimumConfidenceRes)
-    
-    # time.sleep(2) 
-    end_time = time.time()
-    execution_time = end_time - start_time
-    
-    # mining_process_id = eclatStoreMining(startDate, endDate, minimumSupport, minimumConfidence, rules, lenOfTransaction, execution_time)
-    mining_process_id = 'test123'
-    # mining_process_id = '2a863b34-2201-4003-b3d7-4c2535cc421b'
-    miningProcessIsExist = False
-    miningProcess = MiningProcess.query.filter_by(id=mining_process_id).first()
-    
-    if miningProcess:
-        miningProcessIsExist= True
-        
-    associated_rules_with_names = associateItemCodeWithName(rules=rules)
+    # print("dictOfItemFrequency", dictOfItemFrequency)
     
     return render_template("mining/fp-growth.html",
                            parameters=parameters,
-                           lenOfTransaction=lenOfTransaction,
-                           dictOfItemFrequency=dictOfItemFrequency,
-                           filteredItemset=filteredItemset,
-                           miningProcessIsExist=miningProcessIsExist,
-                           associated_rules=associated_rules_with_names,
-                           mining_process_id=mining_process_id,
-                           execution_time=execution_time)
+                           lenOfTransaction=lenOfTransaction)
+
+
+# def fpGrowthMining():
+#     start_time = time.time()
+
+#     request_form = request.form.to_dict()
+#     startDate = request_form['start-date']
+#     endDate = request_form['end-date']
+#     minimumSupport = float(request_form['minimumSupport'])
+#     minimumConfidence = float(request_form['minimumConfidence'])
+    
+#     parameters = {
+#         'startDate': startDate,
+#         'endDate': endDate,
+#         'minimumSupport': minimumSupport,
+#         'minimumConfidence': minimumConfidence
+#         }
+    
+#     # transactions = Transaction.query.all()
+#     transactions_in_period = Transaction.query.filter(Transaction.date.between(startDate, endDate)).all()
+#     lenOfTransaction = len(transactions_in_period)
+#     if lenOfTransaction <=0:
+#         flash('Tidak ada transaksi pada periode tersebut.')
+#         return render_template("mining/fp-growth.html")
+    
+#     minimumSupportFreq = (minimumSupport / 100) * len(transactions_in_period)
+#     minimumConfidenceRatio = minimumConfidence / 100
+    
+#     # Algorithm here
+#     fpGrowthInstance = FPGrowth(minimumSupportFreq, 0.75)
+#     dictOfItemFrequency, filteredItemset, freqentItemset, listOfItemset, minimumConfidenceRes = fpGrowthInstance.run()
+    
+#     rules = associationRuleFpGrowth(freqentItemset, listOfItemset, minConf=minimumConfidenceRes)
+    
+#     # time.sleep(2) 
+#     end_time = time.time()
+#     execution_time = end_time - start_time
+    
+#     # mining_process_id = eclatStoreMining(startDate, endDate, minimumSupport, minimumConfidence, rules, lenOfTransaction, execution_time)
+#     mining_process_id = 'test123'
+#     # mining_process_id = '2a863b34-2201-4003-b3d7-4c2535cc421b'
+#     miningProcessIsExist = False
+#     miningProcess = MiningProcess.query.filter_by(id=mining_process_id).first()
+    
+#     if miningProcess:
+#         miningProcessIsExist= True
+        
+#     associated_rules_with_names = associateItemCodeWithName(rules=rules)
+    
+#     return render_template("mining/fp-growth.html",
+#                            parameters=parameters,
+#                            lenOfTransaction=lenOfTransaction,
+#                            dictOfItemFrequency=dictOfItemFrequency,
+#                            filteredItemset=filteredItemset,
+#                            miningProcessIsExist=miningProcessIsExist,
+#                            associated_rules=associated_rules_with_names,
+#                            mining_process_id=mining_process_id,
+#                            execution_time=execution_time)

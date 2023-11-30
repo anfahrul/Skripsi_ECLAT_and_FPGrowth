@@ -3,7 +3,7 @@ from src.models.product import Product
 from src.models.transaction import TransactionProduct, Transaction
 import numpy
 from csv import reader
-from collections import defaultdict
+from collections import defaultdict, Counter, OrderedDict
 from itertools import chain, combinations
 
 
@@ -26,53 +26,39 @@ class FPNode:
             
 class FPGrowth:
     def __init__(self, minimumSupportRatio, minimumConfidence):
-        self.minimumSupportRatio = minimumSupportRatio
+        self.minimumSupportCount = minimumSupportRatio
         self.minimumConfidence = minimumConfidence
         self.listOfItemset = []
         self.dictOfFilteredItems = {}
         self.frequencyOfTransaction = []
+        self.itemFrequencyFiltered = {}
 
 
-    def read_data(self):
-        transactionsProducts = TransactionProduct.query.all()
-        
-        dictOfItemset = {}
-        
-        for item in transactionsProducts:
-            if item.transaction_id not in dictOfItemset:
-                dictOfItemset[item.transaction_id] = []
-                
-            dictOfItemset[item.transaction_id].append(item.itemCode)
-            
-        
-        for _, itemset in dictOfItemset.items():
-            self.listOfItemset.append(itemset)
-            self.frequencyOfTransaction.append(1)
-            
-        self.dictOfFilteredItems = dictOfItemset
-            
-    
-    def getFrequentItemset(self):
-        dictOfItemFrequency = {}
-        
-        for i, itemset in enumerate(self.listOfItemset):
-            for item in itemset:
-                if item not in dictOfItemFrequency:
-                    dictOfItemFrequency[item] = 0
-                
-                dictOfItemFrequency[item] += 1
-        
-        return {item: frequency for item, frequency in dictOfItemFrequency.items() if frequency >= self.minimumSupportRatio}
+    def read_data(self, transactions):
+        dictOfItems = defaultdict(list)
+
+        for item in transactions:
+            dictOfItems[item.transaction_id].append(item.itemCode)
+
+        self.listOfItemset = list(dictOfItems.values())
+        self.frequencyOfTransaction = [1] * len(self.listOfItemset)
+        self.dictOfFilteredItems = dictOfItems
+     
+     
+    def getFrequentOfItems(self):
+        itemFrequencyCounter = Counter(item for itemset in self.listOfItemset for item in itemset)
+
+        self.itemFrequencyFiltered = {item: frequency for item, frequency in sorted(itemFrequencyCounter.items(), key=lambda x: x[1], reverse=True) if frequency >= self.minimumSupportCount}
 
     
-    def filteredTransactionItems(self, dictOfItemFrequency):
-        nested_dict = {key: [self.dictOfFilteredItems[key]] +
-                            [sorted([item for item in itemset if item in dictOfItemFrequency], key=lambda x: dictOfItemFrequency.get(x, 0), reverse=True)
-                            for itemset in [self.dictOfFilteredItems[key]]]
-                    for key in self.dictOfFilteredItems}
+    def filteredTransactionItems(self):
+        order_keys = set(self.itemFrequencyFiltered.keys())
+        sorted_order = [item[0] for item in self.itemFrequencyFiltered]
+        for key, value in self.dictOfFilteredItems.items():
+            self.dictOfFilteredItems[key] = sorted([elem for elem in value if elem in order_keys], key=lambda x:  sorted_order.index(x))
 
-
-        return nested_dict
+    
+    # CREATE THE TREE
     
     
     def updateHeaderTable(self, item, targetNode, headerTable):
@@ -83,6 +69,7 @@ class FPGrowth:
             while currentNode.next is not None:
                 currentNode = currentNode.next
             currentNode.next = targetNode
+    
 
     def updateTree(self, item, parentNode, headerTable):
         if item in parentNode.children:
@@ -93,115 +80,123 @@ class FPGrowth:
             self.updateHeaderTable(item, newItemNode, headerTable)
         return parentNode.children[item]
 
-    # Construct FP Tree
+
     def constructFPTree(self):
-        headerTable = defaultdict(int)
-        for i, itemset in enumerate(self.listOfItemset):
-            for item in itemset:
-                headerTable[item] += self.frequencyOfTransaction[i]
-
-        headerTable = dict((item, supportValue) for item, supportValue in headerTable.items() if supportValue >= self.minimumSupportRatio)
-
+        headerTable = self.itemFrequencyFiltered
+        
         if len(headerTable) == 0:
             return None, None
 
-        for item in headerTable:
-            headerTable[item] = [headerTable[item], None]
+        headerTable = {item: [freq, None] for item, freq in headerTable.items()}
 
         initialNode = FPNode('Null', 1, None)
-
-        for _, itemset in enumerate(self.listOfItemset):
-            itemset = [item for item in itemset if item in headerTable]
-            itemset.sort(key=lambda item: (-headerTable[item][0], item))
-
+        
+        for _, itemset in self.dictOfFilteredItems.items():
             currentNode = initialNode
             for item in itemset:
                 currentNode = self.updateTree(item, currentNode, headerTable)
 
         return initialNode, headerTable
     
+    # MINING THE TREE
     
     def findPrefixPath(self, node, prefixPath):
         if node.parent is not None:
-            prefixPath.append(node.itemName)
+            prefixPath.insert(0, node.itemName)
             self.findPrefixPath(node.parent, prefixPath)
 
+
     def createConditionalPatternBase(self, item, headerTable):
-        nodeOfTree = headerTable[item][1]
-        conditionalPaths = []
-        frequencyOfEachPath = []
+        node_of_tree = headerTable[item][1]
+        dict_of_conditional_pattern_base = {}
 
-        while nodeOfTree is not None:
-            prefixPath = []
-            self.findPrefixPath(nodeOfTree, prefixPath)
-            prefixPath = prefixPath[::-1]
+        if node_of_tree.parent.itemName != 'Null':
+            while node_of_tree is not None:
+                prefix_path = []
+                
+                if node_of_tree.parent.itemName != 'Null':
+                    self.findPrefixPath(node_of_tree.parent, prefix_path)
 
-            if len(prefixPath) > 1:
-                conditionalPaths.append(prefixPath[:len(prefixPath) - 1])
-                frequencyOfEachPath.append(nodeOfTree.count)
+                    prefix_path = tuple(prefix_path)
 
-            nodeOfTree = nodeOfTree.next
+                    if prefix_path in dict_of_conditional_pattern_base:
+                        dict_of_conditional_pattern_base[prefix_path] += node_of_tree.count
+                    else:
+                        dict_of_conditional_pattern_base[prefix_path] = node_of_tree.count
 
-        return conditionalPaths, frequencyOfEachPath
+                node_of_tree = node_of_tree.next
 
-    def constructConditionalTree(self, conditionalPatternBase, frequency, minimumSupport):
+        return dict_of_conditional_pattern_base
+
+
+    def updateConditionalTree(self, item, parentNode, headerTable, supportCount):
+        if item in parentNode.children:
+            parentNode.children[item].increment(supportCount)
+        else:
+            newItemNode = FPNode(item, supportCount, parentNode)
+            parentNode.children[item] = newItemNode
+            self.updateHeaderTable(item, newItemNode, headerTable)
+        return parentNode.children[item]
+    
+    
+    def constructConditionalTree(self, conditionalPatternBase, minimumSupport):
         conditionalHeaderTable = defaultdict(int)
 
-        for i, itemSet in enumerate(conditionalPatternBase):
+        for itemSet, freq in conditionalPatternBase.items():
             for item in itemSet:
-                conditionalHeaderTable[item] += frequency[i]
+                conditionalHeaderTable[item] += freq
+        
+        conditionalHeaderTable = {item: supportValue for item, supportValue in conditionalHeaderTable.items() if supportValue >= minimumSupport}
 
-        conditionalHeaderTable = dict((item, supportValue) for item, supportValue in conditionalHeaderTable.items() if supportValue >= minimumSupport)
-
-        if len(conditionalHeaderTable) == 0:
+        if not conditionalHeaderTable:
             return None, None
 
         for item in conditionalHeaderTable:
             conditionalHeaderTable[item] = [conditionalHeaderTable[item], None]
 
         conditionalInitialNode = FPNode('Null', 1, None)
-        conditionalPatternBaseExtracted = []
-
-        for itemset, freq in zip(conditionalPatternBase, frequency):
-            conditionalPatternBaseExtracted.extend([itemset.copy() for _ in range(freq)])
-
-        for _, itemset in enumerate(conditionalPatternBaseExtracted):
+        
+        for itemset, support in conditionalPatternBase.items():
             itemset = [item for item in itemset if item in conditionalHeaderTable]
             currentNode = conditionalInitialNode
 
             for item in itemset:
-                currentNode = self.updateTree(item, currentNode, conditionalHeaderTable)
+                currentNode = self.updateConditionalTree(item, currentNode, conditionalHeaderTable, supportCount=support)
 
+        # print("conditionalInitialNode", conditionalInitialNode.display())
         return conditionalInitialNode, conditionalHeaderTable
 
-    def miningTrees(self, headerTable, prefix, freqItemsetList):
-        itemlistSorted = [item[0] for item in sorted(headerTable.items(), key=lambda item: (-item[1][0], item[0]))]
 
+    def miningTrees(self, headerTable, prefix, freqItemsetList):
+        itemlistSorted = [item[0] for item in headerTable.items()][::-1]
+        
         for item in itemlistSorted:
-            newFreqItemset = prefix.copy()
-            newFreqItemset.add(item)
+            newFreqItemset = list(prefix.copy())
+            newFreqItemset.insert(0, item)
             freqItemsetList.append(newFreqItemset)
-            conditionalPatternBase, frequency = self.createConditionalPatternBase(item, headerTable)
-            conditionalTree, newHeaderTable = self.constructConditionalTree(conditionalPatternBase, frequency, self.minimumSupportRatio)
+            conditionalPatternBase = self.createConditionalPatternBase(item, headerTable)
+            # print("CPB: ", prefix, item, conditionalPatternBase)
+            
+            conditionalTree, newHeaderTable = self.constructConditionalTree(
+                conditionalPatternBase, self.minimumSupportCount
+                )
 
             if newHeaderTable is not None:
                 self.miningTrees(newHeaderTable, newFreqItemset, freqItemsetList)
     
     
     def run(self):
-        self.read_data()
+        self.getFrequentOfItems()
         
-        dictOfItemFrequency = self.getFrequentItemset()
+        self.filteredTransactionItems()
         
-        filteredItemset = self.filteredTransactionItems(dictOfItemFrequency)
-        
-        self.minimumSupport = len(self.listOfItemset) * self.minimumSupportRatio
         fpTree, headerTable = self.constructFPTree()
-
+        
         if fpTree.children is None:
             print('No frequent item set')
         else:
             freqentItemset = []
             self.miningTrees(headerTable, set(), freqentItemset)
             
-            return dictOfItemFrequency, filteredItemset, freqentItemset, self.listOfItemset, self.minimumConfidence
+            print(freqentItemset)
+            return self.itemFrequencyFiltered, self.dictOfFilteredItems, freqentItemset, self.listOfItemset, self.minimumConfidence
