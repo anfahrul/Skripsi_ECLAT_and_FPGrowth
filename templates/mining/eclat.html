@@ -308,6 +308,7 @@
 </div>
 {% endif %}
 
+{% if is_form_submitted %}
 {% if associated_rules|length == 0 %}
 <div class="card" id="rules-card">
   <div class="card-body">
@@ -315,6 +316,7 @@
       <p>Tidak ada rules yang dihasilkan.</p>
   </div>
 </div>
+{% endif %}
 {% endif %}
 
 {% if execution_time_res %}

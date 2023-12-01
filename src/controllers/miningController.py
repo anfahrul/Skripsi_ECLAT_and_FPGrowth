@@ -12,8 +12,55 @@ import uuid
 from memory_profiler import profile
 
 
+def associateItemCodeWithName(rules):
+    # Ambil data produk
+    products = Product.query.all()
+    product_dict = {product.itemCode: product.name for product in products}
+    
+    # Buat daftar aturan asosiasi dengan nama barang
+    associated_rules_with_names = []
+
+    for antecedent, consequent in rules:
+        antecedent_with_names = [f"{item} - {product_dict[item]}" for item in antecedent]
+        consequent_with_names = [f"{item} - {product_dict[item]}" for item in consequent]
+        support, confidence, lift = rules[(antecedent, consequent)]
+
+        associated_rules_with_names.append({
+            'antecedent_with_names': antecedent_with_names,
+            'consequent_with_names': consequent_with_names,
+            'support': support,
+            'confidence': confidence,
+            'lift': lift
+        })
+    
+    sorted_rules = sorted(associated_rules_with_names, key=lambda x: x['confidence'], reverse=True)
+    return sorted_rules
+
+
+def formattingExecutionTime(execution_time):
+    display_time = 0.0
+    unit = ""
+    
+    if execution_time < 1:
+        display_time = execution_time * 1000
+        unit = "milidetik"
+    elif execution_time < 60:
+        display_time = execution_time
+        unit = "detik"
+    elif execution_time < 3600:
+        display_time = execution_time / 60
+        unit = "menit"
+    else:
+        display_time = execution_time / 3600
+        unit = "jam"
+    
+    return display_time, unit
+    
+
 def eclatIndex():
-    return render_template("mining/eclat.html")
+    is_form_submitted = False
+    
+    return render_template("mining/eclat.html", is_form_submitted=is_form_submitted)
 
 
 def eclatStoreMining(period_start, period_end, minimum_support, minimum_confidence, rules, lenOfTransaction, execution_time):
@@ -76,52 +123,9 @@ def eclatStoreMining(period_start, period_end, minimum_support, minimum_confiden
     return mining_process.id
 
 
-def associateItemCodeWithName(rules):
-    # Ambil data produk
-    products = Product.query.all()
-    product_dict = {product.itemCode: product.name for product in products}
-    
-    # Buat daftar aturan asosiasi dengan nama barang
-    associated_rules_with_names = []
-
-    for antecedent, consequent in rules:
-        antecedent_with_names = [f"{item} - {product_dict[item]}" for item in antecedent]
-        consequent_with_names = [f"{item} - {product_dict[item]}" for item in consequent]
-        support, confidence, lift = rules[(antecedent, consequent)]
-
-        associated_rules_with_names.append({
-            'antecedent_with_names': antecedent_with_names,
-            'consequent_with_names': consequent_with_names,
-            'support': support,
-            'confidence': confidence,
-            'lift': lift
-        })
-    
-    sorted_rules = sorted(associated_rules_with_names, key=lambda x: x['confidence'], reverse=True)
-    return sorted_rules
-
-
-def formattingExecutionTime(execution_time):
-    display_time = 0.0
-    unit = ""
-    
-    if execution_time < 1:
-        display_time = execution_time * 1000
-        unit = "milidetik"
-    elif execution_time < 60:
-        display_time = execution_time
-        unit = "detik"
-    elif execution_time < 3600:
-        display_time = execution_time / 60
-        unit = "menit"
-    else:
-        display_time = execution_time / 3600
-        unit = "jam"
-    
-    return display_time, unit
-    
-
 def eclatMining():
+    is_form_submitted = True
+    
     start_time = time.time()
 
     request_form = request.form.to_dict()
@@ -190,6 +194,7 @@ def eclatMining():
     
     if verbose:
         return render_template("mining/eclat.html",
+                            is_form_submitted=is_form_submitted,
                             parameters=parameters,
                             verticalData=verticalData, 
                             lenOfTransaction=lenOfTransaction, 
@@ -201,6 +206,7 @@ def eclatMining():
                             execution_time_unit=execution_time_unit)
     else:
         return render_template("mining/eclat.html",
+                            is_form_submitted=is_form_submitted,
                             parameters=parameters,
                             lenOfTransaction=lenOfTransaction, 
                             miningProcessIsExist=miningProcessIsExist,
@@ -211,10 +217,15 @@ def eclatMining():
     
 
 def fpGrowthIndex():
-    return render_template("mining/fp-growth.html")
+    is_form_submitted = False
+    return render_template("mining/fp-growth.html", is_form_submitted=is_form_submitted)
 
 
 def fpGrowthMining():
+    is_form_submitted = True
+    
+    start_time = time.time()
+    
     request_form = request.form.to_dict()
     startDate = request_form['start-date']
     endDate = request_form['end-date']
@@ -244,68 +255,22 @@ def fpGrowthMining():
     minimumConfidenceRatio = minimumConfidence / 100
     fpGrowthInstance = FPGrowth(minimumSupportCount, minimumConfidenceRatio)
     fpGrowthInstance.read_data(transactions_in_period)
-    dictOfItemFrequency, filteredItemset, freqentItemset, listOfItemset, minimumConfidenceRes = fpGrowthInstance.run()
+    dictOfItemFrequency, filteredItemset, freqentItemset, listOfItemset = fpGrowthInstance.run()
     
-    # print("dictOfItemFrequency", dictOfItemFrequency)
+    end_time = time.time()
+    execution_time = end_time - start_time
+    execution_time_res, execution_time_unit = formattingExecutionTime(execution_time)
+    
+    rules = associationRuleFpGrowth(freqentItemset, listOfItemset, minConf=minimumConfidenceRatio)
+    
+    associated_rules_with_names = associateItemCodeWithName(rules=rules)
     
     return render_template("mining/fp-growth.html",
+                           is_form_submitted=is_form_submitted,
                            parameters=parameters,
-                           lenOfTransaction=lenOfTransaction)
-
-
-# def fpGrowthMining():
-#     start_time = time.time()
-
-#     request_form = request.form.to_dict()
-#     startDate = request_form['start-date']
-#     endDate = request_form['end-date']
-#     minimumSupport = float(request_form['minimumSupport'])
-#     minimumConfidence = float(request_form['minimumConfidence'])
-    
-#     parameters = {
-#         'startDate': startDate,
-#         'endDate': endDate,
-#         'minimumSupport': minimumSupport,
-#         'minimumConfidence': minimumConfidence
-#         }
-    
-#     # transactions = Transaction.query.all()
-#     transactions_in_period = Transaction.query.filter(Transaction.date.between(startDate, endDate)).all()
-#     lenOfTransaction = len(transactions_in_period)
-#     if lenOfTransaction <=0:
-#         flash('Tidak ada transaksi pada periode tersebut.')
-#         return render_template("mining/fp-growth.html")
-    
-#     minimumSupportFreq = (minimumSupport / 100) * len(transactions_in_period)
-#     minimumConfidenceRatio = minimumConfidence / 100
-    
-#     # Algorithm here
-#     fpGrowthInstance = FPGrowth(minimumSupportFreq, 0.75)
-#     dictOfItemFrequency, filteredItemset, freqentItemset, listOfItemset, minimumConfidenceRes = fpGrowthInstance.run()
-    
-#     rules = associationRuleFpGrowth(freqentItemset, listOfItemset, minConf=minimumConfidenceRes)
-    
-#     # time.sleep(2) 
-#     end_time = time.time()
-#     execution_time = end_time - start_time
-    
-#     # mining_process_id = eclatStoreMining(startDate, endDate, minimumSupport, minimumConfidence, rules, lenOfTransaction, execution_time)
-#     mining_process_id = 'test123'
-#     # mining_process_id = '2a863b34-2201-4003-b3d7-4c2535cc421b'
-#     miningProcessIsExist = False
-#     miningProcess = MiningProcess.query.filter_by(id=mining_process_id).first()
-    
-#     if miningProcess:
-#         miningProcessIsExist= True
-        
-#     associated_rules_with_names = associateItemCodeWithName(rules=rules)
-    
-#     return render_template("mining/fp-growth.html",
-#                            parameters=parameters,
-#                            lenOfTransaction=lenOfTransaction,
-#                            dictOfItemFrequency=dictOfItemFrequency,
-#                            filteredItemset=filteredItemset,
-#                            miningProcessIsExist=miningProcessIsExist,
-#                            associated_rules=associated_rules_with_names,
-#                            mining_process_id=mining_process_id,
-#                            execution_time=execution_time)
+                           lenOfTransaction=lenOfTransaction,
+                           dictOfItemFrequency=dictOfItemFrequency,
+                           filteredItemset=filteredItemset,
+                           associated_rules=associated_rules_with_names,
+                           execution_time_res=execution_time_res,
+                           execution_time_unit=execution_time_unit)

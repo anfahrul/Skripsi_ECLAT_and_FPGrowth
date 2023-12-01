@@ -25,9 +25,8 @@ class FPNode:
             
             
 class FPGrowth:
-    def __init__(self, minimumSupportRatio, minimumConfidence):
-        self.minimumSupportCount = minimumSupportRatio
-        self.minimumConfidence = minimumConfidence
+    def __init__(self, minimumSupportCount, minimumConfidence):
+        self.minimumSupportCount = minimumSupportCount
         self.listOfItemset = []
         self.dictOfFilteredItems = {}
         self.frequencyOfTransaction = []
@@ -71,11 +70,11 @@ class FPGrowth:
             currentNode.next = targetNode
     
 
-    def updateTree(self, item, parentNode, headerTable):
+    def updateTree(self, item, parentNode, headerTable, supportCount):
         if item in parentNode.children:
-            parentNode.children[item].increment(1)
+            parentNode.children[item].increment(supportCount)
         else:
-            newItemNode = FPNode(item, 1, parentNode)
+            newItemNode = FPNode(item, supportCount, parentNode)
             parentNode.children[item] = newItemNode
             self.updateHeaderTable(item, newItemNode, headerTable)
         return parentNode.children[item]
@@ -94,11 +93,13 @@ class FPGrowth:
         for _, itemset in self.dictOfFilteredItems.items():
             currentNode = initialNode
             for item in itemset:
-                currentNode = self.updateTree(item, currentNode, headerTable)
+                currentNode = self.updateTree(item, currentNode, headerTable, supportCount=1)
 
         return initialNode, headerTable
     
+    
     # MINING THE TREE
+    
     
     def findPrefixPath(self, node, prefixPath):
         if node.parent is not None:
@@ -129,30 +130,19 @@ class FPGrowth:
         return dict_of_conditional_pattern_base
 
 
-    def updateConditionalTree(self, item, parentNode, headerTable, supportCount):
-        if item in parentNode.children:
-            parentNode.children[item].increment(supportCount)
-        else:
-            newItemNode = FPNode(item, supportCount, parentNode)
-            parentNode.children[item] = newItemNode
-            self.updateHeaderTable(item, newItemNode, headerTable)
-        return parentNode.children[item]
-    
-    
-    def constructConditionalTree(self, conditionalPatternBase, minimumSupport):
+    def constructConditionalTree(self, conditionalPatternBase):
         conditionalHeaderTable = defaultdict(int)
 
         for itemSet, freq in conditionalPatternBase.items():
             for item in itemSet:
                 conditionalHeaderTable[item] += freq
         
-        conditionalHeaderTable = {item: supportValue for item, supportValue in conditionalHeaderTable.items() if supportValue >= minimumSupport}
-
+        conditionalHeaderTable = {item: supportValue for item, supportValue in conditionalHeaderTable.items() if supportValue >= self.minimumSupportCount}
+        
         if not conditionalHeaderTable:
             return None, None
 
-        for item in conditionalHeaderTable:
-            conditionalHeaderTable[item] = [conditionalHeaderTable[item], None]
+        conditionalHeaderTable = {item: [freq, None] for item, freq in conditionalHeaderTable.items()}
 
         conditionalInitialNode = FPNode('Null', 1, None)
         
@@ -161,7 +151,7 @@ class FPGrowth:
             currentNode = conditionalInitialNode
 
             for item in itemset:
-                currentNode = self.updateConditionalTree(item, currentNode, conditionalHeaderTable, supportCount=support)
+                currentNode = self.updateTree(item, currentNode, conditionalHeaderTable, supportCount=support)
 
         # print("conditionalInitialNode", conditionalInitialNode.display())
         return conditionalInitialNode, conditionalHeaderTable
@@ -177,12 +167,13 @@ class FPGrowth:
             conditionalPatternBase = self.createConditionalPatternBase(item, headerTable)
             # print("CPB: ", prefix, item, conditionalPatternBase)
             
-            conditionalTree, newHeaderTable = self.constructConditionalTree(
-                conditionalPatternBase, self.minimumSupportCount
-                )
+            conditionalTree, newHeaderTable = self.constructConditionalTree(conditionalPatternBase)
 
             if newHeaderTable is not None:
                 self.miningTrees(newHeaderTable, newFreqItemset, freqItemsetList)
+    
+    
+    # TRIGGER
     
     
     def run(self):
@@ -198,5 +189,5 @@ class FPGrowth:
             freqentItemset = []
             self.miningTrees(headerTable, set(), freqentItemset)
             
-            print(freqentItemset)
-            return self.itemFrequencyFiltered, self.dictOfFilteredItems, freqentItemset, self.listOfItemset, self.minimumConfidence
+            # print(freqentItemset)
+            return self.itemFrequencyFiltered, self.dictOfFilteredItems, freqentItemset, self.listOfItemset
