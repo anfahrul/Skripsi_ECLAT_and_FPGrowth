@@ -256,12 +256,13 @@ def fpGrowthMining():
     fpGrowthInstance = FPGrowth(minimumSupportCount, minimumConfidenceRatio)
     fpGrowthInstance.read_data(transactions_in_period)
     dictOfItemFrequency, filteredItemset, freqentItemset, listOfItemset = fpGrowthInstance.run()
+    # print(freqentItemset[:10])
     
     end_time = time.time()
     execution_time = end_time - start_time
     execution_time_res, execution_time_unit = formattingExecutionTime(execution_time)
     
-    rules = associationRuleFpGrowth(freqentItemset, listOfItemset, minConf=minimumConfidenceRatio)
+    rules = associationRuleFpGrowth(freqentItemset, listOfItemset, minimumConfidence=minimumConfidenceRatio)
     
     associated_rules_with_names = associateItemCodeWithName(rules=rules)
     

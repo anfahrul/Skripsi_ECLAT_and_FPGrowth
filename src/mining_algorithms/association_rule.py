@@ -102,29 +102,35 @@ def associationRuleEclatWithoutVerbose(freqItemSetList, itemSetList, minConf):
     return rules
 
 
-def associationRuleFpGrowth(freqItemSet, itemSetList, minConf):
+def associationRuleFpGrowth(frequentItemset, listOfItemset, minimumConfidence):
     rules = defaultdict(list)
 
-    support_dict = {frozenset(itemSet): getSupport(itemSet, itemSetList) for itemSet in freqItemSet}
+    dictOfItemsetsSupport = {frozenset(itemset): getSupport(itemset, listOfItemset) for itemset in frequentItemset}
+    dictOfantecedentsSupport = {}
     
-    for itemSet in freqItemSet:
-        subsets = powerset(itemSet)
-        itemSetSup = support_dict[frozenset(itemSet)]
+    for itemset in frequentItemset:
+        subsets = powerset(itemset)
+        itemsetsSupport = dictOfItemsetsSupport[frozenset(itemset)]
 
-        for s in subsets:
-            s_set = frozenset(s)
-            itemSet_set = set(itemSet)
+        for antecedent in subsets:
+            itemset = set(itemset)
             
-            if s_set in support_dict and itemSetSup > 0:
-                s_difference = itemSet_set.difference(s_set)
+            antecedent = frozenset(antecedent)
+            if antecedent not in dictOfantecedentsSupport:
+                dictOfantecedentsSupport[antecedent] = getSupport(antecedent, listOfItemset)
+            antecedentSupport = dictOfantecedentsSupport[antecedent]
+            
+            consequent = itemset.difference(antecedent)
+            if frozenset(consequent) not in dictOfItemsetsSupport:
+                dictOfItemsetsSupport[frozenset(consequent)] = getSupport(consequent, listOfItemset)
+            consequentSupport = dictOfItemsetsSupport[frozenset(consequent)]
 
-                confidence = float(itemSetSup / support_dict[s_set])
-                if confidence >= minConf:
-                    support_B = support_dict[frozenset(s_difference)]
-                    lift_ratio = confidence / (support_B / len(itemSetList))
+            confidence = float(itemsetsSupport / antecedentSupport)
+            if confidence >= minimumConfidence:
+                liftRatio = confidence / (consequentSupport / len(listOfItemset))
 
-                    rule_key = (s_set, frozenset(s_difference))
-                    rules[rule_key] = [itemSetSup, confidence, lift_ratio]
+                ruleKey = (antecedent, frozenset(consequent))
+                rules[ruleKey] = [itemsetsSupport, confidence, liftRatio]
 
     return dict(rules)
 
