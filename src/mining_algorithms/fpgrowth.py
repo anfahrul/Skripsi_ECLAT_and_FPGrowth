@@ -52,7 +52,8 @@ class FPGrowth:
     
     def filteredTransactionItems(self):
         order_keys = set(self.itemFrequencyFiltered.keys())
-        sorted_order = [item[0] for item in self.itemFrequencyFiltered]
+        # sorted_order = [item[0] for item in self.itemFrequencyFiltered]
+        sorted_order = [item for item in self.itemFrequencyFiltered]
         for key, value in self.dictOfFilteredItems.items():
             self.dictOfFilteredItems[key] = sorted([elem for elem in value if elem in order_keys], key=lambda x:  sorted_order.index(x))
 

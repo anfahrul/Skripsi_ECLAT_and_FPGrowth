@@ -106,24 +106,25 @@ def associationRuleFpGrowth(freqItemSet, itemSetList, minConf):
     rules = defaultdict(list)
 
     support_dict = {frozenset(itemSet): getSupport(itemSet, itemSetList) for itemSet in freqItemSet}
-
+    
     for itemSet in freqItemSet:
         subsets = powerset(itemSet)
         itemSetSup = support_dict[frozenset(itemSet)]
-        support = support_dict[frozenset(itemSet)]
 
         for s in subsets:
             s_set = frozenset(s)
             itemSet_set = set(itemSet)
-            s_difference = itemSet_set.difference(s_set)
+            
+            if s_set in support_dict and itemSetSup > 0:
+                s_difference = itemSet_set.difference(s_set)
 
-            confidence = float(itemSetSup / support_dict[s_set])
-            if confidence >= minConf:
-                support_B = support_dict[frozenset(s_difference)]
-                lift_ratio = confidence / (support_B / len(itemSetList))
+                confidence = float(itemSetSup / support_dict[s_set])
+                if confidence >= minConf:
+                    support_B = support_dict[frozenset(s_difference)]
+                    lift_ratio = confidence / (support_B / len(itemSetList))
 
-                rule_key = (s_set, frozenset(s_difference))
-                rules[rule_key] = [support, confidence, lift_ratio]
+                    rule_key = (s_set, frozenset(s_difference))
+                    rules[rule_key] = [itemSetSup, confidence, lift_ratio]
 
     return dict(rules)
 
