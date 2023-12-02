@@ -23,6 +23,6 @@ class Transaction(db.Model):
 class TransactionProduct(db.Model):
     __tablename__ = 'transaction_products'
     id = db.Column(db.Integer, primary_key=True)
-    transaction_id = db.Column(db.String, db.ForeignKey('transactions.transaction_id'))
-    itemCode = db.Column(db.String, db.ForeignKey('products.itemCode'))
+    transaction_id = db.Column(db.String, db.ForeignKey('transactions.transaction_id', onupdate="CASCADE", ondelete="CASCADE"))
+    itemCode = db.Column(db.String, db.ForeignKey('products.itemCode', onupdate="CASCADE", ondelete="RESTRICT"))
     quantity = db.Column(db.Integer)

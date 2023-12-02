@@ -56,11 +56,16 @@ def indexTrans():
         print(f"Error in indexTrans: {str(e)}")
         return jsonify({'error': 'Internal Server Error'}), 500
 
+def clean_value(value):
+    return value.replace('`', '')
+
 
 def createTrans():
     products = Product.query.all()
     
-    return render_template('transaction/create_transaction.html', products=products)
+    cleaned_products = [{'itemCode': product.itemCode, 'name': clean_value(product.name)} for product in products]
+    
+    return render_template('transaction/create_transaction.html', products=cleaned_products)
 
 
 def storeTrans(): 
