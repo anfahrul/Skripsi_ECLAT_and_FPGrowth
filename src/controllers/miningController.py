@@ -177,7 +177,7 @@ def eclatMining():
     execution_time_res, execution_time_unit = formattingExecutionTime(execution_time)
     
     if verbose:
-        rules = associationRule(freqItems, listOfItemInEachTransaction, minConf=minimumConfidenceRatio)
+        rules = associationRule(freqItems, listOfItemInEachTransaction, minimumConfidence=minimumConfidenceRatio)
     else:
         rules = associationRuleEclatWithoutVerbose(freqItems, listOfItemInEachTransaction, minimumConfidence=minimumConfidenceRatio)
 
