@@ -52,11 +52,20 @@ class FPGrowth:
     
     def filteredTransactionItems(self):
         order_keys = set(self.itemFrequencyFiltered.keys())
-        # sorted_order = [item[0] for item in self.itemFrequencyFiltered]
         sorted_order = [item for item in self.itemFrequencyFiltered]
-        for key, value in self.dictOfFilteredItems.items():
-            self.dictOfFilteredItems[key] = sorted([elem for elem in value if elem in order_keys], key=lambda x:  sorted_order.index(x))
 
+        keys_to_remove = []
+        
+        for key, value in self.dictOfFilteredItems.items():
+            filtered_list = [elem for elem in value if elem in order_keys]
+            if not filtered_list:
+                keys_to_remove.append(key)
+            else:
+                self.dictOfFilteredItems[key] = sorted(filtered_list, key=lambda x: sorted_order.index(x))
+
+        for key_to_remove in keys_to_remove:
+            del self.dictOfFilteredItems[key_to_remove]
+    
     
     # CREATE THE TREE
     
