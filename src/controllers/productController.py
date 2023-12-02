@@ -71,9 +71,6 @@ def store():
     db.session.add(new_item)
     db.session.commit()
     
-    # products = Product.query.all()
-    
-    # return render_template('product/list_product.html', products=products)
     flash('Barang baru berhasil disimpan.')
     
     return redirect(url_for('product_blueprint.list_product'))
