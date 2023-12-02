@@ -63,14 +63,14 @@ def eclatIndex():
     return render_template("mining/eclat.html", is_form_submitted=is_form_submitted)
 
 
-def eclatStoreMining(period_start, period_end, minimum_support, minimum_confidence, rules, lenOfTransaction, execution_time):
+def eclatStoreMining(algorithm, period_start, period_end, minimum_support, minimum_confidence, rules, lenOfTransaction, execution_time):
     new_uuid = uuid.uuid4()
     process_id = str(new_uuid)
     
     # Mining Process
     mining_process = MiningProcess(
         id=process_id,
-        algorithm='ECLAT',
+        algorithm=algorithm,
         period_start=period_start,
         period_end=period_end,
         minimum_support=minimum_support,
@@ -181,8 +181,8 @@ def eclatMining():
     else:
         rules = associationRuleEclatWithoutVerbose(freqItems, listOfItemInEachTransaction, minimumConfidence=minimumConfidenceRatio)
 
-    # mining_process_id = eclatStoreMining(startDate, endDate, minimumSupport, minimumConfidence, rules, lenOfTransaction, execution_time)
-    mining_process_id = 'test123'
+    mining_process_id = eclatStoreMining('ECLAT', startDate, endDate, minimumSupport, minimumConfidence, rules, lenOfTransaction, execution_time)
+    # mining_process_id = 'test123'
     miningProcessIsExist = False
     miningProcess = MiningProcess.query.filter_by(id=mining_process_id).first()
     
@@ -264,6 +264,14 @@ def fpGrowthMining():
     
     rules = associationRuleFpGrowth(freqentItemset, listOfItemset, minimumConfidence=minimumConfidenceRatio)
     
+    mining_process_id = eclatStoreMining('FP-Growth', startDate, endDate, minimumSupportCount, minimumConfidence, rules, lenOfTransaction, execution_time)
+    # mining_process_id = 'test123'
+    miningProcessIsExist = False
+    miningProcess = MiningProcess.query.filter_by(id=mining_process_id).first()
+    
+    if miningProcess:
+        miningProcessIsExist= True
+        
     associated_rules_with_names = associateItemCodeWithName(rules=rules)
     
     return render_template("mining/fp-growth.html",
@@ -272,6 +280,8 @@ def fpGrowthMining():
                            lenOfTransaction=lenOfTransaction,
                            dictOfItemFrequency=dictOfItemFrequency,
                            filteredItemset=filteredItemset,
+                           miningProcessIsExist=miningProcessIsExist,
                            associated_rules=associated_rules_with_names,
+                           mining_process_id=mining_process_id,
                            execution_time_res=execution_time_res,
                            execution_time_unit=execution_time_unit)
