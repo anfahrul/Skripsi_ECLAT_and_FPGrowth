@@ -26,7 +26,7 @@
           <th scope="col">Nama Barang</th>
           <!-- <th scope="col">Satuan</th> -->
           <!-- <th scope="col">Harga Jual</th> -->
-          <th scope="col">Tindakan</th>
+          <!-- <th scope="col">Tindakan</th> -->
         </tr>
       </thead>
       <tbody>
@@ -37,7 +37,7 @@
           <td>{{ item['Nama Barang'] }}</td>
           <!-- <td>{{ item.unit }}</td> -->
           <!-- <td id="price">{{ item.price }}</td> -->
-          <td>
+          <!-- <td>
             <div class="d-flex justify-content-left">
               <a
                 href="{{ url_for('product_blueprint.edit_product', itemCode=item['Kode Barang']) }}"
@@ -46,7 +46,7 @@
                 aria-label="Edit"
                 ><span> <i class="ti ti-edit"></i> Edit </span></a
               >
-              <!-- <form
+              <form
                 method="post"
                 action="{{ url_for('product_blueprint.delete_product', itemCode=item.itemCode) }}"
                 onsubmit="return deleteProductConfirmation('{{ item.name }}')"
@@ -60,25 +60,8 @@
                 >
                   <span><i class="ti ti-trash"></i> Hapus</span>
                 </button>
-              </form> -->
+              </form>
             </div>
-          </td>
-          <!-- <td>
-            <a
-              href="{{ url_for('product_blueprint.edit_product', itemCode=item.itemCode) }}"
-              class="btn btn-sm btn-primary"
-              >Edit</a
-            >
-            <form
-              method="post"
-              action="{{ url_for('product_blueprint.delete_product', itemCode=item.itemCode) }}"
-            >
-              <input
-                type="submit"
-                value="Delete"
-                class="btn btn-sm btn-danger"
-              />
-            </form>
           </td> -->
         </tr>
         {% endfor %}
@@ -116,18 +99,18 @@
           data: "Nama Barang",
           name: "Nama Barang",
         },
-        {
-          orderable: false,
-          data: null,
-          render: function (data, type, row) {
-            return (
-              '<a href="/products/' +
-              row["Kode Barang"] +
-              "/edit" +
-              '" class="btn btn-sm btn-outline-primary" title="Lihat Detail" aria-label="Lihat Detail"><span> <i class="ti ti-eye"></i> Detail </span></a>'
-            );
-          },
-        },
+        // {
+        //   orderable: false,
+        //   data: null,
+        //   render: function (data, type, row) {
+        //     return (
+        //       '<a href="/products/' +
+        //       row["Kode Barang"] +
+        //       "/edit" +
+        //       '" class="btn btn-sm btn-outline-primary" title="Lihat Detail" aria-label="Lihat Detail"><span> <i class="ti ti-eye"></i> Detail </span></a>'
+        //     );
+        //   },
+        // },
       ],
       language: {
         url: "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json",
