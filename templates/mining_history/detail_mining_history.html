@@ -31,7 +31,11 @@ endblock %} {% block content %}
             Minimum Support
           </th>
           <td style="padding: 5px 0px !important">
-            {{ mining_process.minimum_support }}%
+            {% if mining_process.algorithm == 'ECLAT' %}
+            <span>{{ mining_process.minimum_support }}%</span>
+            {% else %}
+            <span>{{ mining_process.minimum_support }}</span>
+            {% endif %}
           </td>
         </tr>
         <tr>
