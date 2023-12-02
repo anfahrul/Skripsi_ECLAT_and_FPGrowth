@@ -55,49 +55,38 @@ def associationRule(freqItemSetDict, itemSetList, minConf):
     return rules
 
 
-def associationRuleEclatWithoutVerbose(freqItemSetList, itemSetList, minConf):
+def associationRuleEclatWithoutVerbose(frequentItemset, listOfItemset, minimumConfidence):
     rules = {}
 
-    # Menghitung dukungan setiap itemset dalam freqItemSet
-    itemSetSupport = {}
-    for itemSet, support, tids in freqItemSetList:
-        itemSetTuple = frozenset(itemSet)
-        itemSetSupport[itemSetTuple] = support
+    dictOfItemsetsSupport = {frozenset(itemset): support for itemset, support, tids in frequentItemset}
+    dictOfantecedentsSupport = {}
 
-    for itemSet, support, tids in freqItemSetList:
-        subsets = powerset(itemSet)
-        itemSetSup = itemSetSupport[frozenset(itemSet)]
+    for itemset, _, _ in frequentItemset:
+        subsets = powerset(itemset)
+        itemsetsSupport = dictOfItemsetsSupport[frozenset(itemset)]
         
         
-        for s in subsets:
-            s_tuple = frozenset(s)
+        for antecedent in subsets:
+            itemset = set(itemset)
             
+            antecedent = frozenset(antecedent)
             
-            if s_tuple in itemSetSupport and itemSetSupport[s_tuple] > 0:
-                # Menghitung dukungan itemset B
-                itemSet_B = tuple(item for item in itemSet if item not in s)
-                itemSet_B_support = itemSetSupport[frozenset(itemSet_B)]
-                
-                # print( "itemSetSup:", itemSetSup, "itemset A:", s_tuple, " supp A:", itemSetSupport[s_tuple])                
-                confidence = float(itemSetSup / itemSetSupport[s_tuple])
+            antecedent = frozenset(antecedent)
+            if antecedent not in dictOfantecedentsSupport:
+                dictOfantecedentsSupport[antecedent] = getSupport(antecedent, listOfItemset)
+            antecedentSupport = dictOfantecedentsSupport[antecedent]
+            
+            consequent = itemset.difference(antecedent)
+            if frozenset(consequent) not in dictOfItemsetsSupport:
+                dictOfItemsetsSupport[frozenset(consequent)] = getSupport(consequent, listOfItemset)
+            consequentSupport = dictOfItemsetsSupport[frozenset(consequent)]
 
-                if confidence >= minConf:
-                    support_B = itemSet_B_support  # Tidak perlu dibagi len(itemSetList)
-                    # print("confidence", confidence, "B:", itemSet_B, "supp:", support_B)
-                    
-                    lift_ratio = confidence / (support_B / len(itemSetList))
-                    
-                    s_difference = frozenset(itemSet_B)
+            confidence = float(itemsetsSupport / antecedentSupport)
+            if confidence >= minimumConfidence:
+                liftRatio = confidence / (consequentSupport / len(listOfItemset))
 
-                    rule_key = (s_tuple, s_difference)
-                    
-                    support = itemSetSup
-                    
-                    rules[rule_key] = [
-                        support, 
-                        confidence, 
-                        lift_ratio
-                    ]
+                ruleKey = (antecedent, frozenset(consequent))
+                rules[ruleKey] = [itemsetsSupport, confidence, liftRatio]            
 
     return rules
 

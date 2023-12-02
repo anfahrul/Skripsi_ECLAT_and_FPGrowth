@@ -179,7 +179,7 @@ def eclatMining():
     if verbose:
         rules = associationRule(freqItems, listOfItemInEachTransaction, minConf=minimumConfidenceRatio)
     else:
-        rules = associationRuleEclatWithoutVerbose(freqItems, listOfItemInEachTransaction, minConf=minimumConfidenceRatio)
+        rules = associationRuleEclatWithoutVerbose(freqItems, listOfItemInEachTransaction, minimumConfidence=minimumConfidenceRatio)
 
     # mining_process_id = eclatStoreMining(startDate, endDate, minimumSupport, minimumConfidence, rules, lenOfTransaction, execution_time)
     mining_process_id = 'test123'
