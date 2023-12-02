@@ -2,9 +2,7 @@
 block content %}
 <div class="container-fluid">
   <div class="row">
-    <h3 class="mb-5">
-      Hi! {{currentUser.name}} <br />Selamat Datang di SinarMart Analytics
-    </h3>
+    <h3 class="mb-5">Hi! <b>{{currentUser.name}}</b></h3>
 
     <div class="col-lg-4">
       <div class="card">
@@ -12,7 +10,7 @@ block content %}
           <div class="row alig n-items-start">
             <div class="col-8">
               <h5 class="card-title mb-9 fw-semibold">Master Produk</h5>
-              <h4 class="fw-semibold mb-3">{{products|length}}</h4>
+              <h4 class="fw-semibold mb-3">{{products}}</h4>
               <div class="d-flex align-items-center pb-1">
                 <!-- <span
                   class="me-2 rounded-circle bg-light-danger round-20 d-flex align-items-center justify-content-center"
@@ -42,7 +40,7 @@ block content %}
           <div class="row alig n-items-start">
             <div class="col-8">
               <h5 class="card-title mb-9 fw-semibold">Transaksi</h5>
-              <h4 class="fw-semibold mb-3">{{transactions|length}}</h4>
+              <h4 class="fw-semibold mb-3">{{transactions}}</h4>
               <div class="d-flex align-items-center pb-1">
                 <!-- <span
                   class="me-2 rounded-circle bg-light-danger round-20 d-flex align-items-center justify-content-center"
@@ -72,7 +70,7 @@ block content %}
           <div class="row alig n-items-start">
             <div class="col-8">
               <h5 class="card-title mb-9 fw-semibold">Riwayat</h5>
-              <h4 class="fw-semibold mb-3">{{miningProcess|length}}</h4>
+              <h4 class="fw-semibold mb-3">{{miningProcess}}</h4>
               <div class="d-flex align-items-center pb-1">
                 <!-- <span
                   class="me-2 rounded-circle bg-light-danger round-20 d-flex align-items-center justify-content-center"

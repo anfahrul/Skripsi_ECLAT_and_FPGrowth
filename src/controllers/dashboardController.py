@@ -8,15 +8,13 @@ from flask_login import current_user
 
 
 def dashboardIndex():
-    products = Product.query.all()
-    transactions = Transaction.query.all()
+    lenOfproducts = Product.query.count()
+    lenOftransactions = Transaction.query.count()
     currentUser = User.query.filter_by(email=current_user.email).first()
-    users = User.query.all()
-    miningProcess = MiningProcess.query.all()
+    lenOfminingProcess = MiningProcess.query.count()
     
     return render_template('dashboard.html',
-                           products=products,
-                           transactions=transactions,
+                           products=lenOfproducts,
+                           transactions=lenOftransactions,
                            currentUser=currentUser,
-                           users=users,
-                           miningProcess=miningProcess)
+                           miningProcess=lenOfminingProcess)
