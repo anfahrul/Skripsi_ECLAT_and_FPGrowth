@@ -277,16 +277,28 @@ def fpGrowthMining():
     
     associated_rules_with_names = associateItemCodeWithName(rules=rules)
     
-    return render_template("mining/fp-growth.html",
-                           is_form_submitted=is_form_submitted,
-                           parameters=parameters,
-                           lenOfTransaction=lenOfTransaction,
-                           dictOfItemFrequency=dictOfItemFrequency,
-                           filteredItemset=filteredItemset,
-                           miningProcessIsExist=miningProcessIsExist,
-                           nodesOfTree=nodesOfTree,
-                           dictOfConditionalPatternBase=dictOfConditionalPatternBase,
-                           associated_rules=associated_rules_with_names,
-                           mining_process_id=mining_process_id,
-                           execution_time_res=execution_time_res,
-                           execution_time_unit=execution_time_unit)
+    if verbose:
+        return render_template("mining/fp-growth.html",
+                            is_form_submitted=is_form_submitted,
+                            parameters=parameters,
+                            lenOfTransaction=lenOfTransaction,
+                            dictOfItemFrequency=dictOfItemFrequency,
+                            filteredItemset=filteredItemset,
+                            miningProcessIsExist=miningProcessIsExist,
+                            nodesOfTree=nodesOfTree,
+                            dictOfConditionalPatternBase=dictOfConditionalPatternBase,
+                            associated_rules=associated_rules_with_names,
+                            mining_process_id=mining_process_id,
+                            execution_time_res=execution_time_res,
+                            execution_time_unit=execution_time_unit)
+    else:
+        return render_template("mining/fp-growth.html",
+                            is_form_submitted=is_form_submitted,
+                            parameters=parameters,
+                            lenOfTransaction=lenOfTransaction,
+                            miningProcessIsExist=miningProcessIsExist,
+                            associated_rules=associated_rules_with_names,
+                            mining_process_id=mining_process_id,
+                            execution_time_res=execution_time_res,
+                            execution_time_unit=execution_time_unit)
+        
