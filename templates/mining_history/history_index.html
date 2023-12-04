@@ -10,7 +10,7 @@ endblock %} {% block content %}
           <th scope="col">No</th>
           <th scope="col">Algoritma</th>
           <th scope="col">Periode Transaksi</th>
-          <th scope="col">Minimum Support (%)</th>
+          <th scope="col">Minimum Support</th>
           <th scope="col">Minimum Confidence (%)</th>
           <th scope="col">Waktu Analisis</th>
           <!-- <th scope="col">Waktu Eksekusi</th> -->
@@ -27,7 +27,14 @@ endblock %} {% block content %}
             s.d
             <span id="periodEnd">{{process.period_end}}</span>
           </td>
-          <td>{{process.minimum_support}}</td>
+          <!-- <td>{{process.minimum_support}}</td> -->
+          <td>
+            {% if process.algorithm == 'ECLAT' %}
+            <span>{{ process.minimum_support }}%</span>
+            {% else %}
+            <span>{{ process.minimum_support|int }}</span>
+            {% endif %}
+          </td>
           <td>{{process.minimum_confidence}}</td>
           <td class="analysisDate">{{process.created_at}}</td>
           <td>

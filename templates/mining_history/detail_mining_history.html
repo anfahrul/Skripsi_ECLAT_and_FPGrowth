@@ -28,13 +28,14 @@ endblock %} {% block content %}
         </tr>
         <tr>
           <th scope="row" style="padding: 5px 0px !important">
-            Minimum Support
+            {% if mining_process.algorithm == 'ECLAT' %} Minimum Support {% else
+            %} Minimum Support Count {% endif %}
           </th>
           <td style="padding: 5px 0px !important">
             {% if mining_process.algorithm == 'ECLAT' %}
             <span>{{ mining_process.minimum_support }}%</span>
             {% else %}
-            <span>{{ mining_process.minimum_support }}</span>
+            <span>{{ mining_process.minimum_support|int }}</span>
             {% endif %}
           </td>
         </tr>
