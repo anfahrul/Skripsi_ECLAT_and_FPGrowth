@@ -22,7 +22,23 @@ class FPNode:
         print('  ' * ind, self.itemName, ' ', self.count)
         for child in list(self.children.values()):
             child.display(ind + 1)
-            
+    
+    def getNodesOfTree(self, listOfNode=None):
+        if listOfNode is None:
+            listOfNode = []
+
+        node_info = {
+            "id": str(self),
+            "icon": False,
+            "parent": "#" if self.parent is None else str(self.parent),
+            "text": "{}:{}".format(self.itemName, self.count)
+        }
+        listOfNode.append(node_info)
+
+        for child in list(self.children.values()):
+            child.getNodesOfTree(listOfNode)
+
+        return listOfNode
             
 class FPGrowth:
     def __init__(self, minimumSupportCount, minimumConfidence):
@@ -167,7 +183,7 @@ class FPGrowth:
         return conditionalInitialNode, conditionalHeaderTable
 
 
-    def miningTrees(self, headerTable, prefix, freqItemsetList):
+    def miningTrees(self, headerTable, prefix, freqItemsetList, dictOfConditionalPatternBase):
         itemlistSorted = [item[0] for item in headerTable.items()][::-1]
         
         for item in itemlistSorted:
@@ -177,10 +193,14 @@ class FPGrowth:
             conditionalPatternBase = self.createConditionalPatternBase(item, headerTable)
             # print("CPB: ", prefix, item, conditionalPatternBase)
             
+            if len(prefix) == 0:
+                dictOfConditionalPatternBase[item] = conditionalPatternBase
+            
             conditionalTree, newHeaderTable = self.constructConditionalTree(conditionalPatternBase)
+            # print(newHeaderTable)
 
             if newHeaderTable is not None:
-                self.miningTrees(newHeaderTable, newFreqItemset, freqItemsetList)
+                self.miningTrees(newHeaderTable, newFreqItemset, freqItemsetList, dictOfConditionalPatternBase)
     
     
     # TRIGGER
@@ -193,11 +213,20 @@ class FPGrowth:
         
         fpTree, headerTable = self.constructFPTree()
         
+        listOfNode = fpTree.getNodesOfTree()
+        
         if fpTree.children is None:
             print('No frequent item set')
         else:
             freqentItemset = []
-            self.miningTrees(headerTable, set(), freqentItemset)
+            dictOfConditionalPatternBase = {}
             
-            # print(freqentItemset)
-            return self.itemFrequencyFiltered, self.dictOfFilteredItems, freqentItemset, self.listOfItemset
+            self.miningTrees(headerTable, set(), freqentItemset, dictOfConditionalPatternBase)
+            
+            return (
+                self.itemFrequencyFiltered,
+                self.dictOfFilteredItems,
+                freqentItemset, 
+                self.listOfItemset, 
+                dictOfConditionalPatternBase,
+                listOfNode)

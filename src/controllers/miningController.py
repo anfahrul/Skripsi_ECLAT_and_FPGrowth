@@ -10,6 +10,7 @@ from src.models.mining import MiningProcess, AssociationResult, AssociationResul
 import datetime
 import uuid
 from memory_profiler import profile
+import json
 
 
 def associateItemCodeWithName(rules):
@@ -255,7 +256,7 @@ def fpGrowthMining():
     minimumConfidenceRatio = minimumConfidence / 100
     fpGrowthInstance = FPGrowth(minimumSupportCount, minimumConfidenceRatio)
     fpGrowthInstance.read_data(transactions_in_period)
-    dictOfItemFrequency, filteredItemset, freqentItemset, listOfItemset = fpGrowthInstance.run()
+    dictOfItemFrequency, filteredItemset, freqentItemset, listOfItemset, dictOfConditionalPatternBase, listOfNode = fpGrowthInstance.run()
     # print(freqentItemset[:10])
     
     end_time = time.time()
@@ -264,14 +265,16 @@ def fpGrowthMining():
     
     rules = associationRuleFpGrowth(freqentItemset, listOfItemset, minimumConfidence=minimumConfidenceRatio)
     
-    mining_process_id = eclatStoreMining('FP-Growth', startDate, endDate, minimumSupportCount, minimumConfidence, rules, lenOfTransaction, execution_time)
-    # mining_process_id = 'test123'
+    # mining_process_id = eclatStoreMining('FP-Growth', startDate, endDate, minimumSupportCount, minimumConfidence, rules, lenOfTransaction, execution_time)
+    mining_process_id = 'test123'
     miningProcessIsExist = False
     miningProcess = MiningProcess.query.filter_by(id=mining_process_id).first()
     
     if miningProcess:
         miningProcessIsExist= True
         
+    nodesOfTree = json.dumps(listOfNode)
+    
     associated_rules_with_names = associateItemCodeWithName(rules=rules)
     
     return render_template("mining/fp-growth.html",
@@ -281,6 +284,8 @@ def fpGrowthMining():
                            dictOfItemFrequency=dictOfItemFrequency,
                            filteredItemset=filteredItemset,
                            miningProcessIsExist=miningProcessIsExist,
+                           nodesOfTree=nodesOfTree,
+                           dictOfConditionalPatternBase=dictOfConditionalPatternBase,
                            associated_rules=associated_rules_with_names,
                            mining_process_id=mining_process_id,
                            execution_time_res=execution_time_res,

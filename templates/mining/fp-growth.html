@@ -15,6 +15,8 @@
   }
 </style>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+
 {% endblock %}
 
 {% block content %}
@@ -242,7 +244,53 @@
   </div>
 </div>
 {% endif %}
- {% if associated_rules %}
+
+{% if nodesOfTree %}
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title fw-semibold mb-4">
+      FP-Tree
+    </h5>
+
+    <div id="jstree"></div>
+
+    <div id="nodesOfTree" data-value="{{ nodesOfTree }}"></div>
+    
+  </div>
+</div>
+{% endif %}
+
+
+{% if dictOfConditionalPatternBase %}
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title fw-semibold mb-4">
+      Conditional Pattern Base
+    </h5>
+
+    <table id="conditionalPatternBase" class="table display">
+      <thead>
+        <tr>
+          <th scope="col">No.</th>
+          <th scope="col">Item (Kode Barang)</th>
+          <th scope="col">Conditional Pattern Base</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for key, value in dictOfConditionalPatternBase.items() %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ key }}</td>
+          <td>{{ value }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+{% if associated_rules %}
 <div class="card" id="rules-card">
   <div class="card-body">
     <div class="d-flex justify-content-between">
@@ -371,6 +419,7 @@
 </style>
 
 {% endblock %} {% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 <script>
   $(document).ready(function () {
     $("#verticalData").DataTable({
@@ -383,6 +432,14 @@
 
   $(document).ready(function () {
     $("#filteredItemset").DataTable({
+      language: {
+        url: "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json",
+      },
+    });
+  });
+  
+  $(document).ready(function () {
+    $("#conditionalPatternBase").DataTable({
       language: {
         url: "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json",
       },
@@ -451,5 +508,16 @@
 
     element.textContent = formattedDate;
   });
+
+  // FP-Tree
+  $(function () {
+    var nodesOfTree = JSON.parse($("#nodesOfTree").attr("data-value"));
+    console.log(nodesOfTree)
+
+    $('#jstree').jstree({ 'core' : {
+        'data' : nodesOfTree
+    }});
+  });
+
 </script>
 {% endblock %}
