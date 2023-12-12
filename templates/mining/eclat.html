@@ -77,8 +77,8 @@
             class="form-control"
             id="exampleFormControlInput1"
             placeholder="Contoh: 5"
-            step="0.01"
-            min="0.01"
+            step="0.0001"
+            min="0.0001"
             max="100"
             required
           />
@@ -249,7 +249,9 @@
     </table>
   </div>
 </div>
-{% endfor %} {% endif %} {% if associated_rules %}
+{% endfor %} {% endif %}
+
+{% if associated_rules %}
 <div class="card" id="rules-card">
   <div class="card-body">
     <div class="d-flex justify-content-between">

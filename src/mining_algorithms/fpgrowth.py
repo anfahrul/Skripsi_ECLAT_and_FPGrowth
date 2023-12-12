@@ -44,9 +44,9 @@ class FPGrowth:
     def __init__(self, minimumSupportCount, minimumConfidence):
         self.minimumSupportCount = minimumSupportCount
         self.listOfItemset = []
-        self.dictOfFilteredItems = {}
+        self.dictOfFilteredItems = None
         self.frequencyOfTransaction = []
-        self.itemFrequencyFiltered = {}
+        self.itemFrequencyFiltered = None
 
 
     def read_data(self, transactions):
@@ -60,29 +60,53 @@ class FPGrowth:
         self.dictOfFilteredItems = dictOfItems
      
      
-    def getFrequentOfItems(self):
-        itemFrequencyCounter = Counter(item for itemset in self.listOfItemset for item in itemset)
+    # def getFrequentOfItems(self):
+    #     itemFrequencyCounter = Counter(item for itemset in self.listOfItemset for item in itemset)
 
-        self.itemFrequencyFiltered = {item: frequency for item, frequency in sorted(itemFrequencyCounter.items(), key=lambda x: x[1], reverse=True) if frequency >= self.minimumSupportCount}
+    #     self.itemFrequencyFiltered = {item: frequency for item, frequency in sorted(itemFrequencyCounter.items(), key=lambda x: x[1], reverse=True) if frequency >= self.minimumSupportCount}
+        
+    def getFrequentOfItems(self):
+        listOfItems = [item for itemset in self.listOfItemset for item in itemset]
+        items = []
+        frequency_of_items = []
+
+        current_index = 0
+        for item in listOfItems:
+            if item not in items:
+                items.insert(current_index+1, item)
+                frequency_of_items.insert(current_index+1, 1)
+                
+                current_index = items.index(item)
+                
+            else:
+                index_of_item = items.index(item)
+                frequency_of_items[index_of_item] += 1
+                current_index = index_of_item
+        
+        filtered_data = [(item, freq) for item, freq in zip(items, frequency_of_items) if freq >= self.minimumSupportCount]
+
+        sorted_data = sorted(filtered_data, key=lambda x: (x[1], -items.index(x[0])), reverse=True)
+        self.itemFrequencyFiltered = OrderedDict(sorted_data)
 
     
     def filteredTransactionItems(self):
-        order_keys = set(self.itemFrequencyFiltered.keys())
+        order_keys = self.itemFrequencyFiltered.keys()
         sorted_order = [item for item in self.itemFrequencyFiltered]
-
+        
         keys_to_remove = []
         
         for key, value in self.dictOfFilteredItems.items():
             filtered_list = [elem for elem in value if elem in order_keys]
-            if not filtered_list:
+            
+            if len(filtered_list) == 0:
                 keys_to_remove.append(key)
             else:
                 self.dictOfFilteredItems[key] = sorted(filtered_list, key=lambda x: sorted_order.index(x))
 
         for key_to_remove in keys_to_remove:
             del self.dictOfFilteredItems[key_to_remove]
-    
-    
+            
+            
     # CREATE THE TREE
     
     
@@ -106,6 +130,24 @@ class FPGrowth:
         return parentNode.children[item]
 
 
+    # def constructFPTree(self):
+    #     headerTable = self.itemFrequencyFiltered
+        
+    #     if len(headerTable) == 0:
+    #         return None, None
+
+    #     headerTable = {item: [freq, None] for item, freq in headerTable.items()}
+
+    #     initialNode = FPNode('Null', 1, None)
+        
+    #     for _, itemset in self.dictOfFilteredItems.items():
+    #         currentNode = initialNode
+    #         for item in itemset:
+    #             currentNode = self.updateTree(item, currentNode, headerTable, supportCount=1)
+
+    #     return initialNode, headerTable
+    
+    
     def constructFPTree(self):
         headerTable = self.itemFrequencyFiltered
         
@@ -137,7 +179,7 @@ class FPGrowth:
         node_of_tree = headerTable[item][1]
         dict_of_conditional_pattern_base = {}
 
-        if node_of_tree.parent.itemName != 'Null':
+        if node_of_tree.itemName != 'Null':
             while node_of_tree is not None:
                 prefix_path = []
                 
@@ -191,14 +233,15 @@ class FPGrowth:
             newFreqItemset.insert(0, item)
             freqItemsetList.append(newFreqItemset)
             conditionalPatternBase = self.createConditionalPatternBase(item, headerTable)
-            # print("CPB: ", prefix, item, conditionalPatternBase)
+            # print("CPB: ", "prefix:", prefix, "item:", item, "Pattern:", conditionalPatternBase)
             
             if len(prefix) == 0:
                 dictOfConditionalPatternBase[item] = conditionalPatternBase
             
             conditionalTree, newHeaderTable = self.constructConditionalTree(conditionalPatternBase)
-            # print(newHeaderTable)
-
+            # print("prefix:", prefix, "item:", item, "cond:", conditionalTree)
+            # print("newFreqItemsetList", newFreqItemset)
+            
             if newHeaderTable is not None:
                 self.miningTrees(newHeaderTable, newFreqItemset, freqItemsetList, dictOfConditionalPatternBase)
     
@@ -223,6 +266,7 @@ class FPGrowth:
             
             self.miningTrees(headerTable, set(), freqentItemset, dictOfConditionalPatternBase)
             
+            # print("len of freq items", len(freqentItemset))
             return (
                 self.itemFrequencyFiltered,
                 self.dictOfFilteredItems,

@@ -182,8 +182,8 @@ def eclatMining():
     else:
         rules = associationRuleEclatWithoutVerbose(freqItems, listOfItemInEachTransaction, minimumConfidence=minimumConfidenceRatio)
 
-    mining_process_id = eclatStoreMining('ECLAT', startDate, endDate, minimumSupport, minimumConfidence, rules, lenOfTransaction, execution_time)
-    # mining_process_id = 'test123'
+    # mining_process_id = eclatStoreMining('ECLAT', startDate, endDate, minimumSupport, minimumConfidence, rules, lenOfTransaction, execution_time)
+    mining_process_id = 'test123'
     miningProcessIsExist = False
     miningProcess = MiningProcess.query.filter_by(id=mining_process_id).first()
     
@@ -246,6 +246,7 @@ def fpGrowthMining():
         db.session.query(TransactionProduct)
         .join(Transaction, TransactionProduct.transaction_id == Transaction.transaction_id)
         .filter(Transaction.date.between(startDate, endDate))
+        .order_by(Transaction.transaction_id)
         .all()
     )
     
@@ -257,7 +258,6 @@ def fpGrowthMining():
     fpGrowthInstance = FPGrowth(minimumSupportCount, minimumConfidenceRatio)
     fpGrowthInstance.read_data(transactions_in_period)
     dictOfItemFrequency, filteredItemset, freqentItemset, listOfItemset, dictOfConditionalPatternBase, listOfNode = fpGrowthInstance.run()
-    # print(freqentItemset[:10])
     
     end_time = time.time()
     execution_time = end_time - start_time
@@ -287,6 +287,7 @@ def fpGrowthMining():
                             miningProcessIsExist=miningProcessIsExist,
                             nodesOfTree=nodesOfTree,
                             dictOfConditionalPatternBase=dictOfConditionalPatternBase,
+                            freqentItemset=freqentItemset,
                             associated_rules=associated_rules_with_names,
                             mining_process_id=mining_process_id,
                             execution_time_res=execution_time_res,

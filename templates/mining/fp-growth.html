@@ -290,6 +290,33 @@
 </div>
 {% endif %}
 
+{% if freqentItemset %}
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title fw-semibold mb-4">
+      Frequent Itemset
+    </h5>
+
+    <table id="freqentItemset" class="table display">
+      <thead>
+        <tr>
+          <th scope="col">No.</th>
+          <th scope="col">Frequent Itemset (Kode Barang)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for value in freqentItemset %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ value }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
 {% if associated_rules %}
 <div class="card" id="rules-card">
   <div class="card-body">
@@ -440,6 +467,14 @@
   
   $(document).ready(function () {
     $("#conditionalPatternBase").DataTable({
+      language: {
+        url: "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json",
+      },
+    });
+  });
+  
+  $(document).ready(function () {
+    $("#freqentItemset").DataTable({
       language: {
         url: "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json",
       },
