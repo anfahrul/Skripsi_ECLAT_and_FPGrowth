@@ -119,9 +119,9 @@ endblock %} {% block content %}
             <br />
             {% endfor %}
           </td>
-          <td>{{ association.support }}</td>
-          <td>{{ association.confidence }}</td>
-          <td>{{ association.lift }}</td>
+          <td>{{ association.support|float|round(3) }}</td>
+          <td>{{ association.confidence|float|round(3) }}</td>
+          <td>{{ association.lift|float|round(3) }}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -136,6 +136,7 @@ endblock %} {% block content %}
       language: {
         url: "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json",
       },
+      iDisplayLength: 5,
     });
   });
 

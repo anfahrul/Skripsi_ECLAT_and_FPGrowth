@@ -59,12 +59,7 @@ class FPGrowth:
         self.frequencyOfTransaction = [1] * len(self.listOfItemset)
         self.dictOfFilteredItems = dictOfItems
      
-     
-    # def getFrequentOfItems(self):
-    #     itemFrequencyCounter = Counter(item for itemset in self.listOfItemset for item in itemset)
-
-    #     self.itemFrequencyFiltered = {item: frequency for item, frequency in sorted(itemFrequencyCounter.items(), key=lambda x: x[1], reverse=True) if frequency >= self.minimumSupportCount}
-        
+   
     def getFrequentOfItems(self):
         listOfItems = [item for itemset in self.listOfItemset for item in itemset]
         items = []
@@ -129,24 +124,6 @@ class FPGrowth:
             self.updateHeaderTable(item, newItemNode, headerTable)
         return parentNode.children[item]
 
-
-    # def constructFPTree(self):
-    #     headerTable = self.itemFrequencyFiltered
-        
-    #     if len(headerTable) == 0:
-    #         return None, None
-
-    #     headerTable = {item: [freq, None] for item, freq in headerTable.items()}
-
-    #     initialNode = FPNode('Null', 1, None)
-        
-    #     for _, itemset in self.dictOfFilteredItems.items():
-    #         currentNode = initialNode
-    #         for item in itemset:
-    #             currentNode = self.updateTree(item, currentNode, headerTable, supportCount=1)
-
-    #     return initialNode, headerTable
-    
     
     def constructFPTree(self):
         headerTable = self.itemFrequencyFiltered

@@ -257,12 +257,11 @@ def fpGrowthMining():
     minimumConfidenceRatio = minimumConfidence / 100
     fpGrowthInstance = FPGrowth(minimumSupportCount, minimumConfidenceRatio)
     fpGrowthInstance.read_data(transactions_in_period)
-    dictOfItemFrequency, filteredItemset, freqentItemset, listOfItemset, dictOfConditionalPatternBase, listOfNode = fpGrowthInstance.run()
+    dictOfItemFrequency, filteredItemset, freqentItemset, listOfItemset, dictOfConditionalPatternBase, listOfNode = profile(fpGrowthInstance.run)()
     
     end_time = time.time()
     execution_time = end_time - start_time
     execution_time_res, execution_time_unit = formattingExecutionTime(execution_time)
-    
     rules = associationRuleFpGrowth(freqentItemset, listOfItemset, minimumConfidence=minimumConfidenceRatio)
     
     # mining_process_id = eclatStoreMining('FP-Growth', startDate, endDate, minimumSupportCount, minimumConfidence, rules, lenOfTransaction, execution_time)
