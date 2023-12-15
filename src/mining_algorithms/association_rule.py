@@ -94,25 +94,18 @@ def associationRuleEclatWithoutVerbose(frequentItemset, listOfItemset, minimumCo
 def associationRuleFpGrowth(frequentItemset, listOfItemset, minimumConfidence):
     rules = defaultdict(list)
 
-    dictOfItemsetsSupport = {frozenset(itemset): getSupport(itemset, listOfItemset) for itemset in frequentItemset}
-    dictOfantecedentsSupport = {}
-    
     for itemset in frequentItemset:
         subsets = powerset(itemset)
-        itemsetsSupport = dictOfItemsetsSupport[frozenset(itemset)]
+        itemsetsSupport = frequentItemset[frozenset(itemset)]
 
         for antecedent in subsets:
             itemset = set(itemset)
             
             antecedent = frozenset(antecedent)
-            if antecedent not in dictOfantecedentsSupport:
-                dictOfantecedentsSupport[antecedent] = getSupport(antecedent, listOfItemset)
-            antecedentSupport = dictOfantecedentsSupport[antecedent]
+            antecedentSupport = frequentItemset[antecedent]
             
             consequent = itemset.difference(antecedent)
-            if frozenset(consequent) not in dictOfItemsetsSupport:
-                dictOfItemsetsSupport[frozenset(consequent)] = getSupport(consequent, listOfItemset)
-            consequentSupport = dictOfItemsetsSupport[frozenset(consequent)]
+            consequentSupport = frequentItemset[frozenset(consequent)]
 
             confidence = float(itemsetsSupport / antecedentSupport)
             if confidence >= minimumConfidence:

@@ -203,12 +203,15 @@ class FPGrowth:
 
 
     def miningTrees(self, headerTable, prefix, freqItemsetList, dictOfConditionalPatternBase):
-        itemlistSorted = [item[0] for item in headerTable.items()][::-1]
+        itemlistSorted = [item for item in headerTable.items()][::-1]
         
-        for item in itemlistSorted:
+        for item, freq in itemlistSorted:
             newFreqItemset = list(prefix.copy())
             newFreqItemset.insert(0, item)
-            freqItemsetList.append(newFreqItemset)
+            
+            setOfNewFrequentItemset = frozenset(newFreqItemset)
+            freqItemsetList[setOfNewFrequentItemset] = freq[0]
+            
             conditionalPatternBase = self.createConditionalPatternBase(item, headerTable)
             # print("CPB: ", "prefix:", prefix, "item:", item, "Pattern:", conditionalPatternBase)
             
@@ -238,7 +241,8 @@ class FPGrowth:
         if fpTree.children is None:
             print('No frequent item set')
         else:
-            freqentItemset = []
+            # freqentItemset = []
+            freqentItemset = {}
             dictOfConditionalPatternBase = {}
             
             self.miningTrees(headerTable, set(), freqentItemset, dictOfConditionalPatternBase)
