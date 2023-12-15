@@ -51,7 +51,6 @@ def associationRuleEclatWithoutVerbose(frequentItemset, listOfItemset, minimumCo
     rules = {}
 
     dictOfItemsetsSupport = {frozenset(itemset): support for itemset, support, tids in frequentItemset}
-    dictOfantecedentsSupport = {}
 
     for itemset, _, _ in frequentItemset:
         subsets = powerset(itemset)
@@ -62,15 +61,9 @@ def associationRuleEclatWithoutVerbose(frequentItemset, listOfItemset, minimumCo
             itemset = set(itemset)
             
             antecedent = frozenset(antecedent)
-            
-            antecedent = frozenset(antecedent)
-            if antecedent not in dictOfantecedentsSupport:
-                dictOfantecedentsSupport[antecedent] = getSupport(antecedent, listOfItemset)
-            antecedentSupport = dictOfantecedentsSupport[antecedent]
+            antecedentSupport = dictOfItemsetsSupport[antecedent]
             
             consequent = itemset.difference(antecedent)
-            if frozenset(consequent) not in dictOfItemsetsSupport:
-                dictOfItemsetsSupport[frozenset(consequent)] = getSupport(consequent, listOfItemset)
             consequentSupport = dictOfItemsetsSupport[frozenset(consequent)]
 
             confidence = float(itemsetsSupport / antecedentSupport)
