@@ -192,7 +192,6 @@ def eclatMining():
         
     associated_rules_with_names = associateItemCodeWithName(rules=rules)
     
-    
     if verbose:
         return render_template("mining/eclat.html",
                             is_form_submitted=is_form_submitted,

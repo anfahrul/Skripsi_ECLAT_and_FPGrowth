@@ -18,7 +18,6 @@ def associationRule(dictOfFrequentItemset, listOfItemset, minimumConfidence):
     rules = {}
 
     dictOfItemsetsSupport = {}
-    dictOfantecedentsSupport = {}
     
     for k, itemsets in dictOfFrequentItemset.items():
         for itemset, support, tids in itemsets:
@@ -29,20 +28,13 @@ def associationRule(dictOfFrequentItemset, listOfItemset, minimumConfidence):
         subsets = powerset(itemset)
         itemsetsSupport = dictOfItemsetsSupport[frozenset(itemset)]
         
-
         for antecedent in subsets:
             itemset = set(itemset)
             
             antecedent = frozenset(antecedent)
-            
-            antecedent = frozenset(antecedent)
-            if antecedent not in dictOfantecedentsSupport:
-                dictOfantecedentsSupport[antecedent] = getSupport(antecedent, listOfItemset)
-            antecedentSupport = dictOfantecedentsSupport[antecedent]
+            antecedentSupport = dictOfItemsetsSupport[antecedent]
             
             consequent = itemset.difference(antecedent)
-            if frozenset(consequent) not in dictOfItemsetsSupport:
-                dictOfItemsetsSupport[frozenset(consequent)] = getSupport(consequent, listOfItemset)
             consequentSupport = dictOfItemsetsSupport[frozenset(consequent)]
 
             confidence = float(itemsetsSupport / antecedentSupport)
