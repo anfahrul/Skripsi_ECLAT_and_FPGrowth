@@ -65,7 +65,7 @@ def eclatIndex():
     return render_template("mining/eclat.html", is_form_submitted=is_form_submitted)
 
 
-def eclatStoreMining(algorithm, period_start, period_end, minimum_support, minimum_confidence, rules, lenOfTransaction, execution_time):
+def storeMining(algorithm, period_start, period_end, minimum_support, minimum_confidence, rules, lenOfTransaction, execution_time, peakMemoryUsage):
     new_uuid = uuid.uuid4()
     process_id = str(new_uuid)
     
@@ -78,6 +78,7 @@ def eclatStoreMining(algorithm, period_start, period_end, minimum_support, minim
         minimum_support=minimum_support,
         minimum_confidence=minimum_confidence,
         execution_time=execution_time,
+        memory_consumtion=peakMemoryUsage,
         created_at=datetime.datetime.now()
     )
     
@@ -197,8 +198,8 @@ def eclatMining():
     else:
         rules = associationRuleEclatWithoutVerbose(freqItems, listOfItemInEachTransaction, minimumConfidence=minimumConfidenceRatio)
 
-    # mining_process_id = eclatStoreMining('ECLAT', startDate, endDate, minimumSupport, minimumConfidence, rules, lenOfTransaction, execution_time)
-    mining_process_id = 'test123'
+    mining_process_id = storeMining('ECLAT', startDate, endDate, minimumSupport, minimumConfidence, rules, lenOfTransaction, execution_time, peakMemoryUsageConverted)
+    # mining_process_id = 'test123'
     miningProcessIsExist = False
     miningProcess = MiningProcess.query.filter_by(id=mining_process_id).first()
     
@@ -294,8 +295,8 @@ def fpGrowthMining():
     
     rules = associationRuleFpGrowth(freqentItemset, listOfItemset, minimumConfidence=minimumConfidenceRatio)
     
-    # mining_process_id = eclatStoreMining('FP-Growth', startDate, endDate, minimumSupportCount, minimumConfidence, rules, lenOfTransaction, execution_time)
-    mining_process_id = 'test123'
+    mining_process_id = storeMining('FP-Growth', startDate, endDate, minimumSupportCount, minimumConfidence, rules, lenOfTransaction, execution_time, peakMemoryUsageConverted)
+    # mining_process_id = 'test123'
     miningProcessIsExist = False
     miningProcess = MiningProcess.query.filter_by(id=mining_process_id).first()
     

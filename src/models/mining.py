@@ -12,6 +12,7 @@ class MiningProcess(db.Model):
     minimum_support = db.Column(db.Float)
     minimum_confidence = db.Column(db.Float)
     execution_time = db.Column(db.Float)
+    memory_consumtion = db.Column(db.Float)
     created_at = db.Column(db.DateTime)
     
     # Define the relationship with AssociationResult
