@@ -128,8 +128,6 @@ def eclatStoreMining(algorithm, period_start, period_end, minimum_support, minim
 def eclatMining():
     is_form_submitted = True
     
-    start_time = time.time()
-
     request_form = request.form.to_dict()
     startDate = request_form['start-date']
     endDate = request_form['end-date']
@@ -158,24 +156,38 @@ def eclatMining():
     
     minimumSupportFreq = (minimumSupport / 100) * lenOfTransaction
     minimumConfidenceRatio = minimumConfidence / 100
-    eclatInstance = Eclat(minsup=minimumSupportFreq, verbose=verbose)
-    listOfItemInEachTransaction = eclatInstance.read_data(transactions_in_period)
-    # verticalData, freqItems = eclatInstance.run()
     
-    verticalData = {}
-    freqItems = {}
-    if verbose:
-        # result = profile(eclatInstance.run)()
-        result = eclatInstance.run()
-        verticalDataRes, freqItemsRes = result
-        verticalData = verticalDataRes
-        freqItems = freqItemsRes
-    else:
-        # result = profile(eclatInstance.run)()
-        result = eclatInstance.run()
-        freqItemsRes = result
-        freqItems = freqItemsRes
+    # Get Execution Time and Peak Memory Usage
+    start_time = time.time()
+    
+    tracemalloc.start()
 
+    try:
+        eclatInstance = Eclat(minsup=minimumSupportFreq, verbose=verbose)
+        listOfItemInEachTransaction = eclatInstance.read_data(transactions_in_period)
+        # verticalData, freqItems = eclatInstance.run()
+        
+        verticalData = {}
+        freqItems = {}
+        if verbose:
+            result = eclatInstance.run()
+            verticalDataRes, freqItemsRes = result
+            verticalData = verticalDataRes
+            freqItems = freqItemsRes
+        else:
+            result = eclatInstance.run()
+            freqItemsRes = result
+            freqItems = freqItemsRes
+
+        _, peakMemoryUsage = tracemalloc.get_traced_memory()
+        peakMemoryUsageConverted = bytes_to_mb(peakMemoryUsage)
+    
+    except Exception as e:
+        print(f"Error: {e}")
+
+    finally:
+        tracemalloc.stop()
+    
     end_time = time.time()
     execution_time = end_time - start_time
     execution_time_res, execution_time_unit = formattingExecutionTime(execution_time)
@@ -206,7 +218,8 @@ def eclatMining():
                             mining_process_id=mining_process_id,
                             freqItems=freqItems,
                             execution_time_res=execution_time_res,
-                            execution_time_unit=execution_time_unit)
+                            execution_time_unit=execution_time_unit,
+                            peakMemoryUsage=peakMemoryUsageConverted)
     else:
         return render_template("mining/eclat.html",
                             is_form_submitted=is_form_submitted,
@@ -216,7 +229,8 @@ def eclatMining():
                             associated_rules=associated_rules_with_names,
                             mining_process_id=mining_process_id,
                             execution_time_res=execution_time_res,
-                            execution_time_unit=execution_time_unit)
+                            execution_time_unit=execution_time_unit,
+                            peakMemoryUsage=peakMemoryUsageConverted)
     
 
 def fpGrowthIndex():
@@ -259,15 +273,20 @@ def fpGrowthMining():
     # Get Execution Time and Peak Memory Usage
     start_time = time.time()
     tracemalloc.start()
+
+    try:
+        fpGrowthInstance = FPGrowth(minimumSupportCount, minimumConfidenceRatio)
+        fpGrowthInstance.read_data(transactions_in_period)
+        dictOfItemFrequency, filteredItemset, freqentItemset, listOfItemset, dictOfConditionalPatternBase, listOfNode = fpGrowthInstance.run()
+        
+        _, peakMemoryUsage = tracemalloc.get_traced_memory()
+        peakMemoryUsageConverted = bytes_to_mb(peakMemoryUsage)
     
-    fpGrowthInstance = FPGrowth(minimumSupportCount, minimumConfidenceRatio)
-    fpGrowthInstance.read_data(transactions_in_period)
-    dictOfItemFrequency, filteredItemset, freqentItemset, listOfItemset, dictOfConditionalPatternBase, listOfNode = fpGrowthInstance.run()
-    
-    _, peakMemoryUsage = tracemalloc.get_traced_memory()
-    peakMemoryUsageConverted = bytes_to_mb(peakMemoryUsage)
-    
-    tracemalloc.stop()
+    except Exception as e:
+        print(f"Error: {e}")
+
+    finally:
+        tracemalloc.stop()
     
     end_time = time.time()
     execution_time = end_time - start_time
