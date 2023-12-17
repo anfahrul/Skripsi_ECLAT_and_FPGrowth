@@ -59,9 +59,15 @@ endblock %} {% block content %}
           <th scope="row" style="padding: 5px 0px !important">
             Waktu Eksekusi
           </th>
-          <td style="padding: 5px 0px !important">
+          <td
+            id="executionTimeCell"
+            data-value="{{ mining_process.execution_time }}"
+            style="padding: 5px 0px !important"
+          ></td>
+
+          <!-- <td id="executionTimeCell" style="padding: 5px 0px !important">
             {{ mining_process.execution_time }} Detik
-          </td>
+          </td> -->
         </tr>
         <tr>
           <th scope="row" style="padding: 5px 0px !important">
@@ -180,5 +186,37 @@ endblock %} {% block content %}
       dateElement.text(formattedDate);
     });
   });
+
+  var executionTime = $("#executionTimeCell").attr("data-value");
+  console.log(executionTime);
+  var executionTimeCell = document.getElementById("executionTimeCell");
+
+  // Konversi waktu sesuai dengan satuan yang tepat
+  var formattedTime = convertTime(executionTime);
+
+  // Tampilkan hasil di dalam elemen HTML
+  executionTimeCell.textContent = formattedTime;
+
+  function convertTime(timeInSeconds) {
+    var seconds = Math.floor(timeInSeconds) % 60;
+    var minutes = Math.floor(timeInSeconds / 60) % 60;
+    var hours = Math.floor(timeInSeconds / 3600);
+
+    var formattedTime = "";
+
+    if (hours > 0) {
+      formattedTime += hours + " Jam ";
+    }
+
+    if (minutes > 0 || hours > 0) {
+      formattedTime += minutes + " Menit ";
+    }
+
+    if (seconds > 0 || (hours === 0 && minutes === 0)) {
+      formattedTime += seconds + " Detik";
+    }
+
+    return formattedTime.trim();
+  }
 </script>
 {% endblock %}

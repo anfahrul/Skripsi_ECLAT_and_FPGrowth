@@ -7,7 +7,7 @@ from src.mining_algorithms.eclat import Eclat
 from src.mining_algorithms.fpgrowth import FPGrowth
 from src.mining_algorithms.association_rule import associationRule, associationRuleEclatWithoutVerbose, associationRuleFpGrowth
 from src.models.mining import MiningProcess, AssociationResult, AssociationResultProduct
-from src.utils import bytes_to_mb
+from src.utils import bytes_to_mb, formatting_execution_time
 import datetime
 import uuid
 import json
@@ -39,24 +39,24 @@ def associateItemCodeWithName(rules):
     return sorted_rules
 
 
-def formattingExecutionTime(execution_time):
-    display_time = 0.0
-    unit = ""
+# def formattingExecutionTime(execution_time):
+#     display_time = 0.0
+#     unit = ""
     
-    if execution_time < 1:
-        display_time = execution_time * 1000
-        unit = "milidetik"
-    elif execution_time < 60:
-        display_time = execution_time
-        unit = "detik"
-    elif execution_time < 3600:
-        display_time = execution_time / 60
-        unit = "menit"
-    else:
-        display_time = execution_time / 3600
-        unit = "jam"
+#     if execution_time < 1:
+#         display_time = execution_time * 1000
+#         unit = "milidetik"
+#     elif execution_time < 60:
+#         display_time = execution_time
+#         unit = "detik"
+#     elif execution_time < 3600:
+#         display_time = execution_time / 60
+#         unit = "menit"
+#     else:
+#         display_time = execution_time / 3600
+#         unit = "jam"
     
-    return display_time, unit
+#     return display_time, unit
     
 
 def eclatIndex():
@@ -191,15 +191,15 @@ def eclatMining():
     
     end_time = time.time()
     execution_time = end_time - start_time
-    execution_time_res, execution_time_unit = formattingExecutionTime(execution_time)
+    execution_time_formatted = formatting_execution_time(execution_time)
     
     if verbose:
         rules = associationRule(freqItems, listOfItemInEachTransaction, minimumConfidence=minimumConfidenceRatio)
     else:
         rules = associationRuleEclatWithoutVerbose(freqItems, listOfItemInEachTransaction, minimumConfidence=minimumConfidenceRatio)
 
-    mining_process_id = storeMining('ECLAT', startDate, endDate, minimumSupport, minimumConfidence, rules, lenOfTransaction, execution_time, peakMemoryUsageConverted)
-    # mining_process_id = 'test123'
+    # mining_process_id = storeMining('ECLAT', startDate, endDate, minimumSupport, minimumConfidence, rules, lenOfTransaction, execution_time, peakMemoryUsageConverted)
+    mining_process_id = 'test123'
     miningProcessIsExist = False
     miningProcess = MiningProcess.query.filter_by(id=mining_process_id).first()
     
@@ -218,8 +218,7 @@ def eclatMining():
                             associated_rules=associated_rules_with_names,
                             mining_process_id=mining_process_id,
                             freqItems=freqItems,
-                            execution_time_res=execution_time_res,
-                            execution_time_unit=execution_time_unit,
+                            execution_time_res=execution_time_formatted,
                             peakMemoryUsage=peakMemoryUsageConverted)
     else:
         return render_template("mining/eclat.html",
@@ -229,8 +228,7 @@ def eclatMining():
                             miningProcessIsExist=miningProcessIsExist,
                             associated_rules=associated_rules_with_names,
                             mining_process_id=mining_process_id,
-                            execution_time_res=execution_time_res,
-                            execution_time_unit=execution_time_unit,
+                            execution_time_res=execution_time_formatted,
                             peakMemoryUsage=peakMemoryUsageConverted)
     
 
@@ -291,12 +289,12 @@ def fpGrowthMining():
     
     end_time = time.time()
     execution_time = end_time - start_time
-    execution_time_res, execution_time_unit = formattingExecutionTime(execution_time)
+    execution_time_formatted = formatting_execution_time(execution_time)
     
     rules = associationRuleFpGrowth(freqentItemset, listOfItemset, minimumConfidence=minimumConfidenceRatio)
     
-    mining_process_id = storeMining('FP-Growth', startDate, endDate, minimumSupportCount, minimumConfidence, rules, lenOfTransaction, execution_time, peakMemoryUsageConverted)
-    # mining_process_id = 'test123'
+    # mining_process_id = storeMining('FP-Growth', startDate, endDate, minimumSupportCount, minimumConfidence, rules, lenOfTransaction, execution_time, peakMemoryUsageConverted)
+    mining_process_id = 'test123'
     miningProcessIsExist = False
     miningProcess = MiningProcess.query.filter_by(id=mining_process_id).first()
     
@@ -320,8 +318,7 @@ def fpGrowthMining():
                             freqentItemset=freqentItemset,
                             associated_rules=associated_rules_with_names,
                             mining_process_id=mining_process_id,
-                            execution_time_res=execution_time_res,
-                            execution_time_unit=execution_time_unit,
+                            execution_time_res=execution_time_formatted,
                             peakMemoryUsage=peakMemoryUsageConverted)
     else:
         return render_template("mining/fp-growth.html",
@@ -331,6 +328,5 @@ def fpGrowthMining():
                             miningProcessIsExist=miningProcessIsExist,
                             associated_rules=associated_rules_with_names,
                             mining_process_id=mining_process_id,
-                            execution_time_res=execution_time_res,
-                            execution_time_unit=execution_time_unit,
+                            execution_time_res=execution_time_formatted,
                             peakMemoryUsage=peakMemoryUsageConverted)
