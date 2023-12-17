@@ -13,5 +13,9 @@ pyexcel-xls
 pyexcel-handsontable
 fpdf
 memory_profiler
+matplotlib
+pytest
+psutil
+psrecord
 
 # -e .

@@ -1,3 +1,5 @@
+from memory_profiler import profile
+
 class Itemset:
     def __init__(self, item):
         self.item = item
@@ -95,7 +97,8 @@ class Eclat:
             new_diff_items = diff_items[i+1:]
             self.eclat_mine_without_verbose(tuple(new_prefix), new_diff_items, minsup, frequent_itemsets)
 
-
+    
+    @profile
     def run(self):
         print("Running ECLAT Algorithm")
         self.prune_items()

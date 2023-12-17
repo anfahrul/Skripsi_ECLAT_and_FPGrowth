@@ -308,7 +308,12 @@
         {% for value in freqentItemset %}
         <tr>
           <td>{{ loop.index }}</td>
-          <td>{{ value }}</td>
+          <td>
+              {% for item in value %}
+                  {{ item }}
+                  {% if not loop.last %}, {% endif %}
+              {% endfor %}
+          </td>
         </tr>
         {% endfor %}
       </tbody>
@@ -391,6 +396,12 @@
   <div class="card-body">
     <h5 class="card-title fw-semibold mb-4">Hasil Lainnya</h5>
 
+    
+    <div class="d-flex justify-content-between">
+      <div class="p-2">Konsumsi Memori</div>
+      <div class="p-2"><b>{{ peakMemoryUsage }}</b> &nbsp;MB </div>
+    </div>
+    
     <div class="d-flex justify-content-between">
       <div class="p-2">Waktu Eksekusi</div>
       <div class="p-2"><b>{{ execution_time_res }}</b> &nbsp;{{ execution_time_unit }} </div>

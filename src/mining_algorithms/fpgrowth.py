@@ -5,6 +5,7 @@ import numpy
 from csv import reader
 from collections import defaultdict, Counter, OrderedDict
 from itertools import chain, combinations
+from memory_profiler import profile
 
 
 class FPNode:
@@ -48,7 +49,7 @@ class FPGrowth:
         self.frequencyOfTransaction = []
         self.itemFrequencyFiltered = None
 
-
+    # @profile
     def read_data(self, transactions):
         dictOfItems = defaultdict(list)
 
@@ -228,7 +229,7 @@ class FPGrowth:
     
     # TRIGGER
     
-    
+    # @profile
     def run(self):
         self.getFrequentOfItems()
         
@@ -241,13 +242,11 @@ class FPGrowth:
         if fpTree.children is None:
             print('No frequent item set')
         else:
-            # freqentItemset = []
             freqentItemset = {}
             dictOfConditionalPatternBase = {}
             
             self.miningTrees(headerTable, set(), freqentItemset, dictOfConditionalPatternBase)
             
-            # print("len of freq items", len(freqentItemset))
             return (
                 self.itemFrequencyFiltered,
                 self.dictOfFilteredItems,

@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, flash
 import time
 from app import db
 from src.models.transaction import Transaction, TransactionProduct
@@ -7,10 +7,11 @@ from src.mining_algorithms.eclat import Eclat
 from src.mining_algorithms.fpgrowth import FPGrowth
 from src.mining_algorithms.association_rule import associationRule, associationRuleEclatWithoutVerbose, associationRuleFpGrowth
 from src.models.mining import MiningProcess, AssociationResult, AssociationResultProduct
+from src.utils import bytes_to_mb
 import datetime
 import uuid
-from memory_profiler import profile
 import json
+import tracemalloc
 
 
 def associateItemCodeWithName(rules):
@@ -164,12 +165,14 @@ def eclatMining():
     verticalData = {}
     freqItems = {}
     if verbose:
-        result = profile(eclatInstance.run)()
+        # result = profile(eclatInstance.run)()
+        result = eclatInstance.run()
         verticalDataRes, freqItemsRes = result
         verticalData = verticalDataRes
         freqItems = freqItemsRes
     else:
-        result = profile(eclatInstance.run)()
+        # result = profile(eclatInstance.run)()
+        result = eclatInstance.run()
         freqItemsRes = result
         freqItems = freqItemsRes
 
@@ -223,9 +226,7 @@ def fpGrowthIndex():
 
 def fpGrowthMining():
     is_form_submitted = True
-    
-    start_time = time.time()
-    
+        
     request_form = request.form.to_dict()
     startDate = request_form['start-date']
     endDate = request_form['end-date']
@@ -254,13 +255,24 @@ def fpGrowthMining():
         return render_template("mining/fp-growth.html")
     
     minimumConfidenceRatio = minimumConfidence / 100
+    
+    # Get Execution Time and Peak Memory Usage
+    start_time = time.time()
+    tracemalloc.start()
+    
     fpGrowthInstance = FPGrowth(minimumSupportCount, minimumConfidenceRatio)
     fpGrowthInstance.read_data(transactions_in_period)
-    dictOfItemFrequency, filteredItemset, freqentItemset, listOfItemset, dictOfConditionalPatternBase, listOfNode = profile(fpGrowthInstance.run)()
+    dictOfItemFrequency, filteredItemset, freqentItemset, listOfItemset, dictOfConditionalPatternBase, listOfNode = fpGrowthInstance.run()
+    
+    _, peakMemoryUsage = tracemalloc.get_traced_memory()
+    peakMemoryUsageConverted = bytes_to_mb(peakMemoryUsage)
+    
+    tracemalloc.stop()
     
     end_time = time.time()
     execution_time = end_time - start_time
     execution_time_res, execution_time_unit = formattingExecutionTime(execution_time)
+    
     rules = associationRuleFpGrowth(freqentItemset, listOfItemset, minimumConfidence=minimumConfidenceRatio)
     
     # mining_process_id = eclatStoreMining('FP-Growth', startDate, endDate, minimumSupportCount, minimumConfidence, rules, lenOfTransaction, execution_time)
@@ -289,7 +301,8 @@ def fpGrowthMining():
                             associated_rules=associated_rules_with_names,
                             mining_process_id=mining_process_id,
                             execution_time_res=execution_time_res,
-                            execution_time_unit=execution_time_unit)
+                            execution_time_unit=execution_time_unit,
+                            peakMemoryUsage=peakMemoryUsageConverted)
     else:
         return render_template("mining/fp-growth.html",
                             is_form_submitted=is_form_submitted,
@@ -299,5 +312,5 @@ def fpGrowthMining():
                             associated_rules=associated_rules_with_names,
                             mining_process_id=mining_process_id,
                             execution_time_res=execution_time_res,
-                            execution_time_unit=execution_time_unit)
-        
+                            execution_time_unit=execution_time_unit,
+                            peakMemoryUsage=peakMemoryUsageConverted)
