@@ -17,5 +17,6 @@ matplotlib
 pytest
 psutil
 psrecord
+seaborn
 
 # -e .

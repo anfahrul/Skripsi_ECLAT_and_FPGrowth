@@ -68,8 +68,13 @@ def detailMiningProcess(process_id):
     mining_process, associations = getMiningProcess(process_id)
     
     sorted_associations = sorted(associations, key=lambda x: x[1]['confidence'], reverse=True)
+    
+    lenOfAssociation = len(sorted_associations)
         
-    return render_template('mining_history/detail_mining_history.html', mining_process=mining_process, associations=sorted_associations)
+    return render_template('mining_history/detail_mining_history.html',
+                           mining_process=mining_process,
+                           associations=sorted_associations,
+                           lenOfAssociation=lenOfAssociation)
 
 
 def generateReport(process_id):
