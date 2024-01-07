@@ -1,4 +1,4 @@
-{% extends 'base_admin.html' %} {% block title %} Home Page {% endblock %} {%
+{% extends 'base_admin.html' %} {% block title %} Dashboard {% endblock %} {%
 set current_page = 'dashboard' %} {% block content %}
 <div class="container-fluid">
   <div class="row">
@@ -95,7 +95,26 @@ set current_page = 'dashboard' %} {% block content %}
       </div>
     </div>
 
-    <h5 class="mt-5">Ketentuan Penggunaan:</h5>
+    <div class="card-body">
+      <div
+        class="d-sm-flex d-block align-items-center justify-content-between mb-9"
+      >
+        <div class="mb-3 mb-sm-0">
+          <h5 class="card-title fw-semibold">Ikhtisar Penjualan</h5>
+        </div>
+        <!-- <div>
+          <select class="form-select">
+            <option value="1">March 2023</option>
+            <option value="2">April 2023</option>
+            <option value="3">May 2023</option>
+            <option value="4">June 2023</option>
+          </select>
+        </div> -->
+      </div>
+      <div id="chart"></div>
+    </div>
+
+    <!-- <h5 class="mt-5">Ketentuan Penggunaan:</h5>
     <ul>
       <li>- Data Laporan penjualan disiapkan terlebih dahulu</li>
       <li>- Data penjualan harus memiliki nomor faktur dan kode barang</li>
@@ -109,7 +128,7 @@ set current_page = 'dashboard' %} {% block content %}
         FP-Growth
       </li>
       <li>- Download PDF hasil analisis jika perlu.</li>
-    </ul>
+    </ul> -->
   </div>
 </div>
 
