@@ -23,6 +23,13 @@
       rel="stylesheet"
     />
 
+    <style>
+      .brand-logo {
+        position: relative;
+        z-index: 100;
+      }
+    </style>
+
     {% block styles %}{% endblock %}
   </head>
 
@@ -38,10 +45,31 @@
       data-header-position="fixed"
     >
       <!-- Sidebar Start -->
-      <aside class="left-sidebar">
+      <aside
+        class="left-sidebar bg-primary text-white"
+        style="
+          background-image: url('/static/images/backgrounds/Sinarmart-Front-Edited.jpeg');
+          background-size: cover;
+          background-repeat: no-repeat;
+          background-position: center;
+          /* position: relative; */
+        "
+      >
+        <div
+          class="position-absolute top-0 start-0 w-100 h-100"
+          style="
+            background: linear-gradient(
+              to bottom,
+              rgba(0, 0, 0, 0.5) 0%,
+              rgba(0, 0, 0, 0.7) 100%
+            );
+            opacity: 0.5; /* Atur nilai opacity di sini */
+          "
+        ></div>
+
         <!-- Sidebar scroll-->
         <div>
-          <div
+          <!-- <div
             class="brand-logo d-flex align-items-center justify-content-between"
           >
             <a href="./index.html" class="text-nowrap logo-img">
@@ -57,17 +85,37 @@
             >
               <i class="ti ti-x fs-8"></i>
             </div>
+          </div> -->
+
+          <div
+            class="brand-logo d-flex align-items-center justify-content-between"
+            style="z-index: 100"
+          >
+            <a href="./index.html" class="text-nowrap logo-img">
+              <img
+                src="/static/images/logos/sinarmart-logo.svg"
+                width="180"
+                alt=""
+              />
+            </a>
+            <div
+              class="close-btn d-xl-none d-block sidebartoggler cursor-pointer"
+              id="sidebarCollapse"
+            >
+              <i class="ti ti-x fs-8"></i>
+            </div>
           </div>
+
           <!-- Sidebar navigation-->
           <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
             <ul id="sidebarnav">
               <li class="nav-small-cap">
                 <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-                <span class="hide-menu">Home</span>
+                <span class="hide-menu text-white">Home</span>
               </li>
-              <li class="sidebar-item">
+              <li id="dashboard" class="sidebar-item">
                 <a
-                  class="sidebar-link"
+                  class="sidebar-link text-white"
                   href="{{ url_for('dashboard_blueprint.dashboard') }}"
                   aria-expanded="false"
                 >
@@ -80,12 +128,12 @@
 
               <li class="nav-small-cap">
                 <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-                <span class="hide-menu">PENAMBANGAN ASOSIASI</span>
+                <span class="hide-menu text-white">PENAMBANGAN ASOSIASI</span>
               </li>
 
-              <li class="sidebar-item">
+              <li id="import" class="sidebar-item">
                 <a
-                  class="sidebar-link"
+                  class="sidebar-link text-white"
                   href="{{ url_for('dataset_blueprint.do_import') }}"
                   aria-expanded="false"
                 >
@@ -97,9 +145,9 @@
                 </a>
               </li>
 
-              <li class="sidebar-item">
+              <li id="product" class="sidebar-item">
                 <a
-                  class="sidebar-link"
+                  class="sidebar-link text-white"
                   href="{{ url_for('product_blueprint.list_product') }}"
                   aria-expanded="false"
                 >
@@ -110,9 +158,9 @@
                 </a>
               </li>
 
-              <li class="sidebar-item">
+              <li id="transaction" class="sidebar-item">
                 <a
-                  class="sidebar-link"
+                  class="sidebar-link text-white"
                   href="{{ url_for('transaction_blueprint.list_transaction') }}"
                   aria-expanded="false"
                 >
@@ -123,9 +171,9 @@
                 </a>
               </li>
 
-              <li class="sidebar-item">
+              <li id="eclat" class="sidebar-item">
                 <a
-                  class="sidebar-link"
+                  class="sidebar-link text-white"
                   href="{{ url_for('mining_blueprint.eclat_mining') }}"
                   aria-expanded="false"
                 >
@@ -136,9 +184,9 @@
                 </a>
               </li>
 
-              <li class="sidebar-item">
+              <li id="fp-growth" class="sidebar-item">
                 <a
-                  class="sidebar-link"
+                  class="sidebar-link text-white"
                   href="{{ url_for('mining_blueprint.fpgrowth_mining') }}"
                   aria-expanded="false"
                 >
@@ -149,9 +197,9 @@
                 </a>
               </li>
 
-              <li class="sidebar-item">
+              <li id="history" class="sidebar-item">
                 <a
-                  class="sidebar-link"
+                  class="sidebar-link text-white"
                   href="{{ url_for('mining_history_blueprint.mining_history') }}"
                   aria-expanded="false"
                 >
@@ -164,12 +212,12 @@
 
               <li class="nav-small-cap">
                 <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-                <span class="hide-menu">AUTENTIKASI</span>
+                <span class="hide-menu text-white">AUTENTIKASI</span>
               </li>
 
-              <li class="sidebar-item">
+              <li id="account-setting" class="sidebar-item">
                 <a
-                  class="sidebar-link"
+                  class="sidebar-link text-white"
                   href="{{ url_for('user_blueprint.profile') }}"
                   aria-expanded="false"
                 >
@@ -180,9 +228,9 @@
                 </a>
               </li>
 
-              <li class="sidebar-item">
+              <li id="logout" class="sidebar-item">
                 <a
-                  class="sidebar-link"
+                  class="sidebar-link text-white"
                   href="{{ url_for('auth_blueprint.logout') }}"
                   aria-expanded="false"
                   onclick="return logoutConfirmation()"
@@ -276,6 +324,30 @@
         </div>
       </div>
     </div>
+
+    <script>
+      function setActiveNavLink(linkId) {
+        var allNavLinks = document.querySelectorAll(".sidebar-item");
+        allNavLinks.forEach(function (navLink) {
+          navLink.classList.remove("active");
+        });
+
+        var selectedNavLink = document.getElementById(linkId);
+        selectedNavLink.classList.add("active");
+
+        var currentNavLink = selectedNavLink.querySelector(".sidebar-link");
+        currentNavLink.style.backgroundColor = "#fff"; // Replace 'your-color' with the desired color
+        currentNavLink.classList.remove("text-white");
+        currentNavLink.classList.add("text-primary");
+      }
+
+      // Get the current page identifier from the Flask template
+      var currentPage = "{{ current_page }}"; // Replace 'current_page' with the actual variable containing the page identifier
+
+      // Call setActiveNavLink based on the current page
+      setActiveNavLink(currentPage);
+    </script>
+
     <script src="/static/libs/jquery/dist/jquery.min.js"></script>
     <script src="/static/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/static/js/sidebarmenu.js"></script>
