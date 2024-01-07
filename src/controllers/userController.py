@@ -38,11 +38,11 @@ def updatePassword(bcrypt):
     
     if not user or not bcrypt.check_password_hash(user.password, old_password):
         flash('Kata sandi lama yang anda masukkan salah!')
+    else:  
+        password_hashed = bcrypt.generate_password_hash(new_password).decode('utf-8')
+        user.password = password_hashed
         
-    password_hashed = bcrypt.generate_password_hash(new_password).decode('utf-8')
-    user.password = password_hashed
-    
-    db.session.commit()
-    
-    flash('Kata sandi berhasil diperbarui!')
+        db.session.commit()
+        flash('Kata sandi berhasil diperbarui!')
+        
     return render_template('user/profile.html', user=user)
