@@ -201,7 +201,7 @@
           <th scope="col">Item (Kode Barang)</th>
           <th scope="col">Daftar Transaksi (No. Faktur)</th>
           <th scope="col">Jumlah Transaksi</th>
-          <th scope="col">Nilai Support (%)</th>
+          <th scope="col">Nilai Support</th>
         </tr>
       </thead>
       <tbody>
@@ -211,7 +211,7 @@
           <td>{{ key }}</td>
           <td>{{ ', '.join(value.tids) }}</td>
           <td>{{ (value.support) }}</td>
-          <td>{{ (value.support / lenOfTransaction) * 100 }}</td>
+          <td>{{ '%.5f' | format(value.support / lenOfTransaction) }}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -230,7 +230,7 @@
           <th scope="col">Frequent Itemset (Kode Barang)</th>
           <th scope="col">Daftar Transaksi (No. Faktur)</th>
           <th scope="col">Jumlah Transaksi</th>
-          <th scope="col">Nilai Support (%)</th>
+          <th scope="col">Nilai Support</th>
         </tr>
       </thead>
       <tbody>
@@ -243,7 +243,7 @@
           </td>
           <td>{{ ', '.join(tids) }}</td>
           <td>{{support}}</td>
-          <td>{{ (support / lenOfTransaction) * 100 }}</td>
+          <td>{{ '%.5f' | format(support / lenOfTransaction) }}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -281,9 +281,9 @@
         <tr>
           <th scope="col">No.</th>
           <th scope="col">Aturan Asosiasi</th>
-          <th scope="col">Nilai Support (%)</th>
-          <th scope="col">Nilai Confidence (%)</th>
-          <th scope="col">Lift Ratio</th>
+          <th scope="col">Nilai Support</th>
+          <th scope="col">Nilai Confidence</th>
+          <th scope="col">Lift</th>
         </tr>
       </thead>
       <tbody>
@@ -300,9 +300,9 @@
             {% endfor %}
           </td>
 
-          <td>{{ '%.2f' | format(rule.support / lenOfTransaction * 100) }}</td>
-          <td>{{ '%.2f' | format(rule.confidence * 100) }}</td>
-          <td>{{ '%.2f' | format(rule.lift) }}</td>
+          <td>{{ '%.5f' | format(rule.support / lenOfTransaction) }}</td>
+          <td>{{ '%.3f' | format(rule.confidence) }}</td>
+          <td>{{ '%.3f' | format(rule.lift) }}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -410,45 +410,21 @@
       language: {
         url: "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json",
       },
+      iDisplayLength: 5,
     });
   });
 
   document.querySelector("form").addEventListener("submit", function () {
   // Show the loading animation
     Swal.fire({
-      title: "Proses Analisis",
-      html: "Berjalan <b></b> silahkan tunggu!",
+      title: "Analisis ECLAT",
+      html: "Proses analisis sedang berlangsung, silahkan <br> tunggu sejenak!",
       timerProgressBar: true,
       showConfirmButton: false,
       allowOutsideClick: false,
       timer: 0,
       didOpen: () => {
         Swal.showLoading();
-        const timer = Swal.getPopup().querySelector("b");
-        let elapsedTime = 0;
-
-        const timerInterval = setInterval(() => {
-          elapsedTime += 100;
-          const seconds = Math.floor(elapsedTime / 1000); // Menghitung detik
-          // timer.innerHTML = `Elapsed Time: ${seconds} seconds`;
-          timer.textContent = `${seconds} detik`;
-        }, 100);
-
-        // Function to check for the presence of the "card-time" element
-        function checkCardTime() {
-          const cardTimeElement = document.getElementById("card-time");
-          if (cardTimeElement) {
-            // Hide the loading animation
-            Swal.close();
-            clearInterval(timerInterval); // Clear the timer interval when the card-time element appears
-          } else {
-            // Continue checking until "card-time" element appears
-            setTimeout(checkCardTime, 500); // Check every 500 milliseconds
-          }
-        }
-
-        // Start checking for the "card-time" element
-        checkCardTime();
       },
     });
   });

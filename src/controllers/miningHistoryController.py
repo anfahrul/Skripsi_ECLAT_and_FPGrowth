@@ -139,8 +139,8 @@ def generateReport(process_id):
         
         # Support, confidence, dan lift
         pdf.set_xy(currrent_x + association_col_width, currrent_y)
-        pdf.cell(col_width, multi_cell_height, "{:.2f}".format(association['support']), border=1, align='C')
-        pdf.cell(col_width, multi_cell_height, "{:.2f}".format(association['confidence']), border=1, align='C')
+        pdf.cell(col_width, multi_cell_height, "{:.2f}".format(association['support']*100), border=1, align='C')
+        pdf.cell(col_width, multi_cell_height, "{:.2f}".format(association['confidence']*100), border=1, align='C')
         # pdf.cell(col_width, multi_cell_height, "{:.2f}".format(association['lift']), border=1, align='C')
 
         # Pindah ke baris berikutnya

@@ -84,7 +84,7 @@
             min="2"
             required
           />
-          <div id="itemCode" class="form-text">Minimal 2</div>
+          <div id="itemCode" class="form-text">Range 2 sampai &infin;</div>
         </div>
         <div class="p-2 d-flex flex-column">
           <label for="exampleFormControlInput1">Min. Confidence (%)</label>
@@ -352,9 +352,9 @@
         <tr>
           <th scope="col">No.</th>
           <th scope="col">Aturan Asosiasi</th>
-          <th scope="col">Nilai Support (%)</th>
-          <th scope="col">Nilai Confidence (%)</th>
-          <th scope="col">Lift Ratio</th>
+          <th scope="col">Nilai Support</th>
+          <th scope="col">Nilai Confidence</th>
+          <th scope="col">Lift</th>
         </tr>
       </thead>
       <tbody>
@@ -371,9 +371,9 @@
             {% endfor %}
           </td>
 
-          <td>{{ '%.2f' | format(rule.support / lenOfTransaction * 100) }}</td>
-          <td>{{ '%.2f' | format(rule.confidence * 100) }}</td>
-          <td>{{ '%.2f' | format(rule.lift) }}</td>
+          <td>{{ '%.5f' | format(rule.support / lenOfTransaction) }}</td>
+          <td>{{ '%.3f' | format(rule.confidence) }}</td>
+          <td>{{ '%.3f' | format(rule.lift) }}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -498,45 +498,21 @@
       language: {
         url: "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json",
       },
+      iDisplayLength: 5,
     });
   });
 
   document.querySelector("form").addEventListener("submit", function () {
   // Show the loading animation
     Swal.fire({
-      title: "Proses Analisis",
-      html: "Berjalan <b></b> silahkan tunggu!",
+      title: "Analisis FP-Growth",
+      html: "Proses analisis sedang berlangsung, silahkan <br> tunggu sejenak!",
       timerProgressBar: true,
       showConfirmButton: false,
       allowOutsideClick: false,
       timer: 0,
       didOpen: () => {
         Swal.showLoading();
-        const timer = Swal.getPopup().querySelector("b");
-        let elapsedTime = 0;
-
-        const timerInterval = setInterval(() => {
-          elapsedTime += 100;
-          const seconds = Math.floor(elapsedTime / 1000); // Menghitung detik
-          // timer.innerHTML = `Elapsed Time: ${seconds} seconds`;
-          timer.textContent = `${seconds} detik`;
-        }, 100);
-
-        // Function to check for the presence of the "card-time" element
-        function checkCardTime() {
-          const cardTimeElement = document.getElementById("card-time");
-          if (cardTimeElement) {
-            // Hide the loading animation
-            Swal.close();
-            clearInterval(timerInterval); // Clear the timer interval when the card-time element appears
-          } else {
-            // Continue checking until "card-time" element appears
-            setTimeout(checkCardTime, 500); // Check every 500 milliseconds
-          }
-        }
-
-        // Start checking for the "card-time" element
-        checkCardTime();
       },
     });
   });
